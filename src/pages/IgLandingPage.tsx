@@ -1627,8 +1627,13 @@ body.ig-page-body::before {
   bottom: -120px;
   background: radial-gradient(circle, hsla(72, 50%, 45%, 0.18) 0%, hsla(72, 50%, 45%, 0) 70%);
 }
-.ig-page .products-backdrop-particle {
+.ig-page .products-backdrop-particle-wrap {
   position: absolute;
+  will-change: transform;
+}
+.ig-page .products-backdrop-particle {
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   background: radial-gradient(circle, hsla(145, 45%, 28%, 0.45) 0%, hsla(145, 45%, 28%, 0) 70%);
   opacity: 0.55;
@@ -1646,6 +1651,7 @@ body.ig-page-body::before {
 @media (prefers-reduced-motion: reduce) {
   .ig-page .products-backdrop-particle { animation: none; }
 }
+
 
 
 /* 1. Heading block — centered, refined, with decorative rule */
