@@ -1292,7 +1292,7 @@ const IgLandingPage = () => {
 
         {/* ============== GALLERY ============== */}
         {activeGallery.length > 0 && (
-          <section className="snap-section section section-moss gallery-section">
+          <section id="gallery" className="snap-section section section-moss gallery-section">
             <span className="gallery-deco gallery-deco-1" aria-hidden="true" />
             <span className="gallery-deco gallery-deco-2" aria-hidden="true" />
             <div className="container">
