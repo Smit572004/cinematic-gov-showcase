@@ -7,30 +7,8 @@ import { useEffect, useRef, useState } from "react";
  * Visual Edits.
  */
 const IgLandingPage = () => {
-  const [gateOpen, setGateOpen] = useState(false);
-  const [mainVisible, setMainVisible] = useState(false);
+  const mainVisible = true;
   const heroRef = useRef<HTMLElement | null>(null);
-
-  // ---- Access gate (Instagram referrer / ?src=ig / remembered flag) ----
-  useEffect(() => {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const fromIg = (document.referrer || "").includes("instagram.com");
-      const srcIg = ["ig", "instagram"].includes(
-        (params.get("src") || params.get("utm_source") || "").toLowerCase()
-      );
-      const remembered = localStorage.getItem("ig_ok") === "1";
-      const ok = fromIg || srcIg || remembered;
-      if (ok) {
-        localStorage.setItem("ig_ok", "1");
-        setMainVisible(true);
-      } else {
-        setGateOpen(true);
-      }
-    } catch {
-      setMainVisible(true);
-    }
-  }, []);
 
   // ---- Page meta + body class for scoped background ----
   useEffect(() => {
