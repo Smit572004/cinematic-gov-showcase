@@ -2624,141 +2624,75 @@ body.ig-page-body::before {
   .ig-page .hand-underline svg { stroke-dashoffset: 0 !important; opacity: 1 !important; }
 }
 
-/* ============== PRODUCT CARD V2 (premium redesign) ============== */
+/* ============== PRODUCT CARD V2 (clean minimal redesign) ============== */
 .ig-page .product-card-v2 {
   appearance: none;
   text-align: left;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, #ffffff 0%, #fdf8ec 100%);
-  border: 1px solid rgba(138, 168, 107, 0.18);
-  border-radius: 26px;
+  background: #ffffff;
+  border: 1px solid #ececec;
+  border-radius: 20px;
   padding: 0;
   overflow: hidden;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.7) inset,
-    0 14px 34px -22px rgba(31, 41, 31, 0.28);
+  box-shadow: 0 2px 12px -6px rgba(20, 20, 20, 0.08);
   transition:
-    transform .55s cubic-bezier(.2,.8,.2,1),
-    box-shadow .55s ease,
-    border-color .35s ease;
+    transform .45s cubic-bezier(.2,.8,.2,1),
+    box-shadow .45s ease,
+    border-color .3s ease;
   font: inherit;
   color: inherit;
   position: relative;
-  /* Prevent the card from being grabbed during marquee drag */
   user-select: none;
 }
 
-/* Soft colored glow underneath each card — picked up on hover */
-.ig-page .product-card-v2::before {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  border-radius: inherit;
-  pointer-events: none;
-  background: radial-gradient(120% 80% at 50% 0%,
-    rgba(138, 168, 107, 0.0) 0%,
-    rgba(138, 168, 107, 0.0) 60%,
-    rgba(138, 168, 107, 0.18) 100%);
-  opacity: 0;
-  transition: opacity .5s ease;
-  z-index: 0;
-}
-
-/* Vibrant top accent ribbon — colored per product tag */
-.ig-page .product-card-v2::after {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 5px;
-  background: linear-gradient(90deg, #8aa86b, #d99a4e, #c96a5a);
-  z-index: 4;
-  opacity: 0.95;
-}
-.ig-page .product-card-v2[data-color="tomato"]::after   { background: linear-gradient(90deg, #e07a5f, #f2a07b, #c96a5a); }
-.ig-page .product-card-v2[data-color="pepper"]::after   { background: linear-gradient(90deg, #e8a04a, #f2c46b, #c97a2a); }
-.ig-page .product-card-v2[data-color="zucchini"]::after { background: linear-gradient(90deg, #8aa86b, #b8d098, #5e8a3f); }
-.ig-page .product-card-v2[data-color="herb"]::after     { background: linear-gradient(90deg, #6fa07a, #a8caa3, #3f7a52); }
-.ig-page .product-card-v2[data-color="berry"]::after    { background: linear-gradient(90deg, #d27a90, #efb0bd, #a64a64); }
-
 .ig-page .product-card-v2:hover {
-  transform: translateY(-10px);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.7) inset,
-    0 38px 70px -28px rgba(47, 74, 50, 0.45),
-    0 0 0 1px rgba(138, 168, 107, 0.45);
-  border-color: rgba(138, 168, 107, 0.55);
-}
-.ig-page .product-card-v2:hover::before {
-  opacity: 1;
+  transform: translateY(-6px);
+  box-shadow: 0 22px 44px -20px rgba(20, 20, 20, 0.18);
+  border-color: #d9d9d9;
 }
 .ig-page .product-card-v2:focus-within {
-  outline: 3px solid var(--moss-2);
-  outline-offset: 4px;
+  outline: 2px solid var(--moss-2);
+  outline-offset: 3px;
 }
 
-/* ----- IMAGE / ART AREA ----- */
+/* ----- IMAGE / ART AREA — pure white background ----- */
 .ig-page .pcv2-art {
   position: relative;
-  height: 260px;
+  height: 240px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: linear-gradient(135deg, #ffe9b8, #ffc97a 55%, #f59e3a);
-}
-.ig-page .pcv2-art[data-color="tomato"]   { background: linear-gradient(135deg, #ffd1c2, #ff8a6b 55%, #d8472f); }
-.ig-page .pcv2-art[data-color="pepper"]   { background: linear-gradient(135deg, #ffe2b0, #ffb24d 55%, #e07a1a); }
-.ig-page .pcv2-art[data-color="zucchini"] { background: linear-gradient(135deg, #d9efb8, #9bd16a 55%, #4f8a2c); }
-.ig-page .pcv2-art[data-color="herb"]     { background: linear-gradient(135deg, #c8eccd, #7dc28a 55%, #2f7a4a); }
-.ig-page .pcv2-art[data-color="berry"]    { background: linear-gradient(135deg, #ffd1de, #ff8aab 55%, #c93a6a); }
-
-/* Organic light flares behind the product image */
-.ig-page .pcv2-art::before {
-  content: "";
-  position: absolute;
-  inset: -10%;
-  background:
-    radial-gradient(circle at 22% 22%, rgba(255,255,255,0.55), transparent 45%),
-    radial-gradient(circle at 78% 82%, rgba(255,255,255,0.22), transparent 55%);
-  pointer-events: none;
-  z-index: 0;
-}
-/* Subtle bottom vignette so text below feels grounded */
-.ig-page .pcv2-art::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 38%;
-  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.18));
-  pointer-events: none;
-  z-index: 2;
+  background: #ffffff;
+  border-bottom: 1px solid #f1f1f1;
 }
 
 .ig-page .pcv2-emoji {
-  font-size: 110px;
+  font-size: 96px;
   line-height: 1;
-  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.22));
   transition: transform .5s cubic-bezier(.2,.8,.2,1);
   position: relative;
   z-index: 1;
 }
 .ig-page .product-card-v2:hover .pcv2-emoji {
-  transform: scale(1.14) rotate(-6deg);
+  transform: scale(1.08);
 }
 .ig-page .pcv2-img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  padding: 18px;
+  background: #ffffff;
   z-index: 1;
-  transition: transform .9s cubic-bezier(.2,.8,.2,1);
+  transition: transform .7s cubic-bezier(.2,.8,.2,1);
   user-select: none;
   -webkit-user-drag: none;
 }
 .ig-page .product-card-v2:hover .pcv2-img {
-  transform: scale(1.10);
+  transform: scale(1.05);
 }
 .ig-page .ig-modal-img {
   position: absolute;
@@ -2769,73 +2703,51 @@ body.ig-page-body::before {
   z-index: 1;
 }
 
-/* Diagonal sheen swept across the image on hover */
-.ig-page .pcv2-shine {
-  position: absolute;
-  top: -40%;
-  left: -60%;
-  width: 60%;
-  height: 200%;
-  background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.5) 50%, transparent 65%);
-  transform: translateX(-20%);
-  transition: transform 1.1s ease;
-  pointer-events: none;
-  z-index: 3;
-}
-.ig-page .product-card-v2:hover .pcv2-shine {
-  transform: translateX(320%);
-}
+/* Hidden — we don't want a sheen on a clean white card */
+.ig-page .pcv2-shine { display: none; }
 
 /* Floating category badge over the image */
 .ig-page .pcv2-cat-float {
   position: absolute;
-  top: 14px;
-  left: 14px;
+  top: 12px;
+  left: 12px;
   z-index: 3;
   font-size: 10px;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  font-weight: 800;
-  padding: 6px 12px;
+  font-weight: 700;
+  padding: 5px 10px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--moss-1);
-  box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  transition: transform .45s cubic-bezier(.2,.8,.2,1);
-}
-.ig-page .product-card-v2[data-color="tomato"]   .pcv2-cat-float { color: #b8431f; }
-.ig-page .product-card-v2[data-color="pepper"]   .pcv2-cat-float { color: #b25e10; }
-.ig-page .product-card-v2[data-color="zucchini"] .pcv2-cat-float { color: #3f6f24; }
-.ig-page .product-card-v2[data-color="herb"]     .pcv2-cat-float { color: #25623c; }
-.ig-page .product-card-v2[data-color="berry"]    .pcv2-cat-float { color: #a4325a; }
-.ig-page .product-card-v2:hover .pcv2-cat-float {
-  transform: translateY(-2px) scale(1.04);
+  background: #f7f7f5;
+  color: #4a4a3e;
+  border: 1px solid #ececec;
 }
 
 /* ----- BODY ----- */
 .ig-page .pcv2-body {
-  padding: 22px 22px 22px;
+  padding: 18px 20px 20px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   flex: 1;
+  background: #ffffff;
   position: relative;
   z-index: 1;
 }
+/* HEADING — distinct deep ink color */
 .ig-page .pcv2-title {
   font-family: 'Fraunces', Georgia, serif;
-  font-size: 22px;
-  line-height: 1.18;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
   letter-spacing: -0.005em;
-  margin: 2px 0 0;
-  color: var(--ink);
+  margin: 0;
+  color: #1a1a1a;
 }
 .ig-page .pcv2-desc {
-  color: var(--ink-soft);
-  font-size: 13.5px;
-  line-height: 1.55;
+  color: #6b6b66;
+  font-size: 13px;
+  line-height: 1.5;
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -2844,62 +2756,55 @@ body.ig-page-body::before {
 }
 .ig-page .pcv2-foot {
   margin-top: auto;
-  padding-top: 16px;
+  padding-top: 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  border-top: 1px dashed var(--line-strong);
+  border-top: 1px solid #f1f1f1;
 }
-.ig-page .pcv2-price-wrap { display: inline-flex; align-items: baseline; gap: 5px; }
+.ig-page .pcv2-price-wrap { display: inline-flex; align-items: baseline; gap: 4px; }
+/* PRICE — distinct warm accent color (terracotta), clear contrast vs heading */
 .ig-page .pcv2-price {
   font-family: 'Fraunces', Georgia, serif;
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 700;
-  color: var(--moss-1);
-  background: linear-gradient(180deg, var(--moss-1), #4f7a3a);
-  -webkit-background-clip: text;
-          background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #c9533a;
+  -webkit-text-fill-color: #c9533a;
 }
-.ig-page .pcv2-unit { font-size: 12px; color: var(--ink-mute); }
+.ig-page .pcv2-unit { font-size: 12px; color: #9a9890; font-weight: 500; }
 
-/* Modern CTA pill button */
+/* Buy CTA — solid moss green pill */
 .ig-page .pcv2-cta {
   appearance: none;
   border: 0;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
+  gap: 7px;
+  padding: 9px 16px;
   border-radius: 999px;
-  background: linear-gradient(135deg, var(--moss-1), #4f7a3a);
-  color: #fffaf0;
+  background: #2f4a32;
+  color: #ffffff;
   font: inherit;
   font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  box-shadow: 0 12px 26px -14px rgba(47, 74, 50, 0.55);
+  font-weight: 600;
+  letter-spacing: 0.02em;
   transition:
-    transform .35s cubic-bezier(.2,.8,.2,1),
-    box-shadow .35s ease,
-    background .35s ease,
-    padding .35s cubic-bezier(.2,.8,.2,1);
+    transform .3s cubic-bezier(.2,.8,.2,1),
+    background .3s ease;
   position: relative;
   overflow: hidden;
 }
 .ig-page .pcv2-cta svg {
-  transition: transform .4s cubic-bezier(.2,.8,.2,1);
+  transition: transform .3s ease;
 }
 .ig-page .pcv2-cta:hover {
-  background: linear-gradient(135deg, #4f7a3a, var(--moss-1));
-  box-shadow: 0 18px 30px -14px rgba(47, 74, 50, 0.7);
+  background: #3e6240;
   transform: translateY(-1px);
-  padding-right: 20px;
 }
 .ig-page .pcv2-cta:hover svg {
-  transform: translateX(4px);
+  transform: scale(1.08);
 }
 .ig-page .pcv2-cta:active { transform: translateY(0); }
 .ig-page .pcv2-cta:focus-visible {
