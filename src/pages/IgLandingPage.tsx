@@ -2867,17 +2867,24 @@ body.ig-page-body::before {
   border-top: 0;
 }
 /* PRICE PILL — fresh emerald → teal gradient */
+/* PRICE PILL — emerald→teal gradient, readable on every card tint */
 .ig-page .pcv2-price-wrap {
+  position: relative;
   display: inline-flex;
   align-items: baseline;
   gap: 6px;
-  background: linear-gradient(135deg, #1f6b4a 0%, #2f9e6a 60%, #4ec9a4 100%);
+  background:
+    linear-gradient(135deg, #14533a 0%, #1f6b4a 35%, #2f9e6a 70%, #4ec9a4 100%);
   padding: 9px 16px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  /* Crisp dark outline + soft white halo isolate the pill from any card color */
+  border: 1px solid rgba(10, 40, 28, 0.55);
   box-shadow:
-    0 1px 0 rgba(255,255,255,0.35) inset,
-    0 8px 18px -8px rgba(31, 107, 74, 0.55);
+    0 0 0 2px rgba(255, 255, 255, 0.85),
+    0 1px 0 rgba(255, 255, 255, 0.4) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.18) inset,
+    0 10px 22px -10px rgba(10, 40, 28, 0.55);
+  isolation: isolate;
 }
 .ig-page .pcv2-price {
   font-family: 'Fraunces', Georgia, serif;
@@ -2886,14 +2893,18 @@ body.ig-page-body::before {
   color: #ffffff;
   -webkit-text-fill-color: #ffffff;
   letter-spacing: -0.01em;
+  /* Subtle drop shadow guarantees legibility on light gradient end */
+  text-shadow: 0 1px 2px rgba(10, 40, 28, 0.45);
 }
 .ig-page .pcv2-unit {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.92);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  text-shadow: 0 1px 1px rgba(10, 40, 28, 0.4);
 }
+
 
 /* Tap hint replaces the old Buy button — minimal, on-brand */
 .ig-page .pcv2-tap-hint {
