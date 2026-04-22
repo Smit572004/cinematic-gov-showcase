@@ -2892,9 +2892,9 @@ body.ig-page-body::before {
   transition: transform .35s cubic-bezier(.2,.8,.2,1);
 }
 .ig-page .pcv2-cta:hover {
-  background: #2f4a32;
+  background: linear-gradient(135deg, #2f4a32 0%, #5b8a4a 100%);
   transform: translateY(-2px);
-  box-shadow: 0 14px 26px -10px rgba(47, 74, 50, 0.7);
+  box-shadow: 0 14px 28px -10px rgba(47, 74, 50, 0.7);
 }
 .ig-page .pcv2-cta:hover svg {
   transform: scale(1.15) rotate(-6deg);
