@@ -25,6 +25,7 @@ const AdminTeam = lazy(() => import("./pages/admin/AdminTeam.tsx"));
 const AdminContent = lazy(() => import("./pages/admin/AdminContent.tsx"));
 const AdminOffers = lazy(() => import("./pages/admin/AdminOffers.tsx"));
 const AdminGallery = lazy(() => import("./pages/admin/AdminGallery.tsx"));
+const IgLandingPage = lazy(() => import("./pages/IgLandingPage.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 
 const queryClient = new QueryClient();
