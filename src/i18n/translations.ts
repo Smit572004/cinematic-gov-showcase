@@ -18,15 +18,15 @@ export const translations = {
 
   // Hero Section
   hero: {
-    badge: { en: "Plant Propagation and Research Since 1992", de: "Pflanzenvermehrung und Forschung seit 1992" },
-    title1: { en: "Reforestation", de: "Aufforstung" },
-    title2: { en: "Made Easier", de: "Leicht Gemacht" },
+    badge: { en: "Trusted by Government Forestry Departments Since 1992", de: "Vertrauenspartner staatlicher Forstbehörden seit 1992" },
+    title1: { en: "Reforesting Nations,", de: "Aufforstung für Nationen," },
+    title2: { en: "Securing Tomorrow", de: "Zukunft Sichern" },
     desc: {
-      en: "Premium container seedlings for modern, climate-friendly forestry. Trusted by government forestry departments across Germany and beyond.",
-      de: "Premium-Containerpflanzen für moderne, klimafreundliche Forstwirtschaft. Vertrauenspartner staatlicher Forstbehörden in Deutschland und darüber hinaus.",
+      en: "Premium container seedlings engineered for state-scale reforestation. Partnering with government agencies and forestry departments to restore resilient forests across Germany and beyond.",
+      de: "Premium-Containerpflanzen für staatliche Aufforstungsprogramme. Partner von Behörden und Forstämtern beim Aufbau widerstandsfähiger Wälder in Deutschland und darüber hinaus.",
     },
-    exploreServices: { en: "Explore Our Services", de: "Unsere Leistungen" },
-    aboutTinplant: { en: "About TinPlant", de: "Über TinPlant" },
+    exploreServices: { en: "Request Government Briefing", de: "Behörden-Briefing anfragen" },
+    aboutTinplant: { en: "View Our Capabilities", de: "Unsere Kompetenzen" },
   },
 
   // About Section
