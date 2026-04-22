@@ -686,6 +686,19 @@ body.ig-page-body::before {
   border-color: rgba(255, 255, 255, 0.10);
   box-shadow: 0 14px 48px rgba(0, 0, 0, 0.35);
 }
+.ig-page .hn-logo {
+  display: inline-flex; align-items: center; padding: 2px 6px 2px 4px;
+  border-radius: 999px; transition: transform .25s ease;
+}
+.ig-page .hn-logo img {
+  height: 26px; width: auto; display: block;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+}
+.ig-page .hn-logo:hover { transform: scale(1.04); }
+.ig-page .hn-divider {
+  width: 1px; height: 22px; background: rgba(255, 255, 255, 0.22);
+  margin: 0 4px;
+}
 .ig-page .hn-link {
   display: flex; align-items: center; gap: 8px;
   color: rgba(255, 255, 255, 0.82);
