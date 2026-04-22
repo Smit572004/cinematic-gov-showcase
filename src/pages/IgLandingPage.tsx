@@ -1105,13 +1105,20 @@ const IgLandingPage = () => {
 
         {/* ============== GALLERY ============== */}
         {activeGallery.length > 0 && (
-          <section className="snap-section section section-moss">
+          <section className="snap-section section section-moss gallery-section">
+            <span className="gallery-deco gallery-deco-1" aria-hidden="true" />
+            <span className="gallery-deco gallery-deco-2" aria-hidden="true" />
             <div className="container">
-              <div className="section-head reveal">
+              <div className="section-head reveal gallery-head">
                 <span className="section-tag light">
                   <span className="tag-leaf" aria-hidden="true">📸</span> {galleryEyebrow}
                 </span>
-                <h2 className="on-dark">{galleryTitle}</h2>
+                <h2 className="on-dark gallery-title">{galleryTitle}</h2>
+                <span className="gallery-divider" aria-hidden="true">
+                  <span className="gallery-divider-line" />
+                  <span className="gallery-divider-dot" />
+                  <span className="gallery-divider-line" />
+                </span>
                 {gallerySubtitle && <p className="on-dark-soft">{gallerySubtitle}</p>}
               </div>
               <GallerySlideshow items={activeGallery} lang={lang} />
