@@ -702,7 +702,7 @@ const ProductsMarquee = ({
                       {(o.price_text || o.unit_text) && (
                         <div className="pcv2-foot">
                           <span className="pcv2-price-wrap">
-                            {o.price_text && <span className="pcv2-price">{o.price_text}</span>}
+                            {o.price_text && <span className="pcv2-price">{formatEuro(o.price_text)}</span>}
                             {o.unit_text && <span className="pcv2-unit">{o.unit_text}</span>}
                           </span>
                           <span className="pcv2-tap-hint" aria-hidden="true">
@@ -1565,7 +1565,7 @@ const IgLandingPage = () => {
                   <div className="ig-modal-price">
                     <span className="ig-modal-price-key">{priceLabel}</span>
                     <span className="ig-modal-price-val">
-                      {o.price_text}
+                      {formatEuro(o.price_text)}
                       {o.unit_text && <span className="ig-modal-price-unit"> {o.unit_text}</span>}
                     </span>
                   </div>
