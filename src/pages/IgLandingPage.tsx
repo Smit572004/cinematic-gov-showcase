@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointer
 import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import logoWhite from "@/assets/tinplant-logo-white.png";
 import locationBg from "@/assets/ig-location-bg.jpeg";
+import productsBg from "@/assets/products-bg.jpg";
 import { useLanguage } from "@/i18n/LanguageContext";
 import {
   HOUR_KEYS,
@@ -504,6 +505,11 @@ const ProductsParallaxBackdrop = ({
 
   return (
     <div className="products-backdrop" aria-hidden="true">
+      <div
+        className="products-backdrop-photo"
+        style={{ backgroundImage: `url(${productsBg})` }}
+      />
+      <div className="products-backdrop-wash" />
       <ParallaxLayer
         scrollYProgress={scrollYProgress}
         range={[-80, 80]}
@@ -2327,6 +2333,41 @@ body.ig-page-body::before {
   pointer-events: none;
   overflow: hidden;
 }
+/* Greenhouse photo as the base layer */
+.ig-page .products-backdrop-photo {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  /* Subtle Ken-Burns drift for cinematic feel */
+  transform: scale(1.06);
+  animation: productsBgPan 40s ease-in-out infinite alternate;
+  will-change: transform;
+}
+/* Cream wash on top so cards & text stay readable */
+.ig-page .products-backdrop-wash {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg,
+      rgba(247, 240, 226, 0.92) 0%,
+      rgba(247, 240, 226, 0.78) 35%,
+      rgba(247, 240, 226, 0.85) 70%,
+      rgba(247, 240, 226, 0.96) 100%);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+@keyframes productsBgPan {
+  0%   { transform: scale(1.06) translate3d(0, 0, 0); }
+  100% { transform: scale(1.12) translate3d(-1.5%, -1%, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ig-page .products-backdrop-photo { animation: none; }
+}
+
 .ig-page .products-backdrop-glow {
   position: absolute;
   border-radius: 50%;
