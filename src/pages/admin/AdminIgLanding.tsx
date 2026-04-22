@@ -1222,6 +1222,8 @@ const GalleryTab = () => {
 
   return (
     <div className="space-y-4">
+      <RotateSpeedPanel />
+
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground font-body">
           {de
