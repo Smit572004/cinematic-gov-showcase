@@ -826,7 +826,8 @@ const IgLandingPage = () => {
   const offersSubtitle = pick(content, "ig_products_subtitle", lang, pick(content, "ig_offers_subtitle", lang, ""));
   const offersBanner = pick(content, "ig_offers_banner", lang, "");
   const productsViewMore = pick(content, "ig_products_view_more", lang, lang === "de" ? "Komplette Preisliste ansehen" : "View full price list");
-  const productsPdfUrl = pick(content, "ig_products_pdf_url", "de", "/preisliste-2026.pdf");
+  // Always use the local PDF file to avoid ad-blockers blocking Supabase storage URLs
+  const productsPdfUrl = "/preisliste-2026.pdf";
 
   const galleryEyebrow = pick(content, "ig_gallery_eyebrow", lang, "Einblicke");
   const galleryTitle = pick(content, "ig_gallery_title", lang, "Aus dem Gewächshaus");
