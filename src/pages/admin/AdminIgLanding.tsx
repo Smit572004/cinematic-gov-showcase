@@ -36,7 +36,7 @@ const translateTexts = async (texts: string[]): Promise<string[]> => {
   return data.translations as string[];
 };
 
-// keys that should NOT be translated (urls, phone numbers, emails, hours)
+// keys that should NOT be translated (urls, phone numbers, emails, hours, identical labels)
 const noTranslateKeys: Set<string> = new Set([
   "ig_hero_image_url",
   "ig_contact_phone",
@@ -53,6 +53,9 @@ const noTranslateKeys: Set<string> = new Set([
   "ig_hours_fri",
   "ig_hours_sat",
   "ig_hours_sun",
+  "ig_qa_whatsapp",
+  "ig_map_apple",
+  "ig_footer_copyright",
 ]);
 
 /* ─────────────────── Field metadata for hero/location ─────────────────── */
