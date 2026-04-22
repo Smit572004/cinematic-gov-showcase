@@ -277,10 +277,12 @@ const IgLandingPage = () => {
   const ctaPrimary = pick(content, "ig_hero_cta_primary", lang, "Angebote ansehen");
   const ctaGhost = pick(content, "ig_hero_cta_ghost", lang, "So findest du uns");
 
-  const offersEyebrow = pick(content, "ig_offers_eyebrow", lang, "Saisonangebote");
-  const offersTitle = pick(content, "ig_offers_title", lang, "Erzeugerpreise — direkt zu dir");
-  const offersSubtitle = pick(content, "ig_offers_subtitle", lang, "");
+  const offersEyebrow = pick(content, "ig_products_eyebrow", lang, pick(content, "ig_offers_eyebrow", lang, lang === "de" ? "Unsere Produkte" : "Our products"));
+  const offersTitle = pick(content, "ig_products_title", lang, pick(content, "ig_offers_title", lang, lang === "de" ? "Frische Pflanzen für jeden Garten" : "Fresh plants for every garden"));
+  const offersSubtitle = pick(content, "ig_products_subtitle", lang, pick(content, "ig_offers_subtitle", lang, ""));
   const offersBanner = pick(content, "ig_offers_banner", lang, "");
+  const productsViewMore = pick(content, "ig_products_view_more", lang, lang === "de" ? "Komplette Preisliste ansehen" : "View full price list");
+  const productsPdfUrl = pick(content, "ig_products_pdf_url", "de", "");
 
   const galleryEyebrow = pick(content, "ig_gallery_eyebrow", lang, "Einblicke");
   const galleryTitle = pick(content, "ig_gallery_title", lang, "Aus dem Gewächshaus");
