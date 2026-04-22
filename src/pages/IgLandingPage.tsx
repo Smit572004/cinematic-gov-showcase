@@ -770,8 +770,41 @@ body.ig-page-body::before {
   width: 1px; height: 22px; background: rgba(255, 255, 255, 0.22);
   margin: 0 8px 0 4px;
 }
-.ig-page .hero-nav .hn-link:first-of-type { margin-left: auto; }
-.ig-page .hero-nav .hn-link:last-of-type { margin-right: auto; }
+.ig-page .hn-links {
+  position: relative;
+  display: flex; align-items: center; gap: 4px;
+  margin: 0 auto;
+}
+.ig-page .hn-indicator {
+  position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  height: 34px; border-radius: 999px; pointer-events: none;
+  background: linear-gradient(135deg, rgba(207, 233, 184, 0.18), rgba(207, 233, 184, 0.08));
+  border: 1px solid rgba(207, 233, 184, 0.28);
+  box-shadow:
+    0 0 0 4px rgba(207, 233, 184, 0.06),
+    0 6px 22px rgba(141, 198, 96, 0.30),
+    inset 0 0 12px rgba(207, 233, 184, 0.18);
+  transition:
+    transform .45s cubic-bezier(.22, 1, .36, 1),
+    width .45s cubic-bezier(.22, 1, .36, 1),
+    opacity .3s ease;
+  will-change: transform, width;
+}
+.ig-page .hn-indicator::after {
+  content: ""; position: absolute; left: 16%; right: 16%; bottom: -2px; height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, #cfe9b8, transparent);
+  filter: drop-shadow(0 0 6px rgba(207, 233, 184, 0.8));
+  animation: hn-glow 2.4s ease-in-out infinite;
+}
+@keyframes hn-glow {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ig-page .hn-indicator { transition: opacity .2s ease; }
+  .ig-page .hn-indicator::after { animation: none; }
+}
 .ig-page .hn-link {
   display: flex; align-items: center; gap: 8px;
   color: rgba(255, 255, 255, 0.82);
