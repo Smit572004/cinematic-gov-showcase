@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointer
 import { motion, useReducedMotion } from "framer-motion";
 import logoWhite from "@/assets/tinplant-logo-white.png";
 import locationBg from "@/assets/ig-location-bg.jpeg";
+import productsBg from "@/assets/products-bg.jpg";
 
 import { useLanguage } from "@/i18n/LanguageContext";
 import {
@@ -1138,6 +1139,7 @@ const IgLandingPage = () => {
             id="offers"
             
             className="snap-section section section-cream products-section"
+            style={{ "--products-bg": `url(${productsBg})` } as React.CSSProperties}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.18 }}
@@ -2233,6 +2235,30 @@ body.ig-page-body::before {
   gap: clamp(40px, 5vw, 64px);
   padding-top: clamp(80px, 9vw, 120px);
   padding-bottom: clamp(80px, 9vw, 120px);
+}
+/* Greenhouse photo as the section backdrop */
+.ig-page .products-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image: var(--products-bg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+/* Soft on-brand wash so cards & text stay readable */
+.ig-page .products-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg,
+      hsl(140 18% 95% / 0.55) 0%,
+      hsl(140 18% 95% / 0.40) 35%,
+      hsl(145 30% 88% / 0.45) 70%,
+      hsl(145 35% 82% / 0.65) 100%);
 }
 /* 1. Heading block — centered, refined, with decorative rule */
 .ig-page .products-header {
