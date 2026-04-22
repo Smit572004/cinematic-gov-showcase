@@ -51,6 +51,7 @@ export const IG_CONTENT_KEYS = [
   "ig_gallery_eyebrow",
   "ig_gallery_title",
   "ig_gallery_subtitle",
+  "ig_gallery_rotate_seconds",
   "ig_location_eyebrow",
   "ig_location_title",
   "ig_location_subtitle",
