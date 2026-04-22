@@ -2264,6 +2264,11 @@ body.ig-page-body::before {
   color: var(--moss-1);
   font-weight: 700;
 }
+.ig-page .product-card-v2[data-color="tomato"]   .pcv2-cat { background: rgba(216, 71, 47, 0.14);  color: #b8431f; }
+.ig-page .product-card-v2[data-color="pepper"]   .pcv2-cat { background: rgba(224, 122, 26, 0.16); color: #b25e10; }
+.ig-page .product-card-v2[data-color="zucchini"] .pcv2-cat { background: rgba(79, 138, 44, 0.16);  color: #3f6f24; }
+.ig-page .product-card-v2[data-color="herb"]     .pcv2-cat { background: rgba(47, 122, 74, 0.16);  color: #25623c; }
+.ig-page .product-card-v2[data-color="berry"]    .pcv2-cat { background: rgba(201, 58, 106, 0.16); color: #a4325a; }
 .ig-page .pcv2-title {
   font-family: 'Fraunces', Georgia, serif;
   font-size: 22px;
