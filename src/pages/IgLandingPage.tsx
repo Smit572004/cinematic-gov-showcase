@@ -28,6 +28,24 @@ const pick = (
   return (lang === "de" ? row.value_de : row.value_en) || row.value_de || fallback;
 };
 
+/**
+ * Always render prices in Euro. If the admin already typed €/EUR/eur,
+ * we keep it; otherwise we prepend €. Empty/undefined → "".
+ */
+const formatEuro = (value?: string | null): string => {
+  const raw = (value ?? "").trim();
+  if (!raw) return "";
+  // Already contains a currency marker
+  if (/€|\beur\b/i.test(raw)) {
+    // Normalize "EUR 12" / "12 EUR" → "€12"
+    return raw.replace(/\beur\b/gi, "€").replace(/€\s+/g, "€").trim();
+  }
+  // Bare number (e.g. "12", "12.50", "12,50") → prepend €
+  if (/^[\d.,]+$/.test(raw)) return `€${raw}`;
+  // Anything else (e.g. "from 12") → still prepend €
+  return `€${raw}`;
+};
+
 const pad = (s: string) => s.padStart(5, "0");
 
 const minutesFromHHMM = (s: string): number => {
