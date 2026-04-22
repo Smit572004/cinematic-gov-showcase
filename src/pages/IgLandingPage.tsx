@@ -504,6 +504,7 @@ const IgLandingPage = () => {
         {activeOffers.length > 0 && (
           <section id="offers" className="snap-section section section-cream">
             <div className="container">
+              {/* 1. HEADER */}
               <div className="section-head reveal">
                 <span className="section-tag">
                   <span className="tag-leaf" aria-hidden="true">🌱</span> {offersEyebrow}
@@ -513,63 +514,15 @@ const IgLandingPage = () => {
               </div>
             </div>
 
-            {/* Edge-to-edge scrolling marquee */}
-            <div
-              className="products-marquee reveal"
-              role="region"
-              aria-label={offersTitle}
-            >
-              <div
-                className="products-track"
-                style={{ ["--track-count" as string]: activeOffers.length }}
-              >
-                {/* render the list twice for a seamless loop */}
-                {[0, 1].map((dup) => (
-                  <div className="products-row" aria-hidden={dup === 1} key={dup}>
-                    {activeOffers.map((o) => {
-                      const title = lang === "de" ? o.title_de : o.title_en || o.title_de;
-                      const desc = lang === "de" ? o.description_de : o.description_en || o.description_de;
-                      const badge = lang === "de" ? o.badge_de : o.badge_en || o.badge_de;
-                      const detailsLabel = lang === "de" ? "Details ansehen" : "View details";
-                      return (
-                        <button
-                          key={`${dup}-${o.id}`}
-                          type="button"
-                          className="product-card-v2"
-                          onClick={() => dup === 0 && setSelectedProduct(o)}
-                          tabIndex={dup === 1 ? -1 : 0}
-                          aria-label={`${title} — ${detailsLabel}`}
-                        >
-                          <div className="pcv2-art" data-color={o.color_tag}>
-                            <span className="pcv2-emoji" aria-hidden="true">{o.emoji}</span>
-                            <span className="pcv2-shine" aria-hidden="true" />
-                          </div>
-                          <div className="pcv2-body">
-                            {badge && <span className="pcv2-cat">{badge}</span>}
-                            <h3 className="pcv2-title">{title}</h3>
-                            {desc && <p className="pcv2-desc">{desc}</p>}
-                            <div className="pcv2-foot">
-                              {(o.price_text || o.unit_text) ? (
-                                <span className="pcv2-price-wrap">
-                                  {o.price_text && <span className="pcv2-price">{o.price_text}</span>}
-                                  {o.unit_text && <span className="pcv2-unit">{o.unit_text}</span>}
-                                </span>
-                              ) : <span />}
-                              <span className="pcv2-arrow" aria-hidden="true">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
-                              </span>
-                            </div>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
-              <div className="products-fade products-fade-l" aria-hidden="true" />
-              <div className="products-fade products-fade-r" aria-hidden="true" />
-            </div>
+            {/* 2. PRODUCT CARDS — auto-scrolling marquee with hover arrows */}
+            <ProductsMarquee
+              offers={activeOffers}
+              lang={lang}
+              onSelect={setSelectedProduct}
+              ariaLabel={offersTitle}
+            />
 
+            {/* 3. DOWNLOAD / VIEW MORE BUTTON */}
             <div className="container">
               {productsPdfUrl && (
                 <div className="products-cta reveal">
@@ -581,9 +534,9 @@ const IgLandingPage = () => {
                   >
                     {productsViewMore}
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M14 3h7v7" />
-                      <path d="M10 14L21 3" />
-                      <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
                     </svg>
                   </a>
                 </div>
