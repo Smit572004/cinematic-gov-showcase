@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import logoWhite from "@/assets/tinplant-logo-white.png";
 import { useLanguage } from "@/i18n/LanguageContext";
 import {
@@ -199,6 +199,100 @@ const StickyIgNav = ({
   );
 };
 
+/* ---------------- Products parallax backdrop ----------------
+   Subtle cinematic layered backdrop sitting BEHIND the product cards.
+   - 2 soft radial moss glows that drift on scroll (parallax)
+   - A handful of small floating dots with gentle CSS drift
+   - Disabled for prefers-reduced-motion and on small screens (perf)
+*/
+type ParallaxLayerProps = {
+  scrollYProgress: MotionValue<number>;
+  range: [number, number];
+  className: string;
+  style?: React.CSSProperties;
+};
+
+const ParallaxLayer = ({ scrollYProgress, range, className, style }: ParallaxLayerProps) => {
+  const y = useTransform(scrollYProgress, [0, 1], range);
+  return <motion.div className={className} style={{ ...style, y }} aria-hidden="true" />;
+};
+
+const ProductsParallaxBackdrop = ({
+  sectionRef,
+}: {
+  sectionRef: React.RefObject<HTMLElement>;
+}) => {
+  const prefersReducedMotion = useReducedMotion();
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    const mq = window.matchMedia("(min-width: 768px)");
+    const update = () => setEnabled(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, [prefersReducedMotion]);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  if (!enabled) return null;
+
+  const particles = [
+    { left: "8%",  top: "18%", size: 10, delay: 0,   dur: 14, range: [-40, 40] as [number, number] },
+    { left: "22%", top: "70%", size: 6,  delay: 2,   dur: 18, range: [60, -60] as [number, number] },
+    { left: "38%", top: "12%", size: 8,  delay: 1,   dur: 16, range: [-30, 30] as [number, number] },
+    { left: "55%", top: "78%", size: 12, delay: 3,   dur: 20, range: [50, -50] as [number, number] },
+    { left: "70%", top: "22%", size: 7,  delay: 0.5, dur: 15, range: [-45, 45] as [number, number] },
+    { left: "84%", top: "60%", size: 9,  delay: 2.5, dur: 17, range: [40, -40] as [number, number] },
+    { left: "92%", top: "30%", size: 5,  delay: 1.5, dur: 19, range: [-25, 25] as [number, number] },
+    { left: "14%", top: "44%", size: 6,  delay: 3.5, dur: 21, range: [30, -30] as [number, number] },
+  ];
+
+  return (
+    <div className="products-backdrop" aria-hidden="true">
+      <ParallaxLayer
+        scrollYProgress={scrollYProgress}
+        range={[-80, 80]}
+        className="products-backdrop-glow products-backdrop-glow--a"
+      />
+      <ParallaxLayer
+        scrollYProgress={scrollYProgress}
+        range={[120, -120]}
+        className="products-backdrop-glow products-backdrop-glow--b"
+      />
+      {particles.map((p, i) => {
+        const y = useTransform(scrollYProgress, [0, 1], p.range);
+        return (
+          <motion.div
+            key={i}
+            className="products-backdrop-particle-wrap"
+            style={{
+              left: p.left,
+              top: p.top,
+              width: p.size,
+              height: p.size,
+              y,
+            }}
+            aria-hidden="true"
+          >
+            <div
+              className="products-backdrop-particle"
+              style={{
+                animationDelay: `${p.delay}s`,
+                animationDuration: `${p.dur}s`,
+              }}
+            />
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+};
+
 /* ---------------- Products auto-scrolling marquee ---------------- */
 
 const ProductsMarquee = ({
@@ -322,6 +416,7 @@ const ProductsMarquee = ({
 const IgLandingPage = () => {
   const { lang } = useLanguage();
   const heroRef = useRef<HTMLElement | null>(null);
+  const productsSectionRef = useRef<HTMLElement | null>(null);
 
   const prefersReducedMotion = useReducedMotion();
 
@@ -625,6 +720,7 @@ const IgLandingPage = () => {
         {activeOffers.length > 0 && (
           <motion.section
             id="offers"
+            ref={productsSectionRef}
             className="snap-section section section-cream products-section"
             initial="hidden"
             whileInView="show"
@@ -638,6 +734,9 @@ const IgLandingPage = () => {
               },
             }}
           >
+            {/* Cinematic parallax backdrop — sits behind everything */}
+            <ProductsParallaxBackdrop sectionRef={productsSectionRef} />
+
             {/* 1. HEADING */}
             <div className="container">
               <motion.header
@@ -1484,12 +1583,76 @@ body.ig-page-body::before {
 
 /* ============== PRODUCTS SECTION (pro layout) ============== */
 .ig-page .products-section {
+  position: relative;
+  isolation: isolate; /* contain z-index for the backdrop */
+  overflow: hidden;   /* clip drifting particles & glows */
   display: flex;
   flex-direction: column;
   gap: clamp(40px, 5vw, 64px);
   padding-top: clamp(80px, 9vw, 120px);
   padding-bottom: clamp(80px, 9vw, 120px);
 }
+/* Lift all direct content above the backdrop */
+.ig-page .products-section > *:not(.products-backdrop) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Cinematic parallax backdrop ---- */
+.ig-page .products-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.ig-page .products-backdrop-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.55;
+  will-change: transform;
+}
+.ig-page .products-backdrop-glow--a {
+  width: 540px;
+  height: 540px;
+  left: -120px;
+  top: -80px;
+  background: radial-gradient(circle, hsla(145, 45%, 28%, 0.22) 0%, hsla(145, 45%, 28%, 0) 70%);
+}
+.ig-page .products-backdrop-glow--b {
+  width: 620px;
+  height: 620px;
+  right: -160px;
+  bottom: -120px;
+  background: radial-gradient(circle, hsla(72, 50%, 45%, 0.18) 0%, hsla(72, 50%, 45%, 0) 70%);
+}
+.ig-page .products-backdrop-particle-wrap {
+  position: absolute;
+  will-change: transform;
+}
+.ig-page .products-backdrop-particle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(145, 45%, 28%, 0.45) 0%, hsla(145, 45%, 28%, 0) 70%);
+  opacity: 0.55;
+  will-change: transform;
+  animation-name: igParticleDrift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+@keyframes igParticleDrift {
+  0%   { transform: translate3d(0, 0, 0); }
+  50%  { transform: translate3d(8px, -10px, 0); }
+  100% { transform: translate3d(-6px, 6px, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ig-page .products-backdrop-particle { animation: none; }
+}
+
+
 
 /* 1. Heading block — centered, refined, with decorative rule */
 .ig-page .products-header {
