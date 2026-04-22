@@ -2162,6 +2162,8 @@ body.ig-page-body::before {
 .ig-page .why-card[data-color="sun"]   .why-icon-bg { background: linear-gradient(135deg, #f7d76e, #e8a04a); }
 .ig-page .why-card[data-color="berry"] .why-icon-bg { background: linear-gradient(135deg, #efb0bd, #d27a90); }
 .ig-page .why-card[data-color="sky"]   .why-icon-bg { background: linear-gradient(135deg, #b6dceb, #7ab0c9); }
+.ig-page .why-card[data-color="coin"]  .why-icon-bg { background: linear-gradient(135deg, #f0d27a, #c9a14a); }
+.ig-page .why-card[data-color="smile"] .why-icon-bg { background: linear-gradient(135deg, #ffc6a8, #e88c6e); }
 .ig-page .why-card:hover .why-icon-bg { transform: rotate(6deg) scale(1.06); }
 
 .ig-page .why-icon {
@@ -2203,6 +2205,8 @@ body.ig-page-body::before {
 .ig-page .why-card[data-color="sun"]   .why-card-stem { background: radial-gradient(circle, #e8a04a, transparent 70%); }
 .ig-page .why-card[data-color="berry"] .why-card-stem { background: radial-gradient(circle, #d27a90, transparent 70%); }
 .ig-page .why-card[data-color="sky"]   .why-card-stem { background: radial-gradient(circle, #7ab0c9, transparent 70%); }
+.ig-page .why-card[data-color="coin"]  .why-card-stem { background: radial-gradient(circle, #c9a14a, transparent 70%); }
+.ig-page .why-card[data-color="smile"] .why-card-stem { background: radial-gradient(circle, #e88c6e, transparent 70%); }
 .ig-page .why-card:hover .why-card-stem {
   transform: scale(1.4);
   opacity: 0.18;
