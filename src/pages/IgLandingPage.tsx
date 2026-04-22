@@ -1227,9 +1227,10 @@ body.ig-page-body::before {
   gap: 22px;
   padding: 0 11px;
 }
-.ig-page .product-card {
+.ig-page .product-card,
+.ig-page .product-card-v2 {
   flex: 0 0 auto;
-  width: clamp(240px, 26vw, 300px);
+  width: clamp(260px, 28vw, 320px);
   margin: 0;
 }
 @keyframes igProductsScroll {
