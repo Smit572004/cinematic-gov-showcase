@@ -217,6 +217,57 @@ const ParallaxLayer = ({ scrollYProgress, range, className, style }: ParallaxLay
   return <motion.div className={className} style={{ ...style, y }} aria-hidden="true" />;
 };
 
+type ParticleSpec = {
+  left: string;
+  top: string;
+  size: number;
+  delay: number;
+  dur: number;
+  range: [number, number];
+};
+
+const ParallaxParticle = ({
+  scrollYProgress,
+  spec,
+}: {
+  scrollYProgress: MotionValue<number>;
+  spec: ParticleSpec;
+}) => {
+  const y = useTransform(scrollYProgress, [0, 1], spec.range);
+  return (
+    <motion.div
+      className="products-backdrop-particle-wrap"
+      style={{
+        left: spec.left,
+        top: spec.top,
+        width: spec.size,
+        height: spec.size,
+        y,
+      }}
+      aria-hidden="true"
+    >
+      <div
+        className="products-backdrop-particle"
+        style={{
+          animationDelay: `${spec.delay}s`,
+          animationDuration: `${spec.dur}s`,
+        }}
+      />
+    </motion.div>
+  );
+};
+
+const PARTICLE_SPECS: ParticleSpec[] = [
+  { left: "8%",  top: "18%", size: 10, delay: 0,   dur: 14, range: [-40, 40] },
+  { left: "22%", top: "70%", size: 6,  delay: 2,   dur: 18, range: [60, -60] },
+  { left: "38%", top: "12%", size: 8,  delay: 1,   dur: 16, range: [-30, 30] },
+  { left: "55%", top: "78%", size: 12, delay: 3,   dur: 20, range: [50, -50] },
+  { left: "70%", top: "22%", size: 7,  delay: 0.5, dur: 15, range: [-45, 45] },
+  { left: "84%", top: "60%", size: 9,  delay: 2.5, dur: 17, range: [40, -40] },
+  { left: "92%", top: "30%", size: 5,  delay: 1.5, dur: 19, range: [-25, 25] },
+  { left: "14%", top: "44%", size: 6,  delay: 3.5, dur: 21, range: [30, -30] },
+];
+
 const ProductsParallaxBackdrop = ({
   sectionRef,
 }: {
@@ -241,17 +292,6 @@ const ProductsParallaxBackdrop = ({
 
   if (!enabled) return null;
 
-  const particles = [
-    { left: "8%",  top: "18%", size: 10, delay: 0,   dur: 14, range: [-40, 40] as [number, number] },
-    { left: "22%", top: "70%", size: 6,  delay: 2,   dur: 18, range: [60, -60] as [number, number] },
-    { left: "38%", top: "12%", size: 8,  delay: 1,   dur: 16, range: [-30, 30] as [number, number] },
-    { left: "55%", top: "78%", size: 12, delay: 3,   dur: 20, range: [50, -50] as [number, number] },
-    { left: "70%", top: "22%", size: 7,  delay: 0.5, dur: 15, range: [-45, 45] as [number, number] },
-    { left: "84%", top: "60%", size: 9,  delay: 2.5, dur: 17, range: [40, -40] as [number, number] },
-    { left: "92%", top: "30%", size: 5,  delay: 1.5, dur: 19, range: [-25, 25] as [number, number] },
-    { left: "14%", top: "44%", size: 6,  delay: 3.5, dur: 21, range: [30, -30] as [number, number] },
-  ];
-
   return (
     <div className="products-backdrop" aria-hidden="true">
       <ParallaxLayer
@@ -264,31 +304,9 @@ const ProductsParallaxBackdrop = ({
         range={[120, -120]}
         className="products-backdrop-glow products-backdrop-glow--b"
       />
-      {particles.map((p, i) => {
-        const y = useTransform(scrollYProgress, [0, 1], p.range);
-        return (
-          <motion.div
-            key={i}
-            className="products-backdrop-particle-wrap"
-            style={{
-              left: p.left,
-              top: p.top,
-              width: p.size,
-              height: p.size,
-              y,
-            }}
-            aria-hidden="true"
-          >
-            <div
-              className="products-backdrop-particle"
-              style={{
-                animationDelay: `${p.delay}s`,
-                animationDuration: `${p.dur}s`,
-              }}
-            />
-          </motion.div>
-        );
-      })}
+      {PARTICLE_SPECS.map((spec, i) => (
+        <ParallaxParticle key={i} scrollYProgress={scrollYProgress} spec={spec} />
+      ))}
     </div>
   );
 };
@@ -357,7 +375,17 @@ const ProductsMarquee = ({
                     aria-label={`${title} — ${detailsLabel}`}
                   >
                     <div className="pcv2-art" data-color={o.color_tag}>
-                      <span className="pcv2-emoji" aria-hidden="true">{o.emoji}</span>
+                      {o.image_url ? (
+                        <img
+                          src={o.image_url}
+                          alt={title}
+                          className="pcv2-img"
+                          loading="lazy"
+                          draggable={false}
+                        />
+                      ) : (
+                        <span className="pcv2-emoji" aria-hidden="true">{o.emoji}</span>
+                      )}
                       <span className="pcv2-shine" aria-hidden="true" />
                     </div>
                     <div className="pcv2-body">
@@ -814,21 +842,21 @@ const IgLandingPage = () => {
 
             {/* 3. CENTERED CTA — late, subtle pop */}
             <div className="container">
-              {productsPdfUrl && (
-                <motion.div
-                  className="products-cta"
-                  variants={{
-                    hidden: prefersReducedMotion
-                      ? { opacity: 1, y: 0, scale: 1 }
-                      : { opacity: 0, y: 24, scale: 0.94 },
-                    show: {
-                      opacity: 1,
-                      y: 0,
-                      scale: 1,
-                      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
-                    },
-                  }}
-                >
+              <motion.div
+                className="products-cta"
+                variants={{
+                  hidden: prefersReducedMotion
+                    ? { opacity: 1, y: 0, scale: 1 }
+                    : { opacity: 0, y: 24, scale: 0.94 },
+                  show: {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+                  },
+                }}
+              >
+                {productsPdfUrl ? (
                   <motion.a
                     href={productsPdfUrl}
                     target="_blank"
@@ -846,8 +874,21 @@ const IgLandingPage = () => {
                     </svg>
                     {productsViewMore}
                   </motion.a>
-                </motion.div>
-              )}
+                ) : (
+                  <motion.a
+                    href="/products"
+                    className="products-download-btn"
+                    whileHover={prefersReducedMotion ? undefined : { y: -3 }}
+                    whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
+                    transition={{ type: "spring", stiffness: 320, damping: 22 }}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M5 12h14M13 5l7 7-7 7" />
+                    </svg>
+                    {productsViewMore}
+                  </motion.a>
+                )}
+              </motion.div>
               {offersBanner && (
                 <motion.p
                   className="producer-banner"
@@ -1072,7 +1113,11 @@ const IgLandingPage = () => {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
               </button>
               <div className="ig-modal-art" data-color={o.color_tag}>
-                <span className="ig-modal-emoji" aria-hidden="true">{o.emoji}</span>
+                {o.image_url ? (
+                  <img src={o.image_url} alt={title} className="ig-modal-img" />
+                ) : (
+                  <span className="ig-modal-emoji" aria-hidden="true">{o.emoji}</span>
+                )}
                 {badge && <span className="ig-modal-cat">{badge}</span>}
               </div>
               <div className="ig-modal-body">
@@ -1879,6 +1924,28 @@ body.ig-page-body::before {
 }
 .ig-page .product-card-v2:hover .pcv2-emoji {
   transform: scale(1.12) rotate(-6deg);
+}
+.ig-page .pcv2-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+  transition: transform .6s cubic-bezier(.2,.8,.2,1);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.ig-page .product-card-v2:hover .pcv2-img {
+  transform: scale(1.06);
+}
+.ig-page .ig-modal-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
 }
 .ig-page .pcv2-shine {
   position: absolute;

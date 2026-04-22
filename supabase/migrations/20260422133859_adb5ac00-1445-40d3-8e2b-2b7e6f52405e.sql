@@ -1,0 +1,1 @@
+ALTER TABLE public.ig_offers ADD COLUMN IF NOT EXISTS image_url text;

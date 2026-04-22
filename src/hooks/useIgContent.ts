@@ -13,6 +13,7 @@ export type IgOffer = {
   unit_text: string;
   emoji: string;
   color_tag: string;
+  image_url: string | null;
   sort_order: number;
   is_active: boolean;
 };

@@ -174,6 +174,7 @@ export type Database = {
           description_en: string
           emoji: string
           id: string
+          image_url: string | null
           is_active: boolean
           price_text: string
           sort_order: number
@@ -191,6 +192,7 @@ export type Database = {
           description_en?: string
           emoji?: string
           id?: string
+          image_url?: string | null
           is_active?: boolean
           price_text?: string
           sort_order?: number
@@ -208,6 +210,7 @@ export type Database = {
           description_en?: string
           emoji?: string
           id?: string
+          image_url?: string | null
           is_active?: boolean
           price_text?: string
           sort_order?: number
