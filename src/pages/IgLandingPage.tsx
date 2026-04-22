@@ -261,6 +261,10 @@ const IgLandingPage = () => {
           className={`hero-nav sticky-nav ${navScrolled ? "is-scrolled" : ""}`}
           aria-label={lang === "de" ? "Seitennavigation" : "Page navigation"}
         >
+          <a href="#ig-main" className="hn-logo" aria-label="TinPlant">
+            <img src={logoWhite} alt="TinPlant" />
+          </a>
+          <span className="hn-divider" aria-hidden="true" />
           {[
             { id: "ig-main", de: "Start", en: "Home" },
             { id: "offers", de: "Angebote", en: "Offers" },
