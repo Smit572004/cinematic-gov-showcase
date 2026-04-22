@@ -2165,7 +2165,7 @@ body.ig-page-body::before {
 .ig-page .pcv2-art[data-color="herb"]     { background: linear-gradient(135deg, #d4e7d2, #a8caa3); }
 .ig-page .pcv2-art[data-color="berry"]    { background: linear-gradient(135deg, #efd0d6, #d99aa6); }
 .ig-page .pcv2-emoji {
-  font-size: 76px;
+  font-size: 100px;
   line-height: 1;
   filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.18));
   transition: transform .5s cubic-bezier(.2,.8,.2,1);
