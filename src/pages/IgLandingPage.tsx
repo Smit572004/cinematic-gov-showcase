@@ -8,6 +8,7 @@ import {
   useIgContent,
   useIgGallery,
   useIgOffers,
+  type IgGalleryItem,
   type IgOffer,
 } from "@/hooks/useIgContent";
 
