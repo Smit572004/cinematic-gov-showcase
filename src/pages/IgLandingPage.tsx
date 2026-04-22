@@ -741,6 +741,9 @@ const IgLandingPage = () => {
   const galleryEyebrow = pick(content, "ig_gallery_eyebrow", lang, "Einblicke");
   const galleryTitle = pick(content, "ig_gallery_title", lang, "Aus dem Gewächshaus");
   const gallerySubtitle = pick(content, "ig_gallery_subtitle", lang, "");
+  const galleryRotateRaw = pick(content, "ig_gallery_rotate_seconds", "en", "3");
+  const galleryRotateSec = Math.min(8, Math.max(2, Number(galleryRotateRaw) || 3));
+  const galleryRotateMs = galleryRotateSec * 1000;
 
   const locEyebrow = pick(content, "ig_location_eyebrow", lang, "Besuch uns");
   const locTitle = pick(content, "ig_location_title", lang, "Öffnungszeiten & Standort");
