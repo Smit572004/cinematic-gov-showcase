@@ -407,6 +407,7 @@ const ProductsMarquee = ({
 const IgLandingPage = () => {
   const { lang } = useLanguage();
   const heroRef = useRef<HTMLElement | null>(null);
+  const productsSectionRef = useRef<HTMLElement | null>(null);
 
   const prefersReducedMotion = useReducedMotion();
 
