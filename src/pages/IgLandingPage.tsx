@@ -1447,40 +1447,7 @@ const IgLandingPage = () => {
                   </a>
                 </div>
 
-                <div className="route-actions">
-                  <a className="qa-btn qa-route" href={`${mapDir}&travelmode=driving`} target="_blank" rel="noopener noreferrer">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <circle cx="12" cy="12" r="10"/>
-                      <polygon points="16.24,7.76 14.12,14.12 7.76,16.24 9.88,9.88" fill="currentColor"/>
-                    </svg>
-                    {mapRouteLabel}
-                  </a>
-                  <a className="qa-btn qa-apple" href={mapApple} target="_blank" rel="noopener noreferrer">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d="M16.4 12.7c0-2.7 2.2-4 2.3-4-1.3-1.8-3.2-2.1-3.9-2.1-1.7-.2-3.3 1-4.1 1-.9 0-2.1-1-3.6-.9-1.8 0-3.5 1.1-4.5 2.7-1.9 3.3-.5 8.2 1.4 10.9.9 1.3 2 2.8 3.5 2.7 1.4-.1 1.9-.9 3.6-.9 1.7 0 2.2.9 3.6.9 1.5 0 2.5-1.3 3.4-2.7.7-1 1-1.5 1.6-2.7-.1 0-3.3-1.3-3.3-4.9zM13.7 4.6c.7-.9 1.3-2.2 1.1-3.5-1.1.1-2.5.8-3.3 1.7-.7.8-1.4 2.1-1.2 3.4 1.2.1 2.6-.7 3.4-1.6z"/>
-                    </svg>
-                    {mapAppleLabel}
-                  </a>
-                  <a
-                    className="qa-btn qa-share"
-                    href={mapShare}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => {
-                      const nav = navigator as Navigator & { share?: (data: ShareData) => Promise<void> };
-                      if (typeof nav.share === "function") {
-                        e.preventDefault();
-                        nav.share({ title: addrName, text: `${addrStreet}, ${addrCity}`, url: mapShare }).catch(() => {});
-                      }
-                    }}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-                      <line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/>
-                    </svg>
-                    {mapShareLabel}
-                  </a>
-                </div>
+
               </div>
             </div>
           </div>
