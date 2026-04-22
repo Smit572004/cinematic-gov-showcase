@@ -245,11 +245,26 @@ const IgLandingPage = () => {
       {gateOpen && (
         <div id="ig-gate" className="ig-gate show" role="dialog" aria-modal="true">
           <div className="box">
-            <h1>Zugang beschränkt</h1>
+            <h1>Willkommen 👋</h1>
             <p>
-              Diese Seite ist exklusiv für unsere Instagram-Besucher reserviert. Bitte öffne den
-              Link erneut über unsere Instagram-Seite.
+              Diese Seite ist eigentlich für unsere Instagram-Besucher gedacht. Du kannst sie
+              trotzdem ansehen — viel Spaß beim Stöbern!
             </p>
+            <button
+              type="button"
+              className="gate-btn"
+              onClick={() => {
+                try {
+                  localStorage.setItem("ig_ok", "1");
+                } catch {
+                  /* ignore */
+                }
+                setGateOpen(false);
+                setMainVisible(true);
+              }}
+            >
+              Seite ansehen →
+            </button>
           </div>
         </div>
       )}
