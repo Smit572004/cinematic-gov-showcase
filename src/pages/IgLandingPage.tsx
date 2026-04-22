@@ -536,6 +536,21 @@ body.ig-page-body::before {
   margin: 0 auto;
   padding: 0 12px;
 }
+.ig-page .hero-logo {
+  display: inline-block;
+  margin-bottom: 22px;
+}
+.ig-page .hero-logo img {
+  height: 60px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 6px 22px rgba(0, 0, 0, 0.45));
+  transition: transform .3s ease;
+}
+.ig-page .hero-logo:hover img { transform: scale(1.04); }
+@media (max-width: 640px) {
+  .ig-page .hero-logo img { height: 48px; }
+}
 .ig-page .eyebrow {
   display: inline-flex;
   align-items: center;
