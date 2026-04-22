@@ -2830,9 +2830,11 @@ body.ig-page-body::before {
   display: inline-flex;
   align-items: baseline;
   gap: 4px;
-  background: #f7f4ed;
-  padding: 8px 12px;
-  border-radius: 12px;
+  background: linear-gradient(135deg, #fff1ec 0%, #ffe1d4 100%);
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 83, 58, 0.18);
+  box-shadow: 0 4px 12px -6px rgba(201, 83, 58, 0.25);
 }
 /* PRICE — vibrant terracotta */
 .ig-page .pcv2-price {
