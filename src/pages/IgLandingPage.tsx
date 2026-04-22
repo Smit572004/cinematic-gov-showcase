@@ -2863,13 +2863,13 @@ body.ig-page-body::before {
   gap: 7px;
   padding: 11px 18px;
   border-radius: 999px;
-  background: #14181a;
+  background: linear-gradient(135deg, #c9533a 0%, #e07b4a 100%);
   color: #ffffff;
   font: inherit;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.02em;
-  box-shadow: 0 8px 20px -10px rgba(20, 24, 26, 0.6);
+  box-shadow: 0 8px 22px -8px rgba(201, 83, 58, 0.6);
   transition:
     transform .35s cubic-bezier(.2,.8,.2,1),
     background .3s ease,
