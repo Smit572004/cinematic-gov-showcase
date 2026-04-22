@@ -2346,17 +2346,17 @@ body.ig-page-body::before {
   animation: productsBgPan 40s ease-in-out infinite alternate;
   will-change: transform;
 }
-/* Cream wash on top so cards & text stay readable */
+/* Sky/cloud wash on top — keeps cards & text readable while staying on-palette */
 .ig-page .products-backdrop-wash {
   position: absolute;
   inset: 0;
   z-index: 1;
   background:
     linear-gradient(180deg,
-      rgba(247, 240, 226, 0.92) 0%,
-      rgba(247, 240, 226, 0.78) 35%,
-      rgba(247, 240, 226, 0.85) 70%,
-      rgba(247, 240, 226, 0.96) 100%);
+      rgba(225, 236, 245, 0.78) 0%,    /* soft cloud-blue at top */
+      rgba(238, 244, 240, 0.70) 40%,   /* misty mid */
+      rgba(232, 240, 230, 0.78) 75%,   /* hint of grass green */
+      rgba(228, 236, 222, 0.92) 100%); /* settles into the grass tone */
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
 }
