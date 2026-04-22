@@ -612,14 +612,8 @@ const ProductsMarquee = ({
       className={`products-marquee reveal ${paused ? "is-paused" : ""} ${showArrows ? "show-arrows" : ""}`}
       role="region"
       aria-label={ariaLabel}
-      onMouseEnter={() => {
-        setShowArrows(true);
-        setPaused(true);
-      }}
-      onMouseLeave={() => {
-        setShowArrows(false);
-        if (!dragRef.current.active) setPaused(false);
-      }}
+      onMouseEnter={() => setShowArrows(true)}
+      onMouseLeave={() => setShowArrows(false)}
       onFocus={() => setShowArrows(true)}
       onBlur={() => setShowArrows(false)}
     >
