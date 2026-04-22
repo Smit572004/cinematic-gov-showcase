@@ -749,6 +749,22 @@ const IgLandingPage = () => {
 
   // Selected product for details modal
   const [selectedProduct, setSelectedProduct] = useState<IgOffer | null>(null);
+  const [buyOffer, setBuyOffer] = useState<IgOffer | null>(null);
+
+  // Lock body scroll + Escape close for buy modal
+  useEffect(() => {
+    if (!buyOffer) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setBuyOffer(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [buyOffer]);
   const [pdfOpen, setPdfOpen] = useState(false);
 
   // Lock body scroll + Escape close for PDF modal
