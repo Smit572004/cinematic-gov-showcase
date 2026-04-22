@@ -1674,28 +1674,25 @@ body.ig-page-body::before {
   padding: 0 clamp(20px, 5vw, 64px);
 }
 .ig-page .hero-nav {
-  position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+  position: fixed; top: 0; left: 0; right: 0; transform: none;
   z-index: 50; display: flex; flex-direction: row; align-items: center;
-  gap: 8px; padding: 8px 14px;
-  width: auto; max-width: calc(100% - 32px);
-  border-radius: 999px;
-  background: rgba(20, 32, 22, 0.55);
-  backdrop-filter: blur(18px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  transition: top .35s ease, padding .35s ease, background .35s ease,
-              border-color .35s ease, box-shadow .35s ease, transform .35s ease;
+  gap: 8px; padding: 12px 28px;
+  width: 100%; max-width: 100%;
+  border-radius: 0;
+  background: rgba(20, 32, 22, 0.45);
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
+  transition: padding .3s ease, background .3s ease,
+              border-color .3s ease, box-shadow .3s ease;
 }
 .ig-page .hero-nav.is-scrolled {
-  top: 10px;
-  background: rgba(15, 24, 17, 0.78);
-  border-color: rgba(207, 233, 184, 0.18);
-  box-shadow:
-    0 14px 44px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  padding: 8px 28px;
+  background: rgba(15, 24, 17, 0.82);
+  border-bottom-color: rgba(207, 233, 184, 0.18);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.35);
 }
 .ig-page .hn-logo {
   display: inline-flex; align-items: center; padding: 2px 4px;
