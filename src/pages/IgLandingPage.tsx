@@ -683,13 +683,23 @@ const ProductsMarquee = ({
                   >
                     <div className="pcv2-art" data-color={o.color_tag}>
                       {o.image_url ? (
-                        <img
-                          src={o.image_url}
-                          alt={title}
-                          className="pcv2-img"
-                          loading="lazy"
-                          draggable={false}
-                        />
+                        <>
+                          <img
+                            src={o.image_url}
+                            alt=""
+                            aria-hidden="true"
+                            className="pcv2-img-bg"
+                            loading="lazy"
+                            draggable={false}
+                          />
+                          <img
+                            src={o.image_url}
+                            alt={title}
+                            className="pcv2-img"
+                            loading="lazy"
+                            draggable={false}
+                          />
+                        </>
                       ) : (
                         <span className="pcv2-emoji" aria-hidden="true">{o.emoji}</span>
                       )}
@@ -2669,22 +2679,24 @@ body.ig-page-body::before {
   outline-offset: 4px;
 }
 
-/* ----- IMAGE / ART AREA — photo fits fully inside (no cropping) ----- */
+/* ----- IMAGE / ART AREA ----- */
 .ig-page .pcv2-art {
   position: relative;
-  height: 240px;
+  width: 100%;
+  aspect-ratio: 4 / 5;          /* tall frame works for both portrait & landscape photos */
   border-radius: 20px;
   display: block;
   overflow: hidden;
-  background: linear-gradient(160deg, #fafafa 0%, #ffffff 50%, #f4f4f4 100%);
+  background: #f4f5f3;
   transform: translateZ(30px);
+  isolation: isolate;
 }
-/* Subtle tinted backdrops — soft so photo dominates but the frame doesn't look empty */
-.ig-page .pcv2-art[data-color="tomato"]   { background: radial-gradient(circle at 30% 30%, #fff5f0 0%, #ffffff 70%); }
-.ig-page .pcv2-art[data-color="pepper"]   { background: radial-gradient(circle at 30% 30%, #fff8e8 0%, #ffffff 70%); }
-.ig-page .pcv2-art[data-color="zucchini"] { background: radial-gradient(circle at 30% 30%, #f4faec 0%, #ffffff 70%); }
-.ig-page .pcv2-art[data-color="herb"]     { background: radial-gradient(circle at 30% 30%, #ecf6ef 0%, #ffffff 70%); }
-.ig-page .pcv2-art[data-color="berry"]    { background: radial-gradient(circle at 30% 30%, #ffeff5 0%, #ffffff 70%); }
+/* Subtle tinted backdrops as fallback when no image */
+.ig-page .pcv2-art[data-color="tomato"]   { background: #fff1ec; }
+.ig-page .pcv2-art[data-color="pepper"]   { background: #fff5e0; }
+.ig-page .pcv2-art[data-color="zucchini"] { background: #f1faea; }
+.ig-page .pcv2-art[data-color="herb"]     { background: #e8f5ec; }
+.ig-page .pcv2-art[data-color="berry"]    { background: #ffeaf2; }
 
 .ig-page .pcv2-art::before { content: none; }
 
@@ -2703,6 +2715,34 @@ body.ig-page-body::before {
 .ig-page .product-card-v2:hover .pcv2-emoji {
   transform: scale(1.12) rotate(-4deg);
 }
+
+/* Blurred backdrop = same image, scaled up & blurred → fills empty letterbox area */
+.ig-page .pcv2-img-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: blur(28px) saturate(1.15) brightness(1.05);
+  transform: scale(1.25);
+  opacity: 0.85;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+/* Subtle dark vignette over the blurred backdrop for depth */
+.ig-page .pcv2-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.18) 100%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Foreground photo — fully visible, never cropped */
 .ig-page .pcv2-img {
   position: absolute;
   inset: 0;
@@ -2710,12 +2750,13 @@ body.ig-page-body::before {
   height: 100%;
   object-fit: contain;
   object-position: center;
-  padding: 10px;
-  z-index: 1;
+  padding: 0;
+  z-index: 2;
   transition: transform .8s cubic-bezier(.2,.8,.2,1);
   user-select: none;
   -webkit-user-drag: none;
   display: block;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.18));
 }
 .ig-page .product-card-v2:hover .pcv2-img {
   transform: scale(1.04);
@@ -2873,7 +2914,7 @@ body.ig-page-body::before {
 
 @media (max-width: 640px) {
   .ig-page .product-card-v2 { padding: 10px; border-radius: 22px; }
-  .ig-page .pcv2-art { height: 200px; border-radius: 16px; }
+  .ig-page .pcv2-art { border-radius: 16px; }
   .ig-page .pcv2-title { font-size: 19px; }
   .ig-page .pcv2-price { font-size: 18px; }
   .ig-page .pcv2-tap-hint { font-size: 11px; }
