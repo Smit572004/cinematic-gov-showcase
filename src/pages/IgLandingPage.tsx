@@ -1742,7 +1742,7 @@ body.ig-page-body::before {
   /* Gap between the two duplicated rows MUST equal the inter-card gap
      so the loop is mathematically seamless (no visible jump at reset). */
   gap: 22px;
-  animation: igProductsScroll 60s linear infinite;
+  animation: igProductsScroll 38s linear infinite;
   will-change: transform;
   /* Hint the browser so transforms stay on the compositor thread. */
   backface-visibility: hidden;
@@ -1769,7 +1769,7 @@ body.ig-page-body::before {
 .ig-page .product-card,
 .ig-page .product-card-v2 {
   flex: 0 0 auto;
-  width: clamp(240px, 24vw, 290px);
+  width: clamp(260px, 26vw, 320px);
   margin: 0;
 }
 /* Translate by exactly one row + the inter-row gap so the second
@@ -2152,7 +2152,7 @@ body.ig-page-body::before {
 
 .ig-page .pcv2-art {
   position: relative;
-  height: 168px;
+  height: 240px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2165,7 +2165,7 @@ body.ig-page-body::before {
 .ig-page .pcv2-art[data-color="herb"]     { background: linear-gradient(135deg, #d4e7d2, #a8caa3); }
 .ig-page .pcv2-art[data-color="berry"]    { background: linear-gradient(135deg, #efd0d6, #d99aa6); }
 .ig-page .pcv2-emoji {
-  font-size: 76px;
+  font-size: 100px;
   line-height: 1;
   filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.18));
   transition: transform .5s cubic-bezier(.2,.8,.2,1);
