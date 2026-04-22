@@ -154,7 +154,7 @@ const LABEL_FIELDS: FieldMeta[] = [
 
 /* ─────────────────────────── Tabs ─────────────────────────── */
 
-type TabId = "hero" | "offers" | "gallery" | "hours" | "location";
+type TabId = "hero" | "offers" | "gallery" | "hours" | "location" | "labels";
 
 const AdminIgLanding = () => {
   const { lang } = useLanguage();
@@ -167,6 +167,7 @@ const AdminIgLanding = () => {
     { id: "gallery", labelDe: "Galerie", labelEn: "Gallery" },
     { id: "hours", labelDe: "Öffnungszeiten", labelEn: "Hours" },
     { id: "location", labelDe: "Standort & Kontakt", labelEn: "Location & Contact" },
+    { id: "labels", labelDe: "UI-Texte", labelEn: "UI Labels" },
   ];
 
   return (
