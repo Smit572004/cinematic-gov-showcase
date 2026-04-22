@@ -109,6 +109,92 @@ const LiveStatusBadge = ({
   );
 };
 
+/* ---------------- Sticky nav with animated indicator ---------------- */
+
+const NAV_ITEMS = [
+  { id: "ig-main", de: "Start", en: "Home" },
+  { id: "offers", de: "Angebote", en: "Offers" },
+  { id: "location", de: "Standort", en: "Location" },
+  { id: "contact", de: "Kontakt", en: "Contact" },
+] as const;
+
+const StickyIgNav = ({
+  lang,
+  activeSection,
+  navScrolled,
+  logo,
+}: {
+  lang: LangKey;
+  activeSection: string;
+  navScrolled: boolean;
+  logo: string;
+}) => {
+  const linksWrapRef = useRef<HTMLDivElement | null>(null);
+  const linkRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+  const [indicator, setIndicator] = useState<{ left: number; width: number; visible: boolean }>({
+    left: 0,
+    width: 0,
+    visible: false,
+  });
+
+  useEffect(() => {
+    const measure = () => {
+      const wrap = linksWrapRef.current;
+      const el = linkRefs.current[activeSection];
+      if (!wrap || !el) {
+        setIndicator((p) => ({ ...p, visible: false }));
+        return;
+      }
+      const wrapBox = wrap.getBoundingClientRect();
+      const elBox = el.getBoundingClientRect();
+      setIndicator({
+        left: elBox.left - wrapBox.left,
+        width: elBox.width,
+        visible: true,
+      });
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [activeSection, lang]);
+
+  return (
+    <nav
+      className={`hero-nav sticky-nav ${navScrolled ? "is-scrolled" : ""}`}
+      aria-label={lang === "de" ? "Seitennavigation" : "Page navigation"}
+    >
+      <a href="#ig-main" className="hn-logo" aria-label="TinPlant">
+        <img src={logo} alt="TinPlant" />
+      </a>
+      <span className="hn-divider" aria-hidden="true" />
+      <div className="hn-links" ref={linksWrapRef}>
+        <span
+          className="hn-indicator"
+          aria-hidden="true"
+          style={{
+            transform: `translateX(${indicator.left}px)`,
+            width: indicator.width,
+            opacity: indicator.visible ? 1 : 0,
+          }}
+        />
+        {NAV_ITEMS.map((it) => (
+          <a
+            key={it.id}
+            href={`#${it.id}`}
+            ref={(el) => {
+              linkRefs.current[it.id] = el;
+            }}
+            className={`hn-link ${activeSection === it.id ? "is-active" : ""}`}
+          >
+            <span className="hn-dot" aria-hidden="true" />
+            <span className="hn-label">{lang === "de" ? it.de : it.en}</span>
+          </a>
+        ))}
+      </div>
+    </nav>
+  );
+};
+
 /* ---------------- Page ---------------- */
 
 const IgLandingPage = () => {
@@ -257,30 +343,12 @@ const IgLandingPage = () => {
 
       <main className="ig-page" id="ig-main">
         {/* ============== STICKY NAV ============== */}
-        <nav
-          className={`hero-nav sticky-nav ${navScrolled ? "is-scrolled" : ""}`}
-          aria-label={lang === "de" ? "Seitennavigation" : "Page navigation"}
-        >
-          <a href="#ig-main" className="hn-logo" aria-label="TinPlant">
-            <img src={logoWhite} alt="TinPlant" />
-          </a>
-          <span className="hn-divider" aria-hidden="true" />
-          {[
-            { id: "ig-main", de: "Start", en: "Home" },
-            { id: "offers", de: "Angebote", en: "Offers" },
-            { id: "location", de: "Standort", en: "Location" },
-            { id: "contact", de: "Kontakt", en: "Contact" },
-          ].map((it) => (
-            <a
-              key={it.id}
-              href={`#${it.id}`}
-              className={`hn-link ${activeSection === it.id ? "is-active" : ""}`}
-            >
-              <span className="hn-dot" aria-hidden="true" />
-              <span className="hn-label">{lang === "de" ? it.de : it.en}</span>
-            </a>
-          ))}
-        </nav>
+        <StickyIgNav
+          lang={lang as LangKey}
+          activeSection={activeSection}
+          navScrolled={navScrolled}
+          logo={logoWhite}
+        />
 
         {/* ============== HERO ============== */}
         <section className="snap-section hero" ref={heroRef}>
@@ -702,8 +770,41 @@ body.ig-page-body::before {
   width: 1px; height: 22px; background: rgba(255, 255, 255, 0.22);
   margin: 0 8px 0 4px;
 }
-.ig-page .hero-nav .hn-link:first-of-type { margin-left: auto; }
-.ig-page .hero-nav .hn-link:last-of-type { margin-right: auto; }
+.ig-page .hn-links {
+  position: relative;
+  display: flex; align-items: center; gap: 4px;
+  margin: 0 auto;
+}
+.ig-page .hn-indicator {
+  position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  height: 34px; border-radius: 999px; pointer-events: none;
+  background: linear-gradient(135deg, rgba(207, 233, 184, 0.18), rgba(207, 233, 184, 0.08));
+  border: 1px solid rgba(207, 233, 184, 0.28);
+  box-shadow:
+    0 0 0 4px rgba(207, 233, 184, 0.06),
+    0 6px 22px rgba(141, 198, 96, 0.30),
+    inset 0 0 12px rgba(207, 233, 184, 0.18);
+  transition:
+    transform .45s cubic-bezier(.22, 1, .36, 1),
+    width .45s cubic-bezier(.22, 1, .36, 1),
+    opacity .3s ease;
+  will-change: transform, width;
+}
+.ig-page .hn-indicator::after {
+  content: ""; position: absolute; left: 16%; right: 16%; bottom: -2px; height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, #cfe9b8, transparent);
+  filter: drop-shadow(0 0 6px rgba(207, 233, 184, 0.8));
+  animation: hn-glow 2.4s ease-in-out infinite;
+}
+@keyframes hn-glow {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ig-page .hn-indicator { transition: opacity .2s ease; }
+  .ig-page .hn-indicator::after { animation: none; }
+}
 .ig-page .hn-link {
   display: flex; align-items: center; gap: 8px;
   color: rgba(255, 255, 255, 0.82);
@@ -719,7 +820,7 @@ body.ig-page-body::before {
 }
 .ig-page .hn-link:hover { color: #fff; background: rgba(255, 255, 255, 0.10); }
 .ig-page .hn-link:hover .hn-dot { background: #cfe9b8; transform: scale(1.3); }
-.ig-page .hn-link.is-active { color: #fff; background: rgba(255, 255, 255, 0.14); }
+.ig-page .hn-link.is-active { color: #fff; background: transparent; }
 .ig-page .hn-link.is-active .hn-dot { background: #cfe9b8; box-shadow: 0 0 0 4px rgba(207, 233, 184, 0.18); }
 @media (max-width: 640px) {
   .ig-page .hero-nav { padding: 8px 12px; gap: 2px; }
@@ -728,7 +829,7 @@ body.ig-page-body::before {
   .ig-page .hn-dot { display: none; }
   .ig-page .hn-logo img { height: 24px; }
   .ig-page .hn-divider { display: none; }
-  .ig-page .hero-nav .hn-link:first-of-type { margin-left: auto; }
+  .ig-page .hn-indicator { height: 28px; }
 }
 .ig-page .eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
