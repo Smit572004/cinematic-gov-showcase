@@ -2131,6 +2131,8 @@ body.ig-page-body::before {
 .ig-page .why-card[data-color="sun"]   .why-card-glow { background: radial-gradient(180px 140px at 80% 0%, rgba(247, 196, 107, 0.32), transparent 70%); }
 .ig-page .why-card[data-color="berry"] .why-card-glow { background: radial-gradient(180px 140px at 80% 0%, rgba(210, 122, 144, 0.30), transparent 70%); }
 .ig-page .why-card[data-color="sky"]   .why-card-glow { background: radial-gradient(180px 140px at 80% 0%, rgba(122, 176, 201, 0.32), transparent 70%); }
+.ig-page .why-card[data-color="coin"]  .why-card-glow { background: radial-gradient(180px 140px at 80% 0%, rgba(212, 175, 90, 0.32), transparent 70%); }
+.ig-page .why-card[data-color="smile"] .why-card-glow { background: radial-gradient(180px 140px at 80% 0%, rgba(232, 140, 110, 0.30), transparent 70%); }
 
 .ig-page .why-card:hover {
   transform: translateY(-8px);
