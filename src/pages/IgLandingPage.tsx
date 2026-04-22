@@ -58,6 +58,93 @@ type StatusTemplates = {
 const fillTemplate = (tpl: string, vars: Record<string, string | number>) =>
   tpl.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? ""));
 
+/* ---------------- Gallery slideshow (3–4 photos, rotates every 3s) ---------------- */
+
+const GallerySlideshow = ({
+  items,
+  lang,
+}: {
+  items: IgGalleryItem[];
+  lang: LangKey;
+}) => {
+  const prefersReducedMotion = useReducedMotion();
+  const [visibleCount, setVisibleCount] = useState(4);
+  const [page, setPage] = useState(0);
+
+  // Responsive: 4 on >=1024px, 3 on >=640px, 2 on small phones, 1 on tiny.
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      if (w >= 1024) setVisibleCount(4);
+      else if (w >= 640) setVisibleCount(3);
+      else if (w >= 420) setVisibleCount(2);
+      else setVisibleCount(1);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  const pageCount = Math.max(1, Math.ceil(items.length / visibleCount));
+  const safePage = page % pageCount;
+
+  // Reset to first page if visibleCount changes and current page is out of range.
+  useEffect(() => {
+    if (page >= pageCount) setPage(0);
+  }, [pageCount, page]);
+
+  // Auto-advance every 3 seconds. Pause when only one page or reduced motion.
+  useEffect(() => {
+    if (prefersReducedMotion || pageCount <= 1) return;
+    const id = window.setInterval(() => {
+      setPage((p) => (p + 1) % pageCount);
+    }, 3000);
+    return () => window.clearInterval(id);
+  }, [pageCount, prefersReducedMotion]);
+
+  const start = safePage * visibleCount;
+  const visible = items.slice(start, start + visibleCount);
+
+  return (
+    <div className="gallery-slideshow">
+      <div
+        className="gallery"
+        style={{
+          gridTemplateColumns: `repeat(${visibleCount}, minmax(0, 1fr))`,
+        }}
+      >
+        {visible.map((g) => {
+          const alt = lang === "de" ? g.title_de : g.title_en || g.title_de;
+          return (
+            <figure
+              key={`${safePage}-${g.id}`}
+              className="tile animate-fade-in"
+              style={{ animationDuration: "600ms" }}
+            >
+              <img loading="lazy" src={g.image_url!} alt={alt} />
+            </figure>
+          );
+        })}
+      </div>
+      {pageCount > 1 && (
+        <div className="gallery-dots" role="tablist" aria-label="Gallery pages">
+          {Array.from({ length: pageCount }).map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              role="tab"
+              aria-selected={i === safePage}
+              aria-label={`Go to gallery page ${i + 1}`}
+              onClick={() => setPage(i)}
+              className={`gallery-dot ${i === safePage ? "active" : ""}`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const LiveStatusBadge = ({
   hours,
   templates,
