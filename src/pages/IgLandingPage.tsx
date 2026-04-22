@@ -2374,7 +2374,9 @@ body.ig-page-body::before {
   filter: blur(60px);
   opacity: 0.55;
   will-change: transform;
+  z-index: 2;
 }
+.ig-page .products-backdrop-particle-wrap { z-index: 2; }
 .ig-page .products-backdrop-glow--a {
   width: 540px;
   height: 540px;
