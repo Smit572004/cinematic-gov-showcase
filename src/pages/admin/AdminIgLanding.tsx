@@ -600,6 +600,7 @@ const emptyOffer: Omit<IgOffer, "id"> = {
   unit_text: "/ Stück",
   emoji: "🌱",
   color_tag: "tomato",
+  image_url: null,
   sort_order: 0,
   is_active: true,
 };
@@ -750,6 +751,7 @@ const OffersTab = () => {
         unit_text: offer.unit_text,
         emoji: offer.emoji,
         color_tag: offer.color_tag,
+        image_url: offer.image_url ?? null,
         sort_order: offer.sort_order,
         is_active: offer.is_active,
       };
