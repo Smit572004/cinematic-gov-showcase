@@ -116,20 +116,17 @@ const LiveStatusBadge = ({
 
 /* ---------------- Sticky nav with animated indicator ---------------- */
 
-const NAV_ITEMS = [
-  { id: "ig-main", de: "Start", en: "Home" },
-  { id: "offers", de: "Angebote", en: "Offers" },
-  { id: "location", de: "Standort", en: "Location" },
-  { id: "contact", de: "Kontakt", en: "Contact" },
-] as const;
+type NavItem = { id: string; label: string };
 
 const StickyIgNav = ({
-  lang,
+  items,
+  ariaLabel,
   activeSection,
   navScrolled,
   logo,
 }: {
-  lang: LangKey;
+  items: NavItem[];
+  ariaLabel: string;
   activeSection: string;
   navScrolled: boolean;
   logo: string;
@@ -161,12 +158,12 @@ const StickyIgNav = ({
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
-  }, [activeSection, lang]);
+  }, [activeSection, items]);
 
   return (
     <nav
       className={`hero-nav sticky-nav ${navScrolled ? "is-scrolled" : ""}`}
-      aria-label={lang === "de" ? "Seitennavigation" : "Page navigation"}
+      aria-label={ariaLabel}
     >
       <a href="#ig-main" className="hn-logo" aria-label="TinPlant">
         <img src={logo} alt="TinPlant" />
@@ -182,7 +179,7 @@ const StickyIgNav = ({
             opacity: indicator.visible ? 1 : 0,
           }}
         />
-        {NAV_ITEMS.map((it) => (
+        {items.map((it) => (
           <a
             key={it.id}
             href={`#${it.id}`}
@@ -192,7 +189,7 @@ const StickyIgNav = ({
             className={`hn-link ${activeSection === it.id ? "is-active" : ""}`}
           >
             <span className="hn-dot" aria-hidden="true" />
-            <span className="hn-label">{lang === "de" ? it.de : it.en}</span>
+            <span className="hn-label">{it.label}</span>
           </a>
         ))}
       </div>
