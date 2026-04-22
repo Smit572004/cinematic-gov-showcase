@@ -1712,33 +1712,17 @@ body.ig-page-body::before {
   display: flex; align-items: center; gap: 2px;
 }
 .ig-page .hn-indicator {
-  position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-  height: 32px; border-radius: 999px; pointer-events: none;
-  background: rgba(207, 233, 184, 0.10);
-  border: 1px solid rgba(207, 233, 184, 0.45);
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
-    0 0 18px rgba(141, 198, 96, 0.25);
+  position: absolute; left: 0; bottom: 0;
+  height: 2px; border-radius: 2px; pointer-events: none;
+  background: #cfe9b8;
   transition:
-    transform .5s cubic-bezier(.22, 1, .36, 1),
-    width .5s cubic-bezier(.22, 1, .36, 1),
-    opacity .3s ease;
+    transform .35s cubic-bezier(.22, 1, .36, 1),
+    width .35s cubic-bezier(.22, 1, .36, 1),
+    opacity .25s ease;
   will-change: transform, width;
-}
-.ig-page .hn-indicator::after {
-  content: ""; position: absolute; left: 22%; right: 22%; bottom: -5px; height: 2px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, #cfe9b8, transparent);
-  box-shadow: 0 0 8px rgba(207, 233, 184, 0.9);
-  animation: hn-underline-glow 2.4s ease-in-out infinite;
-}
-@keyframes hn-underline-glow {
-  0%, 100% { opacity: 0.55; transform: scaleX(0.85); }
-  50% { opacity: 1; transform: scaleX(1); }
 }
 @media (prefers-reduced-motion: reduce) {
   .ig-page .hn-indicator { transition: opacity .2s ease; }
-  .ig-page .hn-indicator::after { animation: none; }
 }
 .ig-page .hn-link {
   position: relative;
@@ -1746,8 +1730,8 @@ body.ig-page-body::before {
   color: rgba(255, 255, 255, 0.78);
   text-decoration: none; font-size: 13px; font-weight: 600;
   letter-spacing: 0.02em; text-transform: capitalize;
-  padding: 7px 16px; border-radius: 999px;
-  transition: color .3s ease, transform .25s ease;
+  padding: 8px 16px;
+  transition: color .25s ease;
 }
 .ig-page .hn-link .hn-label { position: relative; z-index: 2; }
 .ig-page .hn-dot { display: none; }
