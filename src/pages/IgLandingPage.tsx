@@ -530,21 +530,37 @@ const IgLandingPage = () => {
                       const title = lang === "de" ? o.title_de : o.title_en || o.title_de;
                       const desc = lang === "de" ? o.description_de : o.description_en || o.description_de;
                       const badge = lang === "de" ? o.badge_de : o.badge_en || o.badge_de;
+                      const detailsLabel = lang === "de" ? "Details ansehen" : "View details";
                       return (
-                        <article key={`${dup}-${o.id}`} className="card product-card">
-                          <div className="card-illust" data-color={o.color_tag}>
-                            <span className="illust-emoji" aria-hidden="true">{o.emoji}</span>
+                        <button
+                          key={`${dup}-${o.id}`}
+                          type="button"
+                          className="product-card-v2"
+                          onClick={() => dup === 0 && setSelectedProduct(o)}
+                          tabIndex={dup === 1 ? -1 : 0}
+                          aria-label={`${title} — ${detailsLabel}`}
+                        >
+                          <div className="pcv2-art" data-color={o.color_tag}>
+                            <span className="pcv2-emoji" aria-hidden="true">{o.emoji}</span>
+                            <span className="pcv2-shine" aria-hidden="true" />
                           </div>
-                          {badge && <span className="badge">{badge}</span>}
-                          <h3>{title}</h3>
-                          {desc && <p className="desc">{desc}</p>}
-                          {(o.price_text || o.unit_text) && (
-                            <div className="price-row">
-                              {o.price_text && <span className="price">{o.price_text}</span>}
-                              {o.unit_text && <span className="price-unit">{o.unit_text}</span>}
+                          <div className="pcv2-body">
+                            {badge && <span className="pcv2-cat">{badge}</span>}
+                            <h3 className="pcv2-title">{title}</h3>
+                            {desc && <p className="pcv2-desc">{desc}</p>}
+                            <div className="pcv2-foot">
+                              {(o.price_text || o.unit_text) ? (
+                                <span className="pcv2-price-wrap">
+                                  {o.price_text && <span className="pcv2-price">{o.price_text}</span>}
+                                  {o.unit_text && <span className="pcv2-unit">{o.unit_text}</span>}
+                                </span>
+                              ) : <span />}
+                              <span className="pcv2-arrow" aria-hidden="true">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
+                              </span>
                             </div>
-                          )}
-                        </article>
+                          </div>
+                        </button>
                       );
                     })}
                   </div>
