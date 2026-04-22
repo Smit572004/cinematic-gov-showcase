@@ -1392,9 +1392,14 @@ body.ig-page-body::before {
 .ig-page .products-track {
   display: flex;
   width: max-content;
-  gap: 0;
+  /* Gap between the two duplicated rows MUST equal the inter-card gap
+     so the loop is mathematically seamless (no visible jump at reset). */
+  gap: 22px;
   animation: igProductsScroll 60s linear infinite;
   will-change: transform;
+  /* Hint the browser so transforms stay on the compositor thread. */
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 /* Pause when hovering / focusing the section, when a card is hovered, or
    when the user just clicked an arrow. */
@@ -1410,7 +1415,9 @@ body.ig-page-body::before {
   display: flex;
   flex: 0 0 auto;
   gap: 22px;
-  padding: 4px 11px;
+  /* Vertical breathing room only — horizontal padding would break the
+     seamless loop because the duplicate would start offset. */
+  padding: 4px 0;
 }
 .ig-page .product-card,
 .ig-page .product-card-v2 {
@@ -1418,9 +1425,11 @@ body.ig-page-body::before {
   width: clamp(240px, 24vw, 290px);
   margin: 0;
 }
+/* Translate by exactly one row + the inter-row gap so the second
+   (duplicate) row lands precisely where the first started. */
 @keyframes igProductsScroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0%   { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(calc(-50% - 11px), 0, 0); }
 }
 @media (prefers-reduced-motion: reduce) {
   .ig-page .products-track { animation: none; transform: translateX(0); }
