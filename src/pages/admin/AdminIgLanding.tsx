@@ -36,7 +36,7 @@ const translateTexts = async (texts: string[]): Promise<string[]> => {
   return data.translations as string[];
 };
 
-// keys that should NOT be translated (urls, phone numbers, emails, hours)
+// keys that should NOT be translated (urls, phone numbers, emails, hours, identical labels)
 const noTranslateKeys: Set<string> = new Set([
   "ig_hero_image_url",
   "ig_contact_phone",
@@ -53,6 +53,9 @@ const noTranslateKeys: Set<string> = new Set([
   "ig_hours_fri",
   "ig_hours_sat",
   "ig_hours_sun",
+  "ig_qa_whatsapp",
+  "ig_map_apple",
+  "ig_footer_copyright",
 ]);
 
 /* ─────────────────── Field metadata for hero/location ─────────────────── */
@@ -109,9 +112,49 @@ const HOURS_FIELDS: { key: IgContentKey; labelDe: string; labelEn: string }[] = 
   { key: "ig_hours_sun", labelDe: "Sonntag", labelEn: "Sunday" },
 ];
 
+const LABEL_FIELDS: FieldMeta[] = [
+  { key: "ig_nav_home", labelDe: "Nav · Start", labelEn: "Nav · Home" },
+  { key: "ig_nav_offers", labelDe: "Nav · Angebote", labelEn: "Nav · Offers" },
+  { key: "ig_nav_location", labelDe: "Nav · Standort", labelEn: "Nav · Location" },
+  { key: "ig_nav_contact", labelDe: "Nav · Kontakt", labelEn: "Nav · Contact" },
+  { key: "ig_hero_scroll_hint", labelDe: "Hero · Scroll-Hinweis", labelEn: "Hero · Scroll hint" },
+  { key: "ig_hours_heading", labelDe: "Öffnungszeiten – Überschrift", labelEn: "Hours – Heading" },
+  { key: "ig_hours_closed", labelDe: "Status · Geschlossen", labelEn: "Status · Closed" },
+  { key: "ig_status_open_until", labelDe: "Status · Geöffnet bis (nutze {time})", labelEn: "Status · Open until (use {time})" },
+  { key: "ig_status_closes_in", labelDe: "Status · Schließt in (nutze {minutes})", labelEn: "Status · Closes in (use {minutes})" },
+  { key: "ig_status_opens_today", labelDe: "Status · Öffnet heute (nutze {time})", labelEn: "Status · Opens today (use {time})" },
+  { key: "ig_status_opens_tomorrow", labelDe: "Status · Öffnet morgen (nutze {time})", labelEn: "Status · Opens tomorrow (use {time})" },
+  { key: "ig_status_opens_on", labelDe: "Status · Öffnet an Tag (nutze {day} und {time})", labelEn: "Status · Opens on day (use {day} and {time})" },
+  { key: "ig_address_heading", labelDe: "Adresse – Überschrift", labelEn: "Address – Heading" },
+  { key: "ig_map_open", labelDe: "Karte · In Google Maps öffnen", labelEn: "Map · Open in Google Maps" },
+  { key: "ig_map_route", labelDe: "Karte · Route", labelEn: "Map · Route" },
+  { key: "ig_map_apple", labelDe: "Karte · Apple Maps", labelEn: "Map · Apple Maps" },
+  { key: "ig_map_share", labelDe: "Karte · Teilen", labelEn: "Map · Share" },
+  { key: "ig_qa_call", labelDe: "Aktion · Anrufen", labelEn: "Action · Call" },
+  { key: "ig_qa_whatsapp", labelDe: "Aktion · WhatsApp", labelEn: "Action · WhatsApp" },
+  { key: "ig_qa_email", labelDe: "Aktion · E-Mail", labelEn: "Action · Email" },
+  { key: "ig_whatsapp_message", labelDe: "WhatsApp – Vorausgefüllte Nachricht", labelEn: "WhatsApp – Prefilled message", multiline: true },
+  { key: "ig_email_subject", labelDe: "E-Mail – Betreff", labelEn: "Email – Subject" },
+  { key: "ig_footer_copyright", labelDe: "Footer – Copyright (nutze {year})", labelEn: "Footer – Copyright (use {year})" },
+  { key: "ig_day_short_mon", labelDe: "Wochentag kurz · Mo", labelEn: "Day short · Mon" },
+  { key: "ig_day_short_tue", labelDe: "Wochentag kurz · Di", labelEn: "Day short · Tue" },
+  { key: "ig_day_short_wed", labelDe: "Wochentag kurz · Mi", labelEn: "Day short · Wed" },
+  { key: "ig_day_short_thu", labelDe: "Wochentag kurz · Do", labelEn: "Day short · Thu" },
+  { key: "ig_day_short_fri", labelDe: "Wochentag kurz · Fr", labelEn: "Day short · Fri" },
+  { key: "ig_day_short_sat", labelDe: "Wochentag kurz · Sa", labelEn: "Day short · Sat" },
+  { key: "ig_day_short_sun", labelDe: "Wochentag kurz · So", labelEn: "Day short · Sun" },
+  { key: "ig_day_long_mon", labelDe: "Wochentag lang · Montag", labelEn: "Day long · Monday" },
+  { key: "ig_day_long_tue", labelDe: "Wochentag lang · Dienstag", labelEn: "Day long · Tuesday" },
+  { key: "ig_day_long_wed", labelDe: "Wochentag lang · Mittwoch", labelEn: "Day long · Wednesday" },
+  { key: "ig_day_long_thu", labelDe: "Wochentag lang · Donnerstag", labelEn: "Day long · Thursday" },
+  { key: "ig_day_long_fri", labelDe: "Wochentag lang · Freitag", labelEn: "Day long · Friday" },
+  { key: "ig_day_long_sat", labelDe: "Wochentag lang · Samstag", labelEn: "Day long · Saturday" },
+  { key: "ig_day_long_sun", labelDe: "Wochentag lang · Sonntag", labelEn: "Day long · Sunday" },
+];
+
 /* ─────────────────────────── Tabs ─────────────────────────── */
 
-type TabId = "hero" | "offers" | "gallery" | "hours" | "location";
+type TabId = "hero" | "offers" | "gallery" | "hours" | "location" | "labels";
 
 const AdminIgLanding = () => {
   const { lang } = useLanguage();
@@ -124,6 +167,7 @@ const AdminIgLanding = () => {
     { id: "gallery", labelDe: "Galerie", labelEn: "Gallery" },
     { id: "hours", labelDe: "Öffnungszeiten", labelEn: "Hours" },
     { id: "location", labelDe: "Standort & Kontakt", labelEn: "Location & Contact" },
+    { id: "labels", labelDe: "UI-Texte", labelEn: "UI Labels" },
   ];
 
   return (
