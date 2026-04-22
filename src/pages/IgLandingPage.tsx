@@ -198,6 +198,124 @@ const StickyIgNav = ({
   );
 };
 
+/* ---------------- Products auto-scrolling marquee ---------------- */
+
+const ProductsMarquee = ({
+  offers,
+  lang,
+  onSelect,
+  ariaLabel,
+}: {
+  offers: IgOffer[];
+  lang: LangKey;
+  onSelect: (o: IgOffer) => void;
+  ariaLabel: string;
+}) => {
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+  const [paused, setPaused] = useState(false);
+  const [showArrows, setShowArrows] = useState(false);
+  const detailsLabel = lang === "de" ? "Details ansehen" : "View details";
+
+  // Manual scroll via arrows (also pauses the marquee while interacting).
+  const scrollByCards = (dir: 1 | -1) => {
+    const vp = viewportRef.current;
+    if (!vp) return;
+    const card = vp.querySelector<HTMLElement>(".product-card-v2");
+    const step = card ? card.getBoundingClientRect().width + 22 : 320;
+    setPaused(true);
+    vp.scrollBy({ left: dir * step * 2, behavior: "smooth" });
+    // resume auto-scroll shortly after
+    window.setTimeout(() => setPaused(false), 1400);
+  };
+
+  return (
+    <div
+      className={`products-marquee reveal ${paused ? "is-paused" : ""} ${showArrows ? "show-arrows" : ""}`}
+      role="region"
+      aria-label={ariaLabel}
+      onMouseEnter={() => setShowArrows(true)}
+      onMouseLeave={() => {
+        setShowArrows(false);
+        setPaused(false);
+      }}
+      onFocus={() => setShowArrows(true)}
+      onBlur={() => setShowArrows(false)}
+    >
+      <div className="products-viewport" ref={viewportRef}>
+        <div className="products-track" ref={trackRef}>
+          {[0, 1].map((dup) => (
+            <div className="products-row" aria-hidden={dup === 1} key={dup}>
+              {offers.map((o) => {
+                const title = lang === "de" ? o.title_de : o.title_en || o.title_de;
+                const desc = lang === "de" ? o.description_de : o.description_en || o.description_de;
+                const badge = lang === "de" ? o.badge_de : o.badge_en || o.badge_de;
+                return (
+                  <button
+                    key={`${dup}-${o.id}`}
+                    type="button"
+                    className="product-card-v2"
+                    onClick={() => dup === 0 && onSelect(o)}
+                    onMouseEnter={() => setPaused(true)}
+                    onMouseLeave={() => setPaused(false)}
+                    tabIndex={dup === 1 ? -1 : 0}
+                    aria-label={`${title} — ${detailsLabel}`}
+                  >
+                    <div className="pcv2-art" data-color={o.color_tag}>
+                      <span className="pcv2-emoji" aria-hidden="true">{o.emoji}</span>
+                      <span className="pcv2-shine" aria-hidden="true" />
+                    </div>
+                    <div className="pcv2-body">
+                      {badge && <span className="pcv2-cat">{badge}</span>}
+                      <h3 className="pcv2-title">{title}</h3>
+                      {desc && <p className="pcv2-desc">{desc}</p>}
+                      <div className="pcv2-foot">
+                        {(o.price_text || o.unit_text) ? (
+                          <span className="pcv2-price-wrap">
+                            {o.price_text && <span className="pcv2-price">{o.price_text}</span>}
+                            {o.unit_text && <span className="pcv2-unit">{o.unit_text}</span>}
+                          </span>
+                        ) : <span />}
+                        <span className="pcv2-arrow" aria-hidden="true">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
+                        </span>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="products-fade products-fade-l" aria-hidden="true" />
+      <div className="products-fade products-fade-r" aria-hidden="true" />
+
+      <button
+        type="button"
+        className="pm-arrow pm-arrow-l"
+        aria-label={lang === "de" ? "Vorheriges" : "Previous"}
+        onClick={() => scrollByCards(-1)}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+      </button>
+      <button
+        type="button"
+        className="pm-arrow pm-arrow-r"
+        aria-label={lang === "de" ? "Nächstes" : "Next"}
+        onClick={() => scrollByCards(1)}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M9 6l6 6-6 6" />
+        </svg>
+      </button>
+    </div>
+  );
+};
+
 /* ---------------- Page ---------------- */
 
 const IgLandingPage = () => {
@@ -504,6 +622,7 @@ const IgLandingPage = () => {
         {activeOffers.length > 0 && (
           <section id="offers" className="snap-section section section-cream">
             <div className="container">
+              {/* 1. HEADER */}
               <div className="section-head reveal">
                 <span className="section-tag">
                   <span className="tag-leaf" aria-hidden="true">🌱</span> {offersEyebrow}
@@ -513,63 +632,15 @@ const IgLandingPage = () => {
               </div>
             </div>
 
-            {/* Edge-to-edge scrolling marquee */}
-            <div
-              className="products-marquee reveal"
-              role="region"
-              aria-label={offersTitle}
-            >
-              <div
-                className="products-track"
-                style={{ ["--track-count" as string]: activeOffers.length }}
-              >
-                {/* render the list twice for a seamless loop */}
-                {[0, 1].map((dup) => (
-                  <div className="products-row" aria-hidden={dup === 1} key={dup}>
-                    {activeOffers.map((o) => {
-                      const title = lang === "de" ? o.title_de : o.title_en || o.title_de;
-                      const desc = lang === "de" ? o.description_de : o.description_en || o.description_de;
-                      const badge = lang === "de" ? o.badge_de : o.badge_en || o.badge_de;
-                      const detailsLabel = lang === "de" ? "Details ansehen" : "View details";
-                      return (
-                        <button
-                          key={`${dup}-${o.id}`}
-                          type="button"
-                          className="product-card-v2"
-                          onClick={() => dup === 0 && setSelectedProduct(o)}
-                          tabIndex={dup === 1 ? -1 : 0}
-                          aria-label={`${title} — ${detailsLabel}`}
-                        >
-                          <div className="pcv2-art" data-color={o.color_tag}>
-                            <span className="pcv2-emoji" aria-hidden="true">{o.emoji}</span>
-                            <span className="pcv2-shine" aria-hidden="true" />
-                          </div>
-                          <div className="pcv2-body">
-                            {badge && <span className="pcv2-cat">{badge}</span>}
-                            <h3 className="pcv2-title">{title}</h3>
-                            {desc && <p className="pcv2-desc">{desc}</p>}
-                            <div className="pcv2-foot">
-                              {(o.price_text || o.unit_text) ? (
-                                <span className="pcv2-price-wrap">
-                                  {o.price_text && <span className="pcv2-price">{o.price_text}</span>}
-                                  {o.unit_text && <span className="pcv2-unit">{o.unit_text}</span>}
-                                </span>
-                              ) : <span />}
-                              <span className="pcv2-arrow" aria-hidden="true">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
-                              </span>
-                            </div>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
-              <div className="products-fade products-fade-l" aria-hidden="true" />
-              <div className="products-fade products-fade-r" aria-hidden="true" />
-            </div>
+            {/* 2. PRODUCT CARDS — auto-scrolling marquee with hover arrows */}
+            <ProductsMarquee
+              offers={activeOffers}
+              lang={lang}
+              onSelect={setSelectedProduct}
+              ariaLabel={offersTitle}
+            />
 
+            {/* 3. DOWNLOAD / VIEW MORE BUTTON */}
             <div className="container">
               {productsPdfUrl && (
                 <div className="products-cta reveal">
@@ -581,9 +652,9 @@ const IgLandingPage = () => {
                   >
                     {productsViewMore}
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M14 3h7v7" />
-                      <path d="M10 14L21 3" />
-                      <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
                     </svg>
                   </a>
                 </div>
@@ -1203,34 +1274,50 @@ body.ig-page-body::before {
 .ig-page .price-unit { font-size: 13px; color: var(--ink-mute); }
 .ig-page .producer-banner { text-align: center; margin-top: 56px; font-family: 'Fraunces', Georgia, serif; font-style: italic; font-size: 15px; color: var(--bark); letter-spacing: 0.04em; }
 
-/* PRODUCT MARQUEE (horizontal scrolling) */
+/* PRODUCT MARQUEE (horizontal scrolling, pro layout) */
 .ig-page .products-marquee {
   position: relative;
   width: 100%;
-  overflow: hidden;
-  padding: 8px 0 28px;
-  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 64px, #000 calc(100% - 64px), transparent 100%);
-          mask-image: linear-gradient(90deg, transparent 0, #000 64px, #000 calc(100% - 64px), transparent 100%);
+  padding: 18px 0 32px;
+  margin-top: 8px;
 }
+.ig-page .products-viewport {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 80px, #000 calc(100% - 80px), transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 80px, #000 calc(100% - 80px), transparent 100%);
+  scroll-behavior: smooth;
+}
+.ig-page .products-viewport::-webkit-scrollbar { display: none; }
+
 .ig-page .products-track {
   display: flex;
   width: max-content;
   gap: 0;
-  animation: igProductsScroll 38s linear infinite;
+  animation: igProductsScroll 60s linear infinite;
   will-change: transform;
 }
+/* Pause when hovering / focusing the section, when a card is hovered, or
+   when the user just clicked an arrow. */
+.ig-page .products-marquee.is-paused .products-track,
 .ig-page .products-marquee:hover .products-track,
-.ig-page .products-marquee:focus-within .products-track { animation-play-state: paused; }
+.ig-page .products-marquee:focus-within .products-track {
+  animation-play-state: paused;
+}
+
 .ig-page .products-row {
   display: flex;
   flex: 0 0 auto;
   gap: 22px;
-  padding: 0 11px;
+  padding: 4px 11px;
 }
 .ig-page .product-card,
 .ig-page .product-card-v2 {
   flex: 0 0 auto;
-  width: clamp(260px, 28vw, 320px);
+  width: clamp(240px, 24vw, 290px);
   margin: 0;
 }
 @keyframes igProductsScroll {
@@ -1239,15 +1326,56 @@ body.ig-page-body::before {
 }
 @media (prefers-reduced-motion: reduce) {
   .ig-page .products-track { animation: none; transform: translateX(0); }
-  .ig-page .products-marquee { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 }
-.ig-page .products-fade {
-  position: absolute; top: 0; bottom: 0; width: 80px; pointer-events: none; z-index: 2;
-}
-.ig-page .products-fade-l { left: 0; background: linear-gradient(90deg, var(--cream), transparent); }
-.ig-page .products-fade-r { right: 0; background: linear-gradient(-90deg, var(--cream), transparent); }
 
-.ig-page .products-cta { display: flex; justify-content: center; margin-top: 14px; }
+.ig-page .products-fade {
+  position: absolute; top: 0; bottom: 0; width: 90px; pointer-events: none; z-index: 2;
+}
+.ig-page .products-fade-l { left: 0; background: linear-gradient(90deg, var(--cream) 25%, transparent); }
+.ig-page .products-fade-r { right: 0; background: linear-gradient(-90deg, var(--cream) 25%, transparent); }
+
+/* Hover arrows — appear only when the marquee is hovered/focused */
+.ig-page .pm-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%) scale(0.85);
+  z-index: 5;
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  background: #fffaf0;
+  color: var(--moss-1);
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 14px 30px -12px rgba(31, 41, 31, 0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease, transform .35s cubic-bezier(.2,.8,.2,1), background .25s ease, color .25s ease;
+}
+.ig-page .pm-arrow-l { left: 18px; }
+.ig-page .pm-arrow-r { right: 18px; }
+.ig-page .products-marquee.show-arrows .pm-arrow {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(-50%) scale(1);
+}
+.ig-page .pm-arrow:hover {
+  background: var(--moss-1);
+  color: #fffaf0;
+  transform: translateY(-50%) scale(1.06);
+}
+.ig-page .pm-arrow:focus-visible {
+  outline: 3px solid var(--moss-2);
+  outline-offset: 3px;
+}
+@media (max-width: 720px) {
+  .ig-page .pm-arrow { display: none; }
+}
+
+.ig-page .products-cta { display: flex; justify-content: center; margin-top: 22px; }
 .ig-page .btn.btn-on-light.btn-primary { color: #fff; }
 .ig-page .btn.btn-on-light.btn-primary:hover { color: #fff; }
 
