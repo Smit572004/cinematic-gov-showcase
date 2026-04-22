@@ -612,14 +612,8 @@ const ProductsMarquee = ({
       className={`products-marquee reveal ${paused ? "is-paused" : ""} ${showArrows ? "show-arrows" : ""}`}
       role="region"
       aria-label={ariaLabel}
-      onMouseEnter={() => {
-        setShowArrows(true);
-        setPaused(true);
-      }}
-      onMouseLeave={() => {
-        setShowArrows(false);
-        if (!dragRef.current.active) setPaused(false);
-      }}
+      onMouseEnter={() => setShowArrows(true)}
+      onMouseLeave={() => setShowArrows(false)}
       onFocus={() => setShowArrows(true)}
       onBlur={() => setShowArrows(false)}
     >
@@ -2624,7 +2618,7 @@ body.ig-page-body::before {
   .ig-page .hand-underline svg { stroke-dashoffset: 0 !important; opacity: 1 !important; }
 }
 
-/* ============== PRODUCT CARD V2 (clean minimal redesign) ============== */
+/* ============== PRODUCT CARD V3 (Gen-Z modern, bold & playful) ============== */
 .ig-page .product-card-v2 {
   appearance: none;
   text-align: left;
@@ -2632,13 +2626,15 @@ body.ig-page-body::before {
   flex-direction: column;
   background: #ffffff;
   border: 1px solid #ececec;
-  border-radius: 20px;
-  padding: 0;
+  border-radius: 28px;
+  padding: 14px;
   overflow: hidden;
-  box-shadow: 0 2px 12px -6px rgba(20, 20, 20, 0.08);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.9) inset,
+    0 18px 40px -22px rgba(20, 30, 20, 0.18);
   transition:
-    transform .45s cubic-bezier(.2,.8,.2,1),
-    box-shadow .45s ease,
+    transform .55s cubic-bezier(.2,.8,.2,1),
+    box-shadow .55s cubic-bezier(.2,.8,.2,1),
     border-color .3s ease;
   font: inherit;
   color: inherit;
@@ -2646,37 +2642,83 @@ body.ig-page-body::before {
   user-select: none;
 }
 
-.ig-page .product-card-v2:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 22px 44px -20px rgba(20, 20, 20, 0.18);
-  border-color: #d9d9d9;
+/* Animated gradient ring on hover */
+.ig-page .product-card-v2::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    #c9533a, #d99a4e, #8aa86b, #2f4a32, #c9533a
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0;
+  transition: opacity .5s ease;
+  pointer-events: none;
+  z-index: 4;
 }
+.ig-page .product-card-v2:hover {
+  transform: translateY(-8px);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.9) inset,
+    0 32px 60px -22px rgba(20, 30, 20, 0.32);
+  border-color: transparent;
+}
+.ig-page .product-card-v2:hover::before { opacity: 1; }
 .ig-page .product-card-v2:focus-within {
   outline: 2px solid var(--moss-2);
-  outline-offset: 3px;
+  outline-offset: 4px;
 }
 
-/* ----- IMAGE / ART AREA — pure white background ----- */
+/* ----- IMAGE / ART AREA — soft tinted block, photo floats large ----- */
 .ig-page .pcv2-art {
   position: relative;
   height: 240px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: #ffffff;
-  border-bottom: 1px solid #f1f1f1;
+  background: linear-gradient(135deg, #f7f4ed 0%, #ede5d2 100%);
+}
+.ig-page .pcv2-art[data-color="tomato"]   { background: linear-gradient(135deg, #ffe9e1 0%, #ffd0c0 100%); }
+.ig-page .pcv2-art[data-color="pepper"]   { background: linear-gradient(135deg, #fff1d6 0%, #ffd9a3 100%); }
+.ig-page .pcv2-art[data-color="zucchini"] { background: linear-gradient(135deg, #ecf6dc 0%, #cfe6a8 100%); }
+.ig-page .pcv2-art[data-color="herb"]     { background: linear-gradient(135deg, #e0f2e3 0%, #b6dec0 100%); }
+.ig-page .pcv2-art[data-color="berry"]    { background: linear-gradient(135deg, #ffe0eb 0%, #ffbcd2 100%); }
+
+/* Soft glow blob behind product to add depth */
+.ig-page .pcv2-art::before {
+  content: "";
+  position: absolute;
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.7) 0%, transparent 70%);
+  filter: blur(8px);
+  z-index: 0;
+  transition: transform .8s cubic-bezier(.2,.8,.2,1);
+}
+.ig-page .product-card-v2:hover .pcv2-art::before {
+  transform: scale(1.15);
 }
 
 .ig-page .pcv2-emoji {
-  font-size: 96px;
+  font-size: 110px;
   line-height: 1;
-  transition: transform .5s cubic-bezier(.2,.8,.2,1);
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.18));
+  transition: transform .55s cubic-bezier(.2,.8,.2,1);
   position: relative;
   z-index: 1;
 }
 .ig-page .product-card-v2:hover .pcv2-emoji {
-  transform: scale(1.08);
+  transform: scale(1.12) rotate(-4deg);
 }
 .ig-page .pcv2-img {
   position: absolute;
@@ -2684,15 +2726,15 @@ body.ig-page-body::before {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 18px;
-  background: #ffffff;
+  padding: 14px;
   z-index: 1;
-  transition: transform .7s cubic-bezier(.2,.8,.2,1);
+  transition: transform .8s cubic-bezier(.2,.8,.2,1);
+  filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.18));
   user-select: none;
   -webkit-user-drag: none;
 }
 .ig-page .product-card-v2:hover .pcv2-img {
-  transform: scale(1.05);
+  transform: scale(1.08) rotate(-1deg);
 }
 .ig-page .ig-modal-img {
   position: absolute;
@@ -2703,49 +2745,49 @@ body.ig-page-body::before {
   z-index: 1;
 }
 
-/* Hidden — we don't want a sheen on a clean white card */
 .ig-page .pcv2-shine { display: none; }
 
-/* Floating category badge over the image */
+/* Floating category pill */
 .ig-page .pcv2-cat-float {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: 14px;
+  left: 14px;
   z-index: 3;
   font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  font-weight: 700;
-  padding: 5px 10px;
+  font-weight: 800;
+  padding: 6px 11px;
   border-radius: 999px;
-  background: #f7f7f5;
-  color: #4a4a3e;
-  border: 1px solid #ececec;
+  background: rgba(255,255,255,0.92);
+  color: #2f4a32;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 6px 16px -8px rgba(0,0,0,0.2);
 }
 
 /* ----- BODY ----- */
 .ig-page .pcv2-body {
-  padding: 18px 20px 20px;
+  padding: 18px 8px 6px;
   display: flex;
   flex-direction: column;
   gap: 6px;
   flex: 1;
-  background: #ffffff;
   position: relative;
   z-index: 1;
 }
-/* HEADING — distinct deep ink color */
+/* HEADING — bold dark ink */
 .ig-page .pcv2-title {
   font-family: 'Fraunces', Georgia, serif;
-  font-size: 20px;
+  font-size: 21px;
   font-weight: 700;
   line-height: 1.2;
-  letter-spacing: -0.005em;
+  letter-spacing: -0.01em;
   margin: 0;
-  color: #1a1a1a;
+  color: #14181a;
 }
 .ig-page .pcv2-desc {
-  color: #6b6b66;
+  color: #7a7770;
   font-size: 13px;
   line-height: 1.5;
   margin: 0;
@@ -2756,25 +2798,39 @@ body.ig-page-body::before {
 }
 .ig-page .pcv2-foot {
   margin-top: auto;
-  padding-top: 14px;
+  padding-top: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  border-top: 1px solid #f1f1f1;
+  gap: 10px;
+  border-top: 0;
 }
-.ig-page .pcv2-price-wrap { display: inline-flex; align-items: baseline; gap: 4px; }
-/* PRICE — distinct warm accent color (terracotta), clear contrast vs heading */
+.ig-page .pcv2-price-wrap {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  background: #f7f4ed;
+  padding: 8px 12px;
+  border-radius: 12px;
+}
+/* PRICE — vibrant terracotta */
 .ig-page .pcv2-price {
   font-family: 'Fraunces', Georgia, serif;
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 800;
   color: #c9533a;
   -webkit-text-fill-color: #c9533a;
+  letter-spacing: -0.01em;
 }
-.ig-page .pcv2-unit { font-size: 12px; color: #9a9890; font-weight: 500; }
+.ig-page .pcv2-unit {
+  font-size: 11px;
+  color: #9a9890;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
 
-/* Buy CTA — solid moss green pill */
+/* Buy CTA — bold dark pill with shine sweep on hover */
 .ig-page .pcv2-cta {
   appearance: none;
   border: 0;
@@ -2782,37 +2838,56 @@ body.ig-page-body::before {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 9px 16px;
+  padding: 11px 18px;
   border-radius: 999px;
-  background: #2f4a32;
+  background: #14181a;
   color: #ffffff;
   font: inherit;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.02em;
+  box-shadow: 0 8px 20px -10px rgba(20, 24, 26, 0.6);
   transition:
-    transform .3s cubic-bezier(.2,.8,.2,1),
-    background .3s ease;
+    transform .35s cubic-bezier(.2,.8,.2,1),
+    background .3s ease,
+    box-shadow .3s ease;
   position: relative;
   overflow: hidden;
 }
+.ig-page .pcv2-cta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.25) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform .8s ease;
+}
+.ig-page .product-card-v2:hover .pcv2-cta::after {
+  transform: translateX(100%);
+}
 .ig-page .pcv2-cta svg {
-  transition: transform .3s ease;
+  transition: transform .35s cubic-bezier(.2,.8,.2,1);
 }
 .ig-page .pcv2-cta:hover {
-  background: #3e6240;
-  transform: translateY(-1px);
+  background: #2f4a32;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 26px -10px rgba(47, 74, 50, 0.7);
 }
 .ig-page .pcv2-cta:hover svg {
-  transform: scale(1.08);
+  transform: scale(1.15) rotate(-6deg);
 }
 .ig-page .pcv2-cta:active { transform: translateY(0); }
 .ig-page .pcv2-cta:focus-visible {
   outline: 3px solid var(--moss-2);
   outline-offset: 3px;
 }
-.ig-page .product-card-v2:hover .pcv2-cta {
-  transform: translateX(2px);
+
+@media (max-width: 640px) {
+  .ig-page .product-card-v2 { padding: 10px; border-radius: 22px; }
+  .ig-page .pcv2-art { height: 200px; border-radius: 16px; }
+  .ig-page .pcv2-title { font-size: 19px; }
+  .ig-page .pcv2-price { font-size: 18px; }
+  .ig-page .pcv2-cta { padding: 10px 14px; font-size: 12px; }
 }
 
 /* ============== PRODUCT DETAILS MODAL ============== */
