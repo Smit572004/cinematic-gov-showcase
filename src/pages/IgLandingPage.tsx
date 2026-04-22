@@ -485,6 +485,11 @@ body.ig-page-body::after {
   background: url('/ig-hero.jpg') center 40%/cover no-repeat;
   transform: scale(1.08); will-change: transform; z-index: 0;
   transition: transform .9s cubic-bezier(.2,.8,.2,1);
+  animation: igKenBurns 22s ease-in-out infinite alternate;
+}
+@keyframes igKenBurns {
+  0%   { transform: scale(1.08) translate3d(0, 0, 0); }
+  100% { transform: scale(1.18) translate3d(-2%, -1.5%, 0); }
 }
 .ig-page .hero::after {
   content: ""; position: absolute; inset: 0; z-index: 1;
@@ -492,7 +497,50 @@ body.ig-page-body::after {
     linear-gradient(180deg, rgba(26,21,48,.15) 0%, rgba(26,21,48,.35) 55%, rgba(255,253,248,.96) 100%),
     linear-gradient(120deg, rgba(255,210,51,.18), rgba(255,111,174,.14) 40%, rgba(78,197,122,.18));
 }
-.ig-page .hero-inner { position: relative; z-index: 2; max-width: 980px; margin: 0 auto; width: 100%; transform-style: preserve-3d; }
+
+/* Cinematic letterbox bars */
+.ig-page .cine-bar {
+  position: absolute; left: 0; right: 0; height: 56px; z-index: 4;
+  background: linear-gradient(180deg, #0b0716 0%, rgba(11,7,22,.85) 100%);
+  pointer-events: none;
+  animation: igCineIn 1.4s cubic-bezier(.2,.8,.2,1) .1s both;
+}
+.ig-page .cine-bar-top { top: 0; }
+.ig-page .cine-bar-bottom { bottom: 0; transform: scaleY(-1); animation-delay: .2s; }
+@keyframes igCineIn {
+  from { transform: translateY(-100%); }
+  to   { transform: translateY(0); }
+}
+.ig-page .cine-bar-bottom { animation-name: igCineInBottom; }
+@keyframes igCineInBottom {
+  from { transform: translateY(100%) scaleY(-1); }
+  to   { transform: translateY(0) scaleY(-1); }
+}
+
+/* Film grain — animated SVG noise */
+.ig-page .film-grain {
+  position: absolute; inset: -50%; z-index: 3; pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  opacity: .12; mix-blend-mode: overlay;
+  animation: igGrain 1.2s steps(6) infinite;
+  will-change: transform;
+}
+@keyframes igGrain {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-3%, 2%); }
+  40%  { transform: translate(2%, -2%); }
+  60%  { transform: translate(-1%, 3%); }
+  80%  { transform: translate(3%, 1%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Soft vignette to focus eye */
+.ig-page .hero-vignette {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 45%, transparent 40%, rgba(11,7,22,.45) 100%);
+}
+
+.ig-page .hero-inner { position: relative; z-index: 3; max-width: 980px; margin: 0 auto; width: 100%; transform-style: preserve-3d; }
 .ig-page .hero-inner > * { transform: translateZ(0); transition: transform .8s cubic-bezier(.2,.8,.2,1); }
 .ig-page .eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
@@ -502,16 +550,26 @@ body.ig-page-body::after {
   color: var(--ink); font-weight: 700; margin-bottom: 22px;
   box-shadow: 0 6px 22px -10px rgba(255,111,174,.45);
 }
-.ig-page .eyebrow .dot { width: 7px; height: 7px; background: var(--pink); border-radius: 50%; box-shadow: 0 0 12px var(--pink); }
+.ig-page .eyebrow .dot { width: 7px; height: 7px; background: var(--pink); border-radius: 50%; box-shadow: 0 0 12px var(--pink); animation: igPulse 2s ease-in-out infinite; }
+@keyframes igPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,111,174,.6), 0 0 12px var(--pink); }
+  50%     { box-shadow: 0 0 0 10px rgba(255,111,174,0), 0 0 20px var(--pink); }
+}
 .ig-page .hero h1 {
   font-size: clamp(36px, 6.4vw, 76px); margin-bottom: 18px;
   color: #ffffff; text-shadow: 0 4px 26px rgba(26,21,48,.45), 0 1px 2px rgba(26,21,48,.35);
 }
 .ig-page .hero h1 .accent {
   font-style: italic; font-weight: 500;
-  background: linear-gradient(135deg, var(--yellow), var(--pink) 55%, var(--orange));
+  background: linear-gradient(120deg, var(--yellow) 0%, var(--pink) 35%, var(--orange) 60%, var(--yellow) 100%);
+  background-size: 250% 100%;
   -webkit-background-clip: text; background-clip: text; color: transparent;
   -webkit-text-fill-color: transparent; text-shadow: none;
+  animation: igShimmer 6s ease-in-out infinite;
+}
+@keyframes igShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
 }
 .ig-page .hero p.lead {
   font-size: clamp(16px, 1.8vw, 20px); max-width: 560px;
@@ -529,7 +587,13 @@ body.ig-page-body::after {
 }
 .ig-page .btn-primary {
   background: linear-gradient(135deg, var(--pink), var(--orange) 55%, var(--yellow));
+  background-size: 200% 200%;
   box-shadow: 0 16px 42px -10px rgba(255,111,174,.6);
+  animation: igBtnFlow 8s ease-in-out infinite;
+}
+@keyframes igBtnFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
 }
 .ig-page .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.06); box-shadow: 0 22px 52px -12px rgba(255,138,61,.7); }
 .ig-page .btn-ghost {
@@ -539,23 +603,62 @@ body.ig-page-body::after {
 }
 .ig-page .btn-ghost:hover { background: #fff; transform: translateY(-2px); }
 
+/* Smooth interactive scroll indicator */
 .ig-page .scroll-hint {
-  position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
-  z-index: 2; font-size: 11px; letter-spacing: .25em; text-transform: uppercase;
-  color: var(--ink); display: flex; flex-direction: column; align-items: center; gap: 8px;
-  font-weight: 700;
+  position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+  z-index: 4; font-size: 10px; letter-spacing: .35em; text-transform: uppercase;
+  color: #fff; display: flex; flex-direction: column; align-items: center; gap: 10px;
+  font-weight: 700; text-decoration: none;
+  opacity: .9; transition: transform .3s ease, opacity .3s ease;
+  text-shadow: 0 2px 10px rgba(0,0,0,.5);
 }
-.ig-page .scroll-hint span { width: 1px; height: 28px; background: linear-gradient(180deg, transparent, var(--ink)); animation: igDrop 2s ease-in-out infinite; }
-@keyframes igDrop { 0%,100% { transform: scaleY(.4); transform-origin: top; } 50% { transform: scaleY(1); } }
+.ig-page .scroll-hint:hover { opacity: 1; transform: translate(-50%, -4px); }
+.ig-page .scroll-hint .mouse {
+  width: 22px; height: 36px; border: 2px solid rgba(255,255,255,.85);
+  border-radius: 14px; position: relative; display: block;
+  box-shadow: 0 0 18px rgba(255,255,255,.18), inset 0 0 8px rgba(255,255,255,.08);
+}
+.ig-page .scroll-hint .wheel {
+  position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
+  width: 3px; height: 7px; border-radius: 2px; background: #fff;
+  animation: igWheel 1.8s cubic-bezier(.6,.05,.4,1) infinite;
+}
+@keyframes igWheel {
+  0%   { opacity: 0; transform: translate(-50%, -2px); }
+  30%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, 14px); }
+}
+.ig-page .scroll-hint .chev { animation: igDrop 2s ease-in-out infinite; opacity: .85; }
+@keyframes igDrop {
+  0%, 100% { transform: translateY(0); opacity: .65; }
+  50%      { transform: translateY(4px); opacity: 1; }
+}
 
 /* Hero orbs */
 .ig-page .hero .orb {
   position: absolute; z-index: 1; border-radius: 50%;
   filter: blur(60px); opacity: .55; pointer-events: none; will-change: transform;
+  animation: igOrbFloat 14s ease-in-out infinite;
 }
-.ig-page .hero .orb.o1 { width: 380px; height: 380px; top: -80px; left: -60px; background: radial-gradient(circle, var(--yellow) 0%, transparent 65%); }
-.ig-page .hero .orb.o2 { width: 320px; height: 320px; top: 30%; right: -80px; background: radial-gradient(circle, var(--pink) 0%, transparent 65%); }
-.ig-page .hero .orb.o3 { width: 300px; height: 300px; bottom: -60px; left: 30%; background: radial-gradient(circle, var(--purple) 0%, transparent 65%); }
+.ig-page .hero .orb.o1 { width: 380px; height: 380px; top: -80px; left: -60px; background: radial-gradient(circle, var(--yellow) 0%, transparent 65%); animation-delay: 0s; }
+.ig-page .hero .orb.o2 { width: 320px; height: 320px; top: 30%; right: -80px; background: radial-gradient(circle, var(--pink) 0%, transparent 65%); animation-delay: -4s; }
+.ig-page .hero .orb.o3 { width: 300px; height: 300px; bottom: -60px; left: 30%; background: radial-gradient(circle, var(--purple) 0%, transparent 65%); animation-delay: -8s; }
+@keyframes igOrbFloat {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(2%, -3%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ig-page .hero::before,
+  .ig-page .film-grain,
+  .ig-page .hero h1 .accent,
+  .ig-page .btn-primary,
+  .ig-page .hero .orb,
+  .ig-page .scroll-hint .wheel,
+  .ig-page .scroll-hint .chev,
+  .ig-page .eyebrow .dot,
+  .ig-page .cine-bar { animation: none !important; }
+}
 
 /* Sections */
 .ig-page section { padding: clamp(64px, 9vw, 120px) 24px; position: relative; isolation: isolate; }
