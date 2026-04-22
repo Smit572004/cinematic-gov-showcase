@@ -428,7 +428,6 @@ const ProductsMarquee = ({
   const [paused, setPaused] = useState(false);
   const [showArrows, setShowArrows] = useState(false);
   const detailsLabel = lang === "de" ? "Details ansehen" : "View details";
-  const ctaLabel = lang === "de" ? "Kaufen" : "Buy";
 
   // ----- Drag-to-scroll support (desktop pointer + touch) ---------------
   // We translate the track inline while dragging, then resume the CSS
@@ -544,7 +543,7 @@ const ProductsMarquee = ({
                     data-color={o.color_tag}
                     role={dup === 0 ? "button" : undefined}
                     tabIndex={dup === 0 ? 0 : -1}
-                    aria-label={`${title} — ${ctaLabel}`}
+                    aria-label={`${title} — ${detailsLabel}`}
                     onClick={() => { if (dup === 0) onSelect(o); }}
                     onKeyDown={(e) => {
                       if (dup === 0 && (e.key === "Enter" || e.key === " ")) {
@@ -603,13 +602,6 @@ const ProductsMarquee = ({
                           <span className="pcv2-price-wrap">
                             {o.price_text && <span className="pcv2-price">{formatEuro(o.price_text)}</span>}
                             {o.unit_text && <span className="pcv2-unit">{o.unit_text}</span>}
-                          </span>
-                          <span className="pcv2-tap-hint" aria-hidden="true">
-                            {ctaLabel}
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M5 12h14" />
-                              <path d="M13 5l7 7-7 7" />
-                            </svg>
                           </span>
                         </div>
                       )}
