@@ -314,7 +314,7 @@ const IgLandingPage = () => {
           </section>
 
           {/* HOURS + LOCATION */}
-          <section id="location" className="offers-bg section-zoom reveal">
+          <section id="location" className="location-bg section-zoom reveal">
             <div className="container">
               <div className="section-head reveal">
                 <span className="section-tag">Besuch uns</span>
@@ -571,6 +571,25 @@ body.ig-page-body::after {
     radial-gradient(ellipse at 100% 100%, rgba(78,197,122,.2), transparent 55%),
     radial-gradient(ellipse at 50% 50%, rgba(255,210,51,.12), transparent 60%),
     linear-gradient(180deg, var(--bg-2) 0%, var(--bg-3) 100%);
+}
+
+/* Location — photo background of the greenhouse */
+.ig-page .location-bg {
+  position: relative;
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,.78) 0%, rgba(255,255,255,.62) 50%, rgba(255,255,255,.82) 100%),
+    url('/ig-location-bg.jpg');
+  background-size: cover, cover;
+  background-position: center, center;
+  background-attachment: scroll, fixed;
+  background-repeat: no-repeat, no-repeat;
+}
+.ig-page .location-bg .panel {
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(8px);
+}
+@media (max-width: 768px) {
+  .ig-page .location-bg { background-attachment: scroll, scroll; }
 }
 .ig-page .grid { display: grid; gap: 22px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); perspective: 1400px; }
 .ig-page .card {
