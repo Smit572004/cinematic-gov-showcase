@@ -843,10 +843,6 @@ const IgLandingPage = () => {
   const addrCity = pick(content, "ig_address_city", lang, "39164 Wanzleben-Börde");
   const phoneDisplay = pick(content, "ig_contact_phone", lang, "+49 39209 69 69 0");
   const phoneTel = pick(content, "ig_contact_phone_tel", "de", "+493920969690");
-  const whatsappNumber = pick(content, "ig_contact_whatsapp", "de", "+493920969690").replace(
-    /[^0-9]/g,
-    "",
-  );
   const email = pick(content, "ig_contact_email", "de", "info@tinplant-gmbh.de");
   const mapQuery =
     pick(content, "ig_map_query", "de", "Magdeburger Landstraße 33, 39164 Wanzleben-Börde");
@@ -859,8 +855,7 @@ const IgLandingPage = () => {
 
   const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`;
   const mapDir = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapQuery)}`;
-  const mapApple = `https://maps.apple.com/?daddr=${encodeURIComponent(mapQuery)}`;
-  const mapShare = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}`;
+
 
   // Day labels (CMS-driven, with hardcoded fallbacks)
   const dayLabels = useMemo(() => {
