@@ -520,11 +520,68 @@ const ProductsMarquee = ({
   const [paused, setPaused] = useState(false);
   const [showArrows, setShowArrows] = useState(false);
   const detailsLabel = lang === "de" ? "Details ansehen" : "View details";
+  const ctaLabel = lang === "de" ? "Ansehen" : "View";
 
-  // Manual nudge via arrows: temporarily shift the track and pause the
-  // animation. After the user stops interacting, the marquee resumes
-  // from its current position.
-  const nudgeRef = useRef(0);
+  // ----- Drag-to-scroll support (desktop pointer + touch) ---------------
+  // We translate the track inline while dragging, then resume the CSS
+  // marquee animation from a small leftover offset. This keeps the loop
+  // seamless while letting users nudge through products manually.
+  const dragRef = useRef({
+    active: false,
+    startX: 0,
+    startOffset: 0,
+    pointerId: 0 as number,
+  });
+  const offsetRef = useRef(0); // accumulated user offset (px)
+
+  const applyOffset = (px: number) => {
+    const track = trackRef.current;
+    if (!track) return;
+    track.style.transform = px === 0 ? "" : `translate3d(${px}px, 0, 0)`;
+  };
+
+  const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    // Only react to primary mouse button or touch/pen
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    const track = trackRef.current;
+    if (!track) return;
+    dragRef.current = {
+      active: true,
+      startX: e.clientX,
+      startOffset: offsetRef.current,
+      pointerId: e.pointerId,
+    };
+    setPaused(true);
+    // Disable transition while dragging for 1:1 finger tracking
+    track.style.transition = "none";
+    (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+  };
+
+  const onPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (!dragRef.current.active) return;
+    const dx = e.clientX - dragRef.current.startX;
+    offsetRef.current = dragRef.current.startOffset + dx;
+    applyOffset(offsetRef.current);
+  };
+
+  const endDrag = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (!dragRef.current.active) return;
+    dragRef.current.active = false;
+    const track = trackRef.current;
+    if (track) {
+      // Smoothly settle back to 0 — the CSS animation continues from here.
+      track.style.transition = "transform .8s cubic-bezier(.2,.8,.2,1)";
+      offsetRef.current = 0;
+      track.style.transform = "";
+    }
+    (e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId);
+    window.setTimeout(() => {
+      if (track) track.style.transition = "";
+      setPaused(false);
+    }, 850);
+  };
+
+  // ----- Arrow nudge ---------------------------------------------------
   const scrollByCards = (dir: 1 | -1) => {
     const track = trackRef.current;
     const vp = viewportRef.current;
@@ -532,16 +589,19 @@ const ProductsMarquee = ({
     const card = vp.querySelector<HTMLElement>(".product-card-v2");
     const step = card ? card.getBoundingClientRect().width + 22 : 320;
     setPaused(true);
-    nudgeRef.current -= dir * step * 2;
-    track.style.transition = "transform .5s cubic-bezier(.2,.8,.2,1)";
-    track.style.transform = `translate3d(${nudgeRef.current}px, 0, 0)`;
+    offsetRef.current -= dir * step * 1.5;
+    track.style.transition = "transform .6s cubic-bezier(.2,.8,.2,1)";
+    applyOffset(offsetRef.current);
     window.setTimeout(() => {
       if (!track) return;
-      track.style.transition = "";
+      track.style.transition = "transform .6s cubic-bezier(.2,.8,.2,1)";
+      offsetRef.current = 0;
       track.style.transform = "";
-      nudgeRef.current = 0;
-      setPaused(false);
-    }, 1400);
+      window.setTimeout(() => {
+        if (track) track.style.transition = "";
+        setPaused(false);
+      }, 650);
+    }, 900);
   };
 
   return (
@@ -549,15 +609,25 @@ const ProductsMarquee = ({
       className={`products-marquee reveal ${paused ? "is-paused" : ""} ${showArrows ? "show-arrows" : ""}`}
       role="region"
       aria-label={ariaLabel}
-      onMouseEnter={() => setShowArrows(true)}
+      onMouseEnter={() => {
+        setShowArrows(true);
+        setPaused(true);
+      }}
       onMouseLeave={() => {
         setShowArrows(false);
-        setPaused(false);
+        if (!dragRef.current.active) setPaused(false);
       }}
       onFocus={() => setShowArrows(true)}
       onBlur={() => setShowArrows(false)}
     >
-      <div className="products-viewport" ref={viewportRef}>
+      <div
+        className="products-viewport"
+        ref={viewportRef}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+      >
         <div className="products-track" ref={trackRef}>
           {[0, 1].map((dup) => (
             <div className="products-row" aria-hidden={dup === 1} key={dup}>
@@ -566,15 +636,10 @@ const ProductsMarquee = ({
                 const desc = lang === "de" ? o.description_de : o.description_en || o.description_de;
                 const badge = lang === "de" ? o.badge_de : o.badge_en || o.badge_de;
                 return (
-                  <button
+                  <article
                     key={`${dup}-${o.id}`}
-                    type="button"
                     className="product-card-v2"
                     data-color={o.color_tag}
-                    onClick={() => dup === 0 && onSelect(o)}
-                    onMouseEnter={() => setPaused(true)}
-                    onMouseLeave={() => setPaused(false)}
-                    tabIndex={dup === 1 ? -1 : 0}
                     aria-label={`${title} — ${detailsLabel}`}
                   >
                     <div className="pcv2-art" data-color={o.color_tag}>
@@ -590,9 +655,9 @@ const ProductsMarquee = ({
                         <span className="pcv2-emoji" aria-hidden="true">{o.emoji}</span>
                       )}
                       <span className="pcv2-shine" aria-hidden="true" />
+                      {badge && <span className="pcv2-cat-float">{badge}</span>}
                     </div>
                     <div className="pcv2-body">
-                      {badge && <span className="pcv2-cat">{badge}</span>}
                       <h3 className="pcv2-title">{title}</h3>
                       {desc && <p className="pcv2-desc">{desc}</p>}
                       <div className="pcv2-foot">
@@ -602,12 +667,24 @@ const ProductsMarquee = ({
                             {o.unit_text && <span className="pcv2-unit">{o.unit_text}</span>}
                           </span>
                         ) : <span />}
-                        <span className="pcv2-arrow" aria-hidden="true">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
-                        </span>
+                        <button
+                          type="button"
+                          className="pcv2-cta"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (dup === 0) onSelect(o);
+                          }}
+                          tabIndex={dup === 1 ? -1 : 0}
+                          aria-label={`${title} — ${detailsLabel}`}
+                        >
+                          <span>{ctaLabel}</span>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M5 12h14M13 5l7 7-7 7" />
+                          </svg>
+                        </button>
                       </div>
                     </div>
-                  </button>
+                  </article>
                 );
               })}
             </div>
