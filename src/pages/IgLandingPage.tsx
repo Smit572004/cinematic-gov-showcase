@@ -745,6 +745,22 @@ const IgLandingPage = () => {
 
   // Selected product for details modal
   const [selectedProduct, setSelectedProduct] = useState<IgOffer | null>(null);
+  const [pdfOpen, setPdfOpen] = useState(false);
+
+  // Lock body scroll + Escape close for PDF modal
+  useEffect(() => {
+    if (!pdfOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setPdfOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [pdfOpen]);
 
   // Lock body scroll when modal is open + close on Escape
   useEffect(() => {
@@ -1272,18 +1288,10 @@ const IgLandingPage = () => {
                 }}
               >
                 {productsPdfUrl ? (
-                  <motion.a
-                    href={productsPdfUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <motion.button
+                    type="button"
                     className="products-download-btn"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      const newWindow = window.open(productsPdfUrl, "_blank", "noopener,noreferrer");
-                      if (!newWindow) {
-                        window.location.href = productsPdfUrl;
-                      }
-                    }}
+                    onClick={() => setPdfOpen(true)}
                     whileHover={prefersReducedMotion ? undefined : { y: -3 }}
                     whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
                     transition={{ type: "spring", stiffness: 320, damping: 22 }}
@@ -1295,7 +1303,7 @@ const IgLandingPage = () => {
                       <line x1="9" y1="11" x2="15" y2="11" />
                     </svg>
                     {productsViewMore}
-                  </motion.a>
+                  </motion.button>
                 ) : (
                   <motion.a
                     href="/products"
@@ -1545,6 +1553,55 @@ const IgLandingPage = () => {
           </div>
         );
       })()}
+
+      {/* ============== PDF PREVIEW MODAL ============== */}
+      {pdfOpen && (
+        <div
+          className="ig-modal ig-pdf-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label={lang === "de" ? "Preisliste" : "Price list"}
+          onClick={() => setPdfOpen(false)}
+        >
+          <div className="ig-pdf-card" onClick={(e) => e.stopPropagation()}>
+            <div className="ig-pdf-head">
+              <h3 className="ig-pdf-title">
+                {lang === "de" ? "Komplette Preisliste 2026" : "Full price list 2026"}
+              </h3>
+              <div className="ig-pdf-actions">
+                <a
+                  href={productsPdfUrl}
+                  download
+                  className="ig-pdf-btn"
+                  aria-label={lang === "de" ? "Herunterladen" : "Download"}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                  {lang === "de" ? "Download" : "Download"}
+                </a>
+                <button
+                  type="button"
+                  className="ig-pdf-close"
+                  onClick={() => setPdfOpen(false)}
+                  aria-label={lang === "de" ? "Schließen" : "Close"}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
+                </button>
+              </div>
+            </div>
+            <div className="ig-pdf-frame-wrap">
+              <iframe
+                src={productsPdfUrl}
+                title={lang === "de" ? "Preisliste" : "Price list"}
+                className="ig-pdf-frame"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
@@ -2931,5 +2988,77 @@ body.ig-page-body::before {
   .ig-modal-emoji { font-size: 84px; }
   .ig-modal-title { font-size: 24px; }
   .ig-modal-body { padding: 22px 20px; }
+}
+
+/* ---- PDF preview modal ---- */
+.ig-pdf-modal { padding: 16px; }
+.ig-pdf-card {
+  position: relative;
+  width: min(1100px, 100%);
+  height: min(92vh, 1000px);
+  background: #1a1a18;
+  border-radius: 18px;
+  box-shadow: 0 40px 100px -20px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: igModalRise 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.ig-pdf-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: linear-gradient(180deg, #2a2a26, #1f1f1c);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
+}
+.ig-pdf-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f7f1e3;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+.ig-pdf-actions { display: flex; align-items: center; gap: 8px; }
+.ig-pdf-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--moss-2);
+  color: #f7f1e3;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.12);
+  transition: background 0.18s ease, transform 0.18s ease;
+  cursor: pointer;
+}
+.ig-pdf-btn:hover { background: var(--moss-1); transform: translateY(-1px); }
+.ig-pdf-close {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.08);
+  color: #f7f1e3;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+.ig-pdf-close:hover { background: rgba(255,255,255,0.16); }
+.ig-pdf-frame-wrap { flex: 1; background: #2a2a26; min-height: 0; }
+.ig-pdf-frame { width: 100%; height: 100%; border: 0; display: block; background: #fff; }
+@media (max-width: 640px) {
+  .ig-pdf-modal { padding: 0; }
+  .ig-pdf-card { width: 100%; height: 100vh; height: 100dvh; border-radius: 0; }
+  .ig-pdf-title { font-size: 0.95rem; }
+  .ig-pdf-btn { padding: 7px 11px; font-size: 0.78rem; }
 }
 `;
