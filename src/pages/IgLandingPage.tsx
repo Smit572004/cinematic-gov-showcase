@@ -622,11 +622,8 @@ const IgLandingPage = () => {
         {activeOffers.length > 0 && (
           <section id="offers" className="snap-section section section-cream">
             <div className="container">
-              {/* 1. HEADER — always visible */}
-              <header className="section-head products-head">
-                <span className="section-tag">
-                  <span className="tag-leaf" aria-hidden="true">🌱</span> {offersEyebrow}
-                </span>
+              {/* 1. HEADER — always visible, centered above the cards */}
+              <header className="section-head products-head products-head-centered">
                 <h2>{offersTitle}</h2>
                 {offersSubtitle && <p>{offersSubtitle}</p>}
               </header>
