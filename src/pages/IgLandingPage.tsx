@@ -1398,9 +1398,11 @@ body.ig-page-body::before {
 }
 /* Pause when hovering / focusing the section, when a card is hovered, or
    when the user just clicked an arrow. */
-.ig-page .products-marquee.is-paused .products-track,
-.ig-page .products-marquee:hover .products-track,
-.ig-page .products-marquee:focus-within .products-track {
+/* Only pause auto-scroll when explicitly paused (via arrow click or
+   when a specific card is being hovered). Hovering empty marquee
+   space or focusing the wrapper no longer pauses scrolling, so the
+   carousel feels continuously alive. */
+.ig-page .products-marquee.is-paused .products-track {
   animation-play-state: paused;
 }
 
