@@ -264,22 +264,31 @@ const ProductsParallaxBackdrop = ({
         range={[120, -120]}
         className="products-backdrop-glow products-backdrop-glow--b"
       />
-      {particles.map((p, i) => (
-        <ParallaxLayer
-          key={i}
-          scrollYProgress={scrollYProgress}
-          range={p.range}
-          className="products-backdrop-particle"
-          style={{
-            left: p.left,
-            top: p.top,
-            width: p.size,
-            height: p.size,
-            animationDelay: `${p.delay}s`,
-            animationDuration: `${p.dur}s`,
-          }}
-        />
-      ))}
+      {particles.map((p, i) => {
+        const y = useTransform(scrollYProgress, [0, 1], p.range);
+        return (
+          <motion.div
+            key={i}
+            className="products-backdrop-particle-wrap"
+            style={{
+              left: p.left,
+              top: p.top,
+              width: p.size,
+              height: p.size,
+              y,
+            }}
+            aria-hidden="true"
+          >
+            <div
+              className="products-backdrop-particle"
+              style={{
+                animationDelay: `${p.delay}s`,
+                animationDuration: `${p.dur}s`,
+              }}
+            />
+          </motion.div>
+        );
+      })}
     </div>
   );
 };
