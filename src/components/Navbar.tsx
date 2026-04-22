@@ -78,19 +78,24 @@ const Navbar = () => {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 + index * 0.05 }}
+        className="relative"
       >
         <Link
           to={link.href}
-          className={`relative text-xs font-body font-medium tracking-wide uppercase whitespace-nowrap transition-colors duration-300 group ${
-            isActive ? "text-primary" : "text-muted-foreground hover:text-primary"
+          className={`relative px-3 py-1.5 rounded-full text-xs font-body font-medium tracking-wide uppercase whitespace-nowrap transition-all duration-300 group ${
+            isActive
+              ? "text-primary bg-primary/10"
+              : "text-muted-foreground hover:text-primary hover:bg-primary/5"
           }`}
         >
-          {t(link.key)}
-          <span
-            className={`absolute -bottom-1 left-0 h-[2px] bg-primary transition-all duration-300 ${
-              isActive ? "w-full" : "w-0 group-hover:w-full"
-            }`}
-          />
+          <span className="relative z-10">{t(link.key)}</span>
+          {isActive && (
+            <motion.span
+              layoutId="navbar-active-dot"
+              className="absolute left-1/2 -translate-x-1/2 -bottom-1 w-1 h-1 rounded-full bg-primary"
+              transition={{ type: "spring", stiffness: 380, damping: 30 }}
+            />
+          )}
         </Link>
       </motion.div>
     );
@@ -102,7 +107,7 @@ const Navbar = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled ? "glass py-3" : "py-4 bg-background/95 backdrop-blur-md shadow-sm"
+        scrolled ? "glass py-2" : "py-3 bg-background/95 backdrop-blur-md shadow-sm"
       }`}
     >
       <div className="container mx-auto flex items-center justify-between px-6">
@@ -110,13 +115,13 @@ const Navbar = () => {
           <motion.img
             src={logoColour}
             alt="TinPlant Logo"
-            className="h-10 w-auto"
+            className="h-9 w-auto"
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 300 }}
           />
         </Link>
 
-        <div className="hidden lg:flex items-center gap-5">
+        <div className="hidden lg:flex items-center gap-1.5 bg-muted/30 border border-border/40 rounded-full px-2 py-1">
           {topNavLinks.map((link, i) => (
             <NavItem key={link.href} link={link} index={i} />
           ))}
@@ -125,15 +130,24 @@ const Navbar = () => {
           <div ref={dropdownRef} className="relative">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className={`flex items-center gap-1 text-xs font-body font-medium tracking-wide uppercase whitespace-nowrap transition-colors duration-300 ${
-                isDropdownActive ? "text-primary" : "text-muted-foreground hover:text-primary"
+              className={`relative flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-body font-medium tracking-wide uppercase whitespace-nowrap transition-all duration-300 ${
+                isDropdownActive
+                  ? "text-primary bg-primary/10"
+                  : "text-muted-foreground hover:text-primary hover:bg-primary/5"
               }`}
             >
               {t("nav.expertise")}
               <ChevronDown
-                size={14}
+                size={12}
                 className={`transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
               />
+              {isDropdownActive && (
+                <motion.span
+                  layoutId="navbar-active-dot"
+                  className="absolute left-1/2 -translate-x-1/2 -bottom-1 w-1 h-1 rounded-full bg-primary"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
             </button>
             <AnimatePresence>
               {dropdownOpen && (
@@ -142,13 +156,13 @@ const Navbar = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-48 rounded-lg border border-border bg-card/95 backdrop-blur-md shadow-lg overflow-hidden"
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-52 rounded-xl border border-border/60 bg-card/95 backdrop-blur-xl shadow-xl overflow-hidden p-1"
                 >
                   {dropdownLinks.map((link) => (
                     <Link
                       key={link.href}
                       to={link.href}
-                      className={`block px-4 py-3 text-sm font-body font-medium tracking-wide transition-colors duration-200 ${
+                      className={`block px-3 py-2.5 rounded-lg text-sm font-body font-medium tracking-wide transition-colors duration-200 ${
                         location.pathname === link.href
                           ? "text-primary bg-primary/10"
                           : "text-muted-foreground hover:text-primary hover:bg-primary/5"
