@@ -706,6 +706,103 @@ const ProductsPdfPanel = () => {
 };
 
 
+/* ───────────────── Offer image uploader ───────────────── */
+
+const OfferImageField = ({
+  imageUrl,
+  onChange,
+}: {
+  imageUrl: string | null;
+  onChange: (url: string | null) => void;
+}) => {
+  const { lang } = useLanguage();
+  const de = lang === "de";
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleUpload = async (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      toast.error(de ? "Bitte eine Bilddatei auswählen" : "Please choose an image file");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error(de ? "Bild muss unter 5MB sein" : "Image must be under 5MB");
+      return;
+    }
+    setUploading(true);
+    const ext = file.name.split(".").pop();
+    const safeName = `offer-${Date.now()}-${Math.random().toString(36).substring(2)}.${ext}`;
+    const { error } = await supabase.storage.from("ig-assets").upload(safeName, file);
+    if (error) {
+      toast.error((de ? "Upload fehlgeschlagen: " : "Upload failed: ") + error.message);
+      setUploading(false);
+      return;
+    }
+    const { data: urlData } = supabase.storage.from("ig-assets").getPublicUrl(safeName);
+    onChange(urlData.publicUrl);
+    setUploading(false);
+    toast.success(de ? "Bild hochgeladen" : "Image uploaded");
+  };
+
+  return (
+    <div>
+      <label className="block text-[11px] font-body font-semibold text-muted-foreground mb-1 uppercase tracking-wider">
+        {de ? "Produktfoto (optional)" : "Product photo (optional)"}
+      </label>
+      <div className="flex items-start gap-3 flex-wrap">
+        {imageUrl ? (
+          <div className="relative w-24 h-24 rounded-lg overflow-hidden border border-border flex-shrink-0">
+            <img src={imageUrl} alt="" className="w-full h-full object-cover" />
+            <button
+              type="button"
+              onClick={() => onChange(null)}
+              className="absolute top-1 right-1 w-5 h-5 rounded-full bg-background/90 flex items-center justify-center text-muted-foreground hover:text-foreground"
+              aria-label={de ? "Bild entfernen" : "Remove image"}
+            >
+              <X size={11} />
+            </button>
+          </div>
+        ) : (
+          <div className="w-24 h-24 rounded-lg border-2 border-dashed border-border flex items-center justify-center bg-muted/20 flex-shrink-0">
+            <ImageIcon size={22} className="text-muted-foreground" />
+          </div>
+        )}
+        <div className="flex-1 min-w-[200px]">
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleUpload(f);
+              e.target.value = "";
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            disabled={uploading}
+            className="flex items-center gap-2 px-3 py-2 bg-muted rounded-lg text-xs font-semibold hover:bg-muted/70 transition-colors disabled:opacity-50"
+          >
+            <Upload size={13} />
+            {uploading
+              ? (de ? "Hochladen..." : "Uploading...")
+              : imageUrl
+                ? (de ? "Foto ersetzen" : "Replace photo")
+                : (de ? "Foto hochladen" : "Upload photo")}
+          </button>
+          <p className="text-[10px] text-muted-foreground mt-1.5">
+            {de
+              ? "Wenn ein Foto vorhanden ist, wird es anstelle des Emojis angezeigt. Max 5MB."
+              : "When a photo is present it replaces the emoji. Max 5MB."}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 
 const OffersTab = () => {
   const queryClient = useQueryClient();
