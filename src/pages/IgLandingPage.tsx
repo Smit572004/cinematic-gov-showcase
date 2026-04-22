@@ -1027,6 +1027,151 @@ const IgLandingPage = () => {
           </svg>
         </section>
 
+        {/* ============== WHY CHOOSE US ============== */}
+        <motion.section
+          className="snap-section section why-section"
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={{
+            hidden: {},
+            show: {
+              transition: prefersReducedMotion
+                ? {}
+                : { staggerChildren: 0.12, delayChildren: 0.05 },
+            },
+          }}
+          aria-label={pick(content, "ig_why_title", lang, lang === "de" ? "Warum TinPlant" : "Why TinPlant")}
+        >
+          <div className="why-orb why-orb-a" aria-hidden="true" />
+          <div className="why-orb why-orb-b" aria-hidden="true" />
+          <div className="container">
+            <motion.div
+              className="section-head"
+              variants={{
+                hidden: { opacity: 0, y: 24 },
+                show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+              }}
+            >
+              <span className="section-tag">
+                <span className="tag-leaf">🌿</span>
+                {pick(content, "ig_why_eyebrow", lang, lang === "de" ? "Warum wir" : "Why us")}
+              </span>
+              <h2>
+                {pick(
+                  content,
+                  "ig_why_title",
+                  lang,
+                  lang === "de" ? "Frisch aus dem Gewächshaus" : "Fresh from the greenhouse",
+                )}
+              </h2>
+              <p>
+                {pick(
+                  content,
+                  "ig_why_subtitle",
+                  lang,
+                  lang === "de"
+                    ? "Lokal angebaut, sorgfältig gepflegt und direkt an dich verkauft – ohne Umwege."
+                    : "Locally grown, carefully tended and sold straight to you — no detours.",
+                )}
+              </p>
+            </motion.div>
+
+            <div className="why-grid">
+              {[
+                {
+                  color: "leaf",
+                  icon: (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M3 21c0-9 7-16 18-18-1 11-8 18-18 18z" />
+                      <path d="M3 21c5-5 9-9 18-18" />
+                    </svg>
+                  ),
+                  titleKey: "ig_why_card1_title",
+                  descKey: "ig_why_card1_desc",
+                  titleFallback: { de: "Eigenes Gewächshaus", en: "Our own greenhouse" },
+                  descFallback: {
+                    de: "Wir ziehen unsere Pflanzen selbst auf – mit Geduld, Erfahrung und viel Sonnenlicht.",
+                    en: "We grow every plant ourselves — with patience, experience and lots of sunlight.",
+                  },
+                },
+                {
+                  color: "sun",
+                  icon: (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <circle cx="12" cy="12" r="4" />
+                      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+                    </svg>
+                  ),
+                  titleKey: "ig_why_card2_title",
+                  descKey: "ig_why_card2_desc",
+                  titleFallback: { de: "Saisonal & frisch", en: "Seasonal & fresh" },
+                  descFallback: {
+                    de: "Was bei uns wächst, ist gerade in Saison – knackig, gesund und voller Energie.",
+                    en: "Whatever grows here is in season right now — crisp, healthy and full of energy.",
+                  },
+                },
+                {
+                  color: "berry",
+                  icon: (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M12 2c1.5 3 4 4 4 7a4 4 0 0 1-8 0c0-3 2.5-4 4-7z" />
+                      <path d="M5 14a4 4 0 1 0 8 0" />
+                      <path d="M11 14a4 4 0 1 0 8 0" />
+                    </svg>
+                  ),
+                  titleKey: "ig_why_card3_title",
+                  descKey: "ig_why_card3_desc",
+                  titleFallback: { de: "Blumen, Gemüse & Kräuter", en: "Flowers, veg & herbs" },
+                  descFallback: {
+                    de: "Vom Tomatensetzling bis zur Geranie – große Auswahl für Garten, Balkon und Küche.",
+                    en: "From tomato seedlings to geraniums — wide variety for garden, balcony and kitchen.",
+                  },
+                },
+                {
+                  color: "sky",
+                  icon: (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M12 22s7-7 7-12a7 7 0 0 0-14 0c0 5 7 12 7 12z" />
+                      <circle cx="12" cy="10" r="2.5" />
+                    </svg>
+                  ),
+                  titleKey: "ig_why_card4_title",
+                  descKey: "ig_why_card4_desc",
+                  titleFallback: { de: "15 Min. von Magdeburg", en: "15 min from Magdeburg" },
+                  descFallback: {
+                    de: "Schnell erreichbar – einfach vorbeikommen, aussuchen und mitnehmen.",
+                    en: "Easy to reach — just stop by, pick your favourites and take them home.",
+                  },
+                },
+              ].map((card) => (
+                <motion.article
+                  key={card.titleKey}
+                  className="why-card"
+                  data-color={card.color}
+                  variants={{
+                    hidden: { opacity: 0, y: 28 },
+                    show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
+                  }}
+                >
+                  <div className="why-card-glow" aria-hidden="true" />
+                  <div className="why-icon-wrap" aria-hidden="true">
+                    <span className="why-icon-bg" />
+                    <span className="why-icon">{card.icon}</span>
+                  </div>
+                  <h3>{pick(content, card.titleKey, lang, card.titleFallback[lang])}</h3>
+                  <p>{pick(content, card.descKey, lang, card.descFallback[lang])}</p>
+                  <span className="why-card-stem" aria-hidden="true" />
+                </motion.article>
+              ))}
+            </div>
+          </div>
+
+          <svg className="divider-bottom" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 50 C 240 90, 480 10, 720 40 C 960 70, 1200 20, 1440 50 L 1440 80 L 0 80 Z" fill="var(--cream)" />
+          </svg>
+        </motion.section>
+
         {/* ============== PRODUCTS ============== */}
         {activeOffers.length > 0 && (
           <motion.section
@@ -1785,6 +1930,173 @@ body.ig-page-body::before {
 .ig-page .section-head h2.on-dark { color: #fffaf0; }
 .ig-page .section-head p { font-size: clamp(15px, 1.4vw, 17px); color: var(--ink-soft); max-width: 560px; margin: 0 auto; }
 .ig-page .section-head p.on-dark-soft { color: rgba(255, 250, 240, 0.82); }
+
+/* ============== WHY CHOOSE US ============== */
+.ig-page .why-section {
+  position: relative;
+  padding: clamp(72px, 9vw, 120px) 24px;
+  background:
+    radial-gradient(1200px 600px at 10% 0%, rgba(247, 215, 110, 0.18), transparent 60%),
+    radial-gradient(1100px 700px at 95% 100%, rgba(213, 128, 168, 0.16), transparent 60%),
+    linear-gradient(180deg, #fffefa 0%, #f8f4ea 100%);
+  overflow: hidden;
+}
+.ig-page .why-section .container { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; }
+.ig-page .why-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 1;
+}
+.ig-page .why-orb-a {
+  width: 380px; height: 380px;
+  top: -120px; left: -120px;
+  background: radial-gradient(circle, rgba(138, 168, 107, 0.55), transparent 70%);
+  animation: whyOrbDrift 14s ease-in-out infinite alternate;
+}
+.ig-page .why-orb-b {
+  width: 460px; height: 460px;
+  bottom: -160px; right: -140px;
+  background: radial-gradient(circle, rgba(247, 196, 107, 0.45), transparent 70%);
+  animation: whyOrbDrift 18s ease-in-out infinite alternate-reverse;
+}
+@keyframes whyOrbDrift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(40px, 30px, 0) scale(1.08); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ig-page .why-orb { animation: none; }
+}
+
+.ig-page .why-grid {
+  display: grid;
+  gap: 22px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  margin-top: 8px;
+}
+
+.ig-page .why-card {
+  position: relative;
+  padding: 32px 26px 30px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #ffffff 0%, #fffaf0 100%);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 18px 40px -22px rgba(60, 70, 50, 0.22);
+  overflow: hidden;
+  transition: transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .45s ease, border-color .35s ease;
+  isolation: isolate;
+}
+.ig-page .why-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  border-radius: 22px 22px 0 0;
+  z-index: 1;
+}
+.ig-page .why-card[data-color="leaf"]::before  { background: linear-gradient(90deg, #6fa07a, #b8d098, #3f7a52); }
+.ig-page .why-card[data-color="sun"]::before   { background: linear-gradient(90deg, #f2c46b, #f7d76e, #e8a04a); }
+.ig-page .why-card[data-color="berry"]::before { background: linear-gradient(90deg, #d27a90, #efb0bd, #a64a64); }
+.ig-page .why-card[data-color="sky"]::before   { background: linear-gradient(90deg, #7ab0c9, #b6dceb, #4d8aa6); }
+
+.ig-page .why-card-glow {
+  position: absolute;
+  inset: -1px;
+  border-radius: 22px;
+  opacity: 0;
+  transition: opacity .45s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+.ig-page .why-card[data-color="leaf"]  .why-card-glow { background: radial-gradient(180px 140px at 80% 0%, rgba(138, 168, 107, 0.30), transparent 70%); }
+.ig-page .why-card[data-color="sun"]   .why-card-glow { background: radial-gradient(180px 140px at 80% 0%, rgba(247, 196, 107, 0.32), transparent 70%); }
+.ig-page .why-card[data-color="berry"] .why-card-glow { background: radial-gradient(180px 140px at 80% 0%, rgba(210, 122, 144, 0.30), transparent 70%); }
+.ig-page .why-card[data-color="sky"]   .why-card-glow { background: radial-gradient(180px 140px at 80% 0%, rgba(122, 176, 201, 0.32), transparent 70%); }
+
+.ig-page .why-card:hover {
+  transform: translateY(-8px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 30px 60px -28px rgba(60, 70, 50, 0.32);
+  border-color: rgba(138, 168, 107, 0.35);
+}
+.ig-page .why-card:hover .why-card-glow { opacity: 1; }
+
+.ig-page .why-icon-wrap {
+  position: relative;
+  width: 64px; height: 64px;
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-bottom: 18px;
+  z-index: 2;
+}
+.ig-page .why-icon-bg {
+  position: absolute; inset: 0;
+  border-radius: 18px;
+  transform: rotate(-6deg);
+  transition: transform .5s cubic-bezier(.2,.8,.2,1);
+}
+.ig-page .why-card[data-color="leaf"]  .why-icon-bg { background: linear-gradient(135deg, #b8d098, #6fa07a); }
+.ig-page .why-card[data-color="sun"]   .why-icon-bg { background: linear-gradient(135deg, #f7d76e, #e8a04a); }
+.ig-page .why-card[data-color="berry"] .why-icon-bg { background: linear-gradient(135deg, #efb0bd, #d27a90); }
+.ig-page .why-card[data-color="sky"]   .why-icon-bg { background: linear-gradient(135deg, #b6dceb, #7ab0c9); }
+.ig-page .why-card:hover .why-icon-bg { transform: rotate(6deg) scale(1.06); }
+
+.ig-page .why-icon {
+  position: relative;
+  width: 30px; height: 30px;
+  color: #fffefa;
+  z-index: 2;
+}
+.ig-page .why-icon svg { width: 100%; height: 100%; }
+
+.ig-page .why-card h3 {
+  position: relative;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 20px;
+  line-height: 1.25;
+  margin: 0 0 10px;
+  color: var(--ink, #2b2b1f);
+  z-index: 2;
+}
+.ig-page .why-card p {
+  position: relative;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink-soft, #5a5a4a);
+  margin: 0;
+  z-index: 2;
+}
+
+.ig-page .why-card-stem {
+  position: absolute;
+  bottom: -30px; right: -20px;
+  width: 110px; height: 110px;
+  border-radius: 50%;
+  opacity: 0.10;
+  transition: transform .6s cubic-bezier(.2,.8,.2,1), opacity .4s ease;
+  z-index: 1;
+}
+.ig-page .why-card[data-color="leaf"]  .why-card-stem { background: radial-gradient(circle, #6fa07a, transparent 70%); }
+.ig-page .why-card[data-color="sun"]   .why-card-stem { background: radial-gradient(circle, #e8a04a, transparent 70%); }
+.ig-page .why-card[data-color="berry"] .why-card-stem { background: radial-gradient(circle, #d27a90, transparent 70%); }
+.ig-page .why-card[data-color="sky"]   .why-card-stem { background: radial-gradient(circle, #7ab0c9, transparent 70%); }
+.ig-page .why-card:hover .why-card-stem {
+  transform: scale(1.4);
+  opacity: 0.18;
+}
+
+@media (max-width: 640px) {
+  .ig-page .why-grid { gap: 16px; }
+  .ig-page .why-card { padding: 26px 22px 24px; border-radius: 20px; }
+  .ig-page .why-icon-wrap { width: 56px; height: 56px; margin-bottom: 14px; }
+  .ig-page .why-card h3 { font-size: 18px; }
+  .ig-page .why-card p { font-size: 14px; }
+}
+
 
 /* OFFERS */
 .ig-page .grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
