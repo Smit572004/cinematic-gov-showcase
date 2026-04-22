@@ -1979,6 +1979,21 @@ body.ig-page-body::before {
 .ig-page .gallery-dot { width: 8px; height: 8px; border-radius: 999px; border: 0; padding: 0; background: rgba(255,255,255,0.35); cursor: pointer; transition: background .25s ease, transform .25s ease; }
 .ig-page .gallery-dot:hover { background: rgba(255,255,255,0.6); }
 .ig-page .gallery-dot.active { background: #fff; transform: scale(1.25); }
+.ig-page .tile-button { display: block; width: 100%; padding: 0; border: 0; background: var(--moss-1); cursor: pointer; font: inherit; color: inherit; }
+.ig-page .tile-button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.ig-page .gallery-lightbox { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.88); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 4vw; animation: fade-in .25s ease-out; }
+.ig-page .gallery-lightbox-img { max-width: min(92vw, 1400px); max-height: 88vh; width: auto; height: auto; border-radius: 14px; box-shadow: 0 30px 80px -20px rgba(0,0,0,0.6); cursor: default; }
+.ig-page .gallery-lightbox-close { position: absolute; top: 18px; right: 22px; width: 44px; height: 44px; border-radius: 999px; border: 0; background: rgba(255,255,255,0.12); color: #fff; font-size: 28px; line-height: 1; cursor: pointer; transition: background .2s ease, transform .2s ease; }
+.ig-page .gallery-lightbox-close:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
+.ig-page .gallery-lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 48px; height: 48px; border-radius: 999px; border: 0; background: rgba(255,255,255,0.12); color: #fff; font-size: 32px; line-height: 1; cursor: pointer; transition: background .2s ease, transform .2s ease; display: flex; align-items: center; justify-content: center; }
+.ig-page .gallery-lightbox-nav:hover { background: rgba(255,255,255,0.25); }
+.ig-page .gallery-lightbox-nav.prev { left: 18px; }
+.ig-page .gallery-lightbox-nav.next { right: 18px; }
+@media (max-width: 640px) {
+  .ig-page .gallery-lightbox-nav { width: 40px; height: 40px; font-size: 26px; }
+  .ig-page .gallery-lightbox-nav.prev { left: 8px; }
+  .ig-page .gallery-lightbox-nav.next { right: 8px; }
+}
 
 /* HOURS + LOCATION */
 .ig-page .split { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
