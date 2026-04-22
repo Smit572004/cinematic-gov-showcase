@@ -1027,6 +1027,151 @@ const IgLandingPage = () => {
           </svg>
         </section>
 
+        {/* ============== WHY CHOOSE US ============== */}
+        <motion.section
+          className="snap-section section why-section"
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={{
+            hidden: {},
+            show: {
+              transition: prefersReducedMotion
+                ? {}
+                : { staggerChildren: 0.12, delayChildren: 0.05 },
+            },
+          }}
+          aria-label={pick(content, "ig_why_title", lang, lang === "de" ? "Warum TinPlant" : "Why TinPlant")}
+        >
+          <div className="why-orb why-orb-a" aria-hidden="true" />
+          <div className="why-orb why-orb-b" aria-hidden="true" />
+          <div className="container">
+            <motion.div
+              className="section-head"
+              variants={{
+                hidden: { opacity: 0, y: 24 },
+                show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+              }}
+            >
+              <span className="section-tag">
+                <span className="tag-leaf">🌿</span>
+                {pick(content, "ig_why_eyebrow", lang, lang === "de" ? "Warum wir" : "Why us")}
+              </span>
+              <h2>
+                {pick(
+                  content,
+                  "ig_why_title",
+                  lang,
+                  lang === "de" ? "Frisch aus dem Gewächshaus" : "Fresh from the greenhouse",
+                )}
+              </h2>
+              <p>
+                {pick(
+                  content,
+                  "ig_why_subtitle",
+                  lang,
+                  lang === "de"
+                    ? "Lokal angebaut, sorgfältig gepflegt und direkt an dich verkauft – ohne Umwege."
+                    : "Locally grown, carefully tended and sold straight to you — no detours.",
+                )}
+              </p>
+            </motion.div>
+
+            <div className="why-grid">
+              {[
+                {
+                  color: "leaf",
+                  icon: (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M3 21c0-9 7-16 18-18-1 11-8 18-18 18z" />
+                      <path d="M3 21c5-5 9-9 18-18" />
+                    </svg>
+                  ),
+                  titleKey: "ig_why_card1_title",
+                  descKey: "ig_why_card1_desc",
+                  titleFallback: { de: "Eigenes Gewächshaus", en: "Our own greenhouse" },
+                  descFallback: {
+                    de: "Wir ziehen unsere Pflanzen selbst auf – mit Geduld, Erfahrung und viel Sonnenlicht.",
+                    en: "We grow every plant ourselves — with patience, experience and lots of sunlight.",
+                  },
+                },
+                {
+                  color: "sun",
+                  icon: (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <circle cx="12" cy="12" r="4" />
+                      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+                    </svg>
+                  ),
+                  titleKey: "ig_why_card2_title",
+                  descKey: "ig_why_card2_desc",
+                  titleFallback: { de: "Saisonal & frisch", en: "Seasonal & fresh" },
+                  descFallback: {
+                    de: "Was bei uns wächst, ist gerade in Saison – knackig, gesund und voller Energie.",
+                    en: "Whatever grows here is in season right now — crisp, healthy and full of energy.",
+                  },
+                },
+                {
+                  color: "berry",
+                  icon: (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M12 2c1.5 3 4 4 4 7a4 4 0 0 1-8 0c0-3 2.5-4 4-7z" />
+                      <path d="M5 14a4 4 0 1 0 8 0" />
+                      <path d="M11 14a4 4 0 1 0 8 0" />
+                    </svg>
+                  ),
+                  titleKey: "ig_why_card3_title",
+                  descKey: "ig_why_card3_desc",
+                  titleFallback: { de: "Blumen, Gemüse & Kräuter", en: "Flowers, veg & herbs" },
+                  descFallback: {
+                    de: "Vom Tomatensetzling bis zur Geranie – große Auswahl für Garten, Balkon und Küche.",
+                    en: "From tomato seedlings to geraniums — wide variety for garden, balcony and kitchen.",
+                  },
+                },
+                {
+                  color: "sky",
+                  icon: (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M12 22s7-7 7-12a7 7 0 0 0-14 0c0 5 7 12 7 12z" />
+                      <circle cx="12" cy="10" r="2.5" />
+                    </svg>
+                  ),
+                  titleKey: "ig_why_card4_title",
+                  descKey: "ig_why_card4_desc",
+                  titleFallback: { de: "15 Min. von Magdeburg", en: "15 min from Magdeburg" },
+                  descFallback: {
+                    de: "Schnell erreichbar – einfach vorbeikommen, aussuchen und mitnehmen.",
+                    en: "Easy to reach — just stop by, pick your favourites and take them home.",
+                  },
+                },
+              ].map((card) => (
+                <motion.article
+                  key={card.titleKey}
+                  className="why-card"
+                  data-color={card.color}
+                  variants={{
+                    hidden: { opacity: 0, y: 28 },
+                    show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
+                  }}
+                >
+                  <div className="why-card-glow" aria-hidden="true" />
+                  <div className="why-icon-wrap" aria-hidden="true">
+                    <span className="why-icon-bg" />
+                    <span className="why-icon">{card.icon}</span>
+                  </div>
+                  <h3>{pick(content, card.titleKey, lang, card.titleFallback[lang])}</h3>
+                  <p>{pick(content, card.descKey, lang, card.descFallback[lang])}</p>
+                  <span className="why-card-stem" aria-hidden="true" />
+                </motion.article>
+              ))}
+            </div>
+          </div>
+
+          <svg className="divider-bottom" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 50 C 240 90, 480 10, 720 40 C 960 70, 1200 20, 1440 50 L 1440 80 L 0 80 Z" fill="var(--cream)" />
+          </svg>
+        </motion.section>
+
         {/* ============== PRODUCTS ============== */}
         {activeOffers.length > 0 && (
           <motion.section
