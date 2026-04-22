@@ -259,8 +259,13 @@ const IgLandingPage = () => {
   /* Resolved content shortcuts */
   const heroPhoto = pick(content, "ig_hero_image_url", "de", "/ig-hero.jpg");
   const heroEyebrow = pick(content, "ig_hero_eyebrow", lang, "Direkt vom Erzeuger · Magdeburg");
-  const heroTitleA = pick(content, "ig_hero_title_a", lang, "Frische Pflanzen,");
-  const heroTitleB = pick(content, "ig_hero_title_b", lang, "direkt aus dem Gewächshaus");
+  const heroTitleA = pick(content, "ig_hero_title_a", lang, "Frische Pflanzen direkt");
+  const heroTitleB = pick(
+    content,
+    "ig_hero_title_b",
+    lang,
+    lang === "de" ? "vom Erzeuger – {{nur 15 Minuten}} von Magdeburg" : "from the grower — {{just 15 minutes}} from Magdeburg",
+  );
   const heroLead = pick(
     content,
     "ig_hero_lead",
@@ -359,18 +364,6 @@ const IgLandingPage = () => {
           />
           <div className="hero-photo-tint" aria-hidden="true" />
 
-          <svg className="leaf leaf-1" viewBox="0 0 64 64" aria-hidden="true">
-            <path d="M8 56 C 18 28, 40 18, 60 6 C 56 30, 38 50, 12 60 Z" fill="currentColor" opacity=".55" />
-            <path d="M14 54 C 28 38, 44 26, 58 12" stroke="rgba(0,0,0,.15)" strokeWidth="1.4" fill="none" />
-          </svg>
-          <svg className="leaf leaf-2" viewBox="0 0 64 64" aria-hidden="true">
-            <path d="M8 56 C 18 28, 40 18, 60 6 C 56 30, 38 50, 12 60 Z" fill="currentColor" opacity=".45" />
-          </svg>
-          <svg className="leaf leaf-3" viewBox="0 0 64 64" aria-hidden="true">
-            <path d="M8 56 C 18 28, 40 18, 60 6 C 56 30, 38 50, 12 60 Z" fill="currentColor" opacity=".35" />
-          </svg>
-
-
           <div className="hero-content reveal">
             <span className="eyebrow">
               <span className="eb-dot" /> {heroEyebrow}
@@ -378,18 +371,19 @@ const IgLandingPage = () => {
             <h1>
               {heroTitleA}
               <br />
-              <span className="hand-underline">
-                {heroTitleB}
-                <svg viewBox="0 0 300 12" preserveAspectRatio="none" aria-hidden="true">
-                  <path
-                    d="M2 8 C 60 2, 130 12, 200 6 C 240 2, 280 8, 298 4"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </span>
+              {(() => {
+                const m = heroTitleB.match(/^(.*?)\{\{(.+?)\}\}(.*)$/);
+                if (m) {
+                  return (
+                    <>
+                      {m[1]}
+                      <span className="title-accent">{m[2]}</span>
+                      {m[3]}
+                    </>
+                  );
+                }
+                return heroTitleB;
+              })()}
             </h1>
             <p className="lead">{heroLead}</p>
             <div className="cta-row">
@@ -401,12 +395,9 @@ const IgLandingPage = () => {
             </div>
           </div>
 
-          <a href="#offers" className="scroll-hint" aria-label="Weiter scrollen">
-            <span>{lang === "de" ? "weiterlesen" : "scroll"}</span>
-            <svg width="22" height="34" viewBox="0 0 22 34" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M11 2 C 14 12, 8 22, 11 32" />
-              <path d="M5 26 L 11 32 L 17 26" />
-            </svg>
+          <a href="#offers" className="scroll-hint" aria-label={lang === "de" ? "Weiter scrollen" : "Scroll down"}>
+            <span className="scroll-line" aria-hidden="true" />
+            <span className="scroll-text">{lang === "de" ? "SCROLL" : "SCROLL"}</span>
           </a>
 
           <svg className="divider-bottom" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
@@ -734,10 +725,15 @@ body.ig-page-body::before {
 .ig-page .hero-photo-tint {
   position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse at 50% 30%, rgba(47, 74, 50, 0.2) 0%, rgba(32, 34, 28, 0.65) 70%),
-    linear-gradient(180deg, rgba(47, 74, 50, 0.55) 0%, rgba(47, 74, 50, 0.85) 100%);
+    radial-gradient(ellipse at 30% 50%, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.15) 55%, rgba(0, 0, 0, 0) 80%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.10) 0%, rgba(0, 0, 0, 0.55) 100%);
 }
-.ig-page .hero-content { position: relative; z-index: 3; max-width: 820px; text-align: center; margin: 0 auto; padding: 0 12px; }
+.ig-page .hero-content {
+  position: relative; z-index: 3;
+  max-width: 1240px; width: 100%;
+  text-align: left; margin: 0 auto;
+  padding: 0 clamp(20px, 5vw, 64px);
+}
 .ig-page .hero-nav {
   position: fixed; top: 0; left: 0; right: 0; transform: none;
   z-index: 50; display: flex; flex-direction: row; align-items: center;
@@ -832,43 +828,113 @@ body.ig-page-body::before {
   .ig-page .hn-indicator { height: 28px; }
 }
 .ig-page .eyebrow {
-  display: inline-flex; align-items: center; gap: 8px;
+  display: inline-flex; align-items: center; gap: 10px;
   font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
-  background: rgba(255, 250, 240, 0.12); border: 1px solid rgba(255, 250, 240, 0.3);
-  padding: 8px 16px; border-radius: 999px; color: #fffaf0; font-weight: 600;
-  margin-bottom: 28px; backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  padding: 9px 18px; border-radius: 999px;
+  color: #fffaf0; font-weight: 600;
+  margin-bottom: 32px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
-.ig-page .eyebrow .eb-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--leaf); box-shadow: 0 0 10px var(--leaf); }
-.ig-page .hero h1 { font-size: clamp(38px, 6.4vw, 78px); font-weight: 700; margin-bottom: 22px; letter-spacing: -0.02em; }
-.ig-page .hand-underline { position: relative; display: inline-block; font-style: italic; font-weight: 500; color: #f5e7b8; }
-.ig-page .hand-underline svg { position: absolute; left: 0; right: 0; bottom: -10px; width: 100%; height: 12px; color: var(--leaf); opacity: 0; stroke-dasharray: 320; stroke-dashoffset: 320; }
-.ig-page .reveal.in .hand-underline svg { opacity: 1; animation: igDraw 1.4s cubic-bezier(.2,.8,.2,1) .6s forwards; }
-@keyframes igDraw { to { stroke-dashoffset: 0; } }
+.ig-page .eyebrow .eb-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #ff6f8a;
+  box-shadow: 0 0 12px rgba(255, 111, 138, 0.8);
+}
+.ig-page .hero h1 {
+  font-size: clamp(44px, 7.4vw, 104px);
+  font-weight: 700;
+  line-height: 0.98;
+  margin-bottom: 28px;
+  letter-spacing: -0.025em;
+  color: #fff;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.35);
+  max-width: 14ch;
+}
+.ig-page .title-accent {
+  font-style: italic;
+  font-weight: 600;
+  background: linear-gradient(95deg, #ffb56b 0%, #ff8a7b 45%, #ff6f8a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-right: 0.06em;
+}
 
-.ig-page .hero p.lead { font-size: clamp(16px, 1.7vw, 19px); max-width: 560px; margin: 0 auto 36px; color: rgba(255, 250, 240, 0.88); line-height: 1.6; }
+.ig-page .hero p.lead {
+  font-size: clamp(15px, 1.5vw, 18px);
+  max-width: 460px;
+  margin: 0 0 36px;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.55;
+  font-weight: 400;
+  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.35);
+}
 
-.ig-page .cta-row { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
-.ig-page .btn { display: inline-flex; align-items: center; gap: 10px; padding: 15px 28px; border-radius: 999px; font-weight: 600; font-size: 15px; border: 1px solid transparent; cursor: pointer; transition: transform .25s ease, box-shadow .25s ease, background .25s ease, color .25s ease; font-family: inherit; }
-.ig-page .btn-primary { background: var(--cream); color: var(--moss-1); box-shadow: 0 14px 30px -12px rgba(0, 0, 0, 0.4); }
-.ig-page .btn-primary:hover { transform: translateY(-2px); background: #fffaf0; box-shadow: 0 18px 38px -14px rgba(0, 0, 0, 0.5); }
-.ig-page .btn-ghost { background: transparent; color: #fffaf0; border-color: rgba(255, 250, 240, 0.45); }
-.ig-page .btn-ghost:hover { background: rgba(255, 250, 240, 0.1); border-color: rgba(255, 250, 240, 0.7); transform: translateY(-2px); }
+.ig-page .cta-row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-start; }
+.ig-page .btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 16px 30px; border-radius: 999px;
+  font-weight: 600; font-size: 15px; border: 1px solid transparent;
+  cursor: pointer; font-family: inherit;
+  transition: transform .25s ease, box-shadow .25s ease, background .25s ease, color .25s ease, border-color .25s ease;
+}
+.ig-page .btn-primary {
+  background: linear-gradient(95deg, #ffb56b 0%, #ff8a7b 50%, #ff6f8a 100%);
+  color: #fff;
+  box-shadow: 0 14px 36px -10px rgba(255, 111, 138, 0.55);
+}
+.ig-page .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 46px -12px rgba(255, 111, 138, 0.7);
+  filter: brightness(1.05);
+}
+.ig-page .btn-ghost {
+  background: rgba(255, 255, 255, 0.95);
+  color: #1f2a1d;
+  border-color: transparent;
+  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.35);
+}
+.ig-page .btn-ghost:hover {
+  background: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 16px 38px -14px rgba(0, 0, 0, 0.45);
+}
 
-.ig-page .leaf { position: absolute; color: var(--leaf); z-index: 2; pointer-events: none; }
-.ig-page .leaf-1 { width: 90px; top: 12%; left: 6%; transform: rotate(-15deg); }
-.ig-page .leaf-2 { width: 70px; top: 22%; right: 8%; transform: rotate(40deg); }
-.ig-page .leaf-3 { width: 110px; bottom: 18%; right: 14%; transform: rotate(-30deg); color: #c0d49a; }
-.ig-page.ig-page .hero-anim .leaf-1 { animation: igLeafA 8s ease-in-out infinite; }
-.ig-page.ig-page .hero-anim .leaf-2 { animation: igLeafB 9s ease-in-out infinite; }
-.ig-page.ig-page .hero-anim .leaf-3 { animation: igLeafA 11s ease-in-out infinite reverse; }
-@keyframes igLeafA { 0%, 100% { transform: rotate(-15deg) translate(0, 0); } 50% { transform: rotate(-8deg) translate(8px, -10px); } }
-@keyframes igLeafB { 0%, 100% { transform: rotate(40deg) translate(0, 0); } 50% { transform: rotate(48deg) translate(-6px, 8px); } }
+.ig-page .leaf { display: none; }
+.ig-page .divider-bottom { display: none; }
 
-.ig-page .scroll-hint { position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%); z-index: 3; color: rgba(255, 250, 240, 0.85); display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 600; transition: opacity .25s ease, transform .25s ease; }
-.ig-page .scroll-hint:hover { opacity: 1; transform: translate(-50%, -3px); }
-.ig-page .scroll-hint svg { animation: igFloat 2.4s ease-in-out infinite; }
-@keyframes igFloat { 0%, 100% { transform: translateY(0); opacity: .85; } 50% { transform: translateY(5px); opacity: 1; } }
+.ig-page .scroll-hint {
+  position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%);
+  z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 10px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 10px; letter-spacing: 0.42em; text-transform: uppercase; font-weight: 600;
+  text-decoration: none;
+  transition: color .25s ease, transform .25s ease;
+}
+.ig-page .scroll-hint .scroll-line {
+  width: 1px; height: 38px; background: rgba(255, 255, 255, 0.9);
+  position: relative; overflow: hidden;
+}
+.ig-page .scroll-hint .scroll-line::after {
+  content: ""; position: absolute; left: 0; right: 0; top: -100%;
+  height: 60%;
+  background: linear-gradient(180deg, transparent, #fff);
+  animation: igScrollLine 2.2s ease-in-out infinite;
+}
+.ig-page .scroll-hint:hover { color: #fff; transform: translate(-50%, -3px); }
+@keyframes igScrollLine {
+  0% { top: -60%; }
+  100% { top: 110%; }
+}
 
+@media (max-width: 640px) {
+  .ig-page .hero h1 { max-width: none; }
+  .ig-page .cta-row { width: 100%; }
+  .ig-page .btn { padding: 14px 22px; font-size: 14px; }
+}
 .ig-page .divider-bottom { position: absolute; left: 0; right: 0; bottom: -1px; width: 100%; height: 80px; z-index: 4; pointer-events: none; }
 
 /* SECTIONS */
