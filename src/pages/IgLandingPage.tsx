@@ -2989,4 +2989,76 @@ body.ig-page-body::before {
   .ig-modal-title { font-size: 24px; }
   .ig-modal-body { padding: 22px 20px; }
 }
+
+/* ---- PDF preview modal ---- */
+.ig-pdf-modal { padding: 16px; }
+.ig-pdf-card {
+  position: relative;
+  width: min(1100px, 100%);
+  height: min(92vh, 1000px);
+  background: #1a1a18;
+  border-radius: 18px;
+  box-shadow: 0 40px 100px -20px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: igModalRise 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.ig-pdf-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: linear-gradient(180deg, #2a2a26, #1f1f1c);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
+}
+.ig-pdf-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f7f1e3;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+.ig-pdf-actions { display: flex; align-items: center; gap: 8px; }
+.ig-pdf-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--moss-2);
+  color: #f7f1e3;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.12);
+  transition: background 0.18s ease, transform 0.18s ease;
+  cursor: pointer;
+}
+.ig-pdf-btn:hover { background: var(--moss-1); transform: translateY(-1px); }
+.ig-pdf-close {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.08);
+  color: #f7f1e3;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+.ig-pdf-close:hover { background: rgba(255,255,255,0.16); }
+.ig-pdf-frame-wrap { flex: 1; background: #2a2a26; min-height: 0; }
+.ig-pdf-frame { width: 100%; height: 100%; border: 0; display: block; background: #fff; }
+@media (max-width: 640px) {
+  .ig-pdf-modal { padding: 0; }
+  .ig-pdf-card { width: 100%; height: 100vh; height: 100dvh; border-radius: 0; }
+  .ig-pdf-title { font-size: 0.95rem; }
+  .ig-pdf-btn { padding: 7px 11px; font-size: 0.78rem; }
+}
 `;
