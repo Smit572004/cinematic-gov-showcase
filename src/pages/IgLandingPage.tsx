@@ -2346,17 +2346,17 @@ body.ig-page-body::before {
   animation: productsBgPan 40s ease-in-out infinite alternate;
   will-change: transform;
 }
-/* Cream wash on top so cards & text stay readable */
+/* Sky/cloud wash on top — keeps cards & text readable while staying on-palette */
 .ig-page .products-backdrop-wash {
   position: absolute;
   inset: 0;
   z-index: 1;
   background:
     linear-gradient(180deg,
-      rgba(247, 240, 226, 0.92) 0%,
-      rgba(247, 240, 226, 0.78) 35%,
-      rgba(247, 240, 226, 0.85) 70%,
-      rgba(247, 240, 226, 0.96) 100%);
+      rgba(225, 236, 245, 0.78) 0%,    /* soft cloud-blue at top */
+      rgba(238, 244, 240, 0.70) 40%,   /* misty mid */
+      rgba(232, 240, 230, 0.78) 75%,   /* hint of grass green */
+      rgba(228, 236, 222, 0.92) 100%); /* settles into the grass tone */
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
 }
@@ -2661,14 +2661,14 @@ body.ig-page-body::before {
   will-change: transform;
 }
 
-/* Colorful card backgrounds tinted by product type */
-.ig-page .product-card-v2[data-color="tomato"]   { background: linear-gradient(160deg, #fff1ec 0%, #ffffff 55%, #ffe6dc 100%); }
-.ig-page .product-card-v2[data-color="pepper"]   { background: linear-gradient(160deg, #fff5e0 0%, #ffffff 55%, #ffe9c2 100%); }
-.ig-page .product-card-v2[data-color="zucchini"] { background: linear-gradient(160deg, #f1faea 0%, #ffffff 55%, #e2f1ce 100%); }
-.ig-page .product-card-v2[data-color="herb"]     { background: linear-gradient(160deg, #e8f5ec 0%, #ffffff 55%, #d6ecde 100%); }
-.ig-page .product-card-v2[data-color="berry"]    { background: linear-gradient(160deg, #ffeaf2 0%, #ffffff 55%, #ffd4e4 100%); }
+/* Sky / cloud / glass / grass palette — harmonizes with greenhouse backdrop */
+.ig-page .product-card-v2[data-color="tomato"]   { background: linear-gradient(160deg, #f4f9ff 0%, #ffffff 55%, #e6eef7 100%); } /* soft cloud blue */
+.ig-page .product-card-v2[data-color="pepper"]   { background: linear-gradient(160deg, #fff8e6 0%, #ffffff 55%, #fbe9c0 100%); } /* warm sun glow */
+.ig-page .product-card-v2[data-color="zucchini"] { background: linear-gradient(160deg, #effaf0 0%, #ffffff 55%, #d8ecd5 100%); } /* fresh grass */
+.ig-page .product-card-v2[data-color="herb"]     { background: linear-gradient(160deg, #e8f3ec 0%, #ffffff 55%, #cfe3d4 100%); } /* meadow herb */
+.ig-page .product-card-v2[data-color="berry"]    { background: linear-gradient(160deg, #eaf2fb 0%, #ffffff 55%, #cfe0f2 100%); } /* glass-pane blue */
 
-/* Colorful corner glow blob */
+/* Corner glow — sky/grass tinted to match each card */
 .ig-page .product-card-v2::after {
   content: "";
   position: absolute;
@@ -2677,19 +2677,19 @@ body.ig-page-body::before {
   width: 160px;
   height: 160px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(201, 83, 58, 0.28) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(110, 158, 207, 0.32) 0%, transparent 70%); /* default sky */
   filter: blur(20px);
   z-index: 0;
   pointer-events: none;
   transition: transform .8s cubic-bezier(.2,.8,.2,1), opacity .4s ease;
 }
 .ig-page .product-card-v2[data-color="zucchini"]::after,
-.ig-page .product-card-v2[data-color="herb"]::after { background: radial-gradient(circle, rgba(138, 168, 107, 0.32) 0%, transparent 70%); }
-.ig-page .product-card-v2[data-color="pepper"]::after { background: radial-gradient(circle, rgba(217, 154, 78, 0.32) 0%, transparent 70%); }
-.ig-page .product-card-v2[data-color="berry"]::after  { background: radial-gradient(circle, rgba(231, 84, 128, 0.32) 0%, transparent 70%); }
+.ig-page .product-card-v2[data-color="herb"]::after { background: radial-gradient(circle, rgba(125, 168, 110, 0.32) 0%, transparent 70%); }
+.ig-page .product-card-v2[data-color="pepper"]::after { background: radial-gradient(circle, rgba(228, 178, 88, 0.34) 0%, transparent 70%); }
+.ig-page .product-card-v2[data-color="berry"]::after  { background: radial-gradient(circle, rgba(95, 145, 200, 0.34) 0%, transparent 70%); }
 .ig-page .product-card-v2:hover::after { transform: scale(1.25); }
 
-/* Animated gradient ring on hover */
+/* Animated ring — sky → grass → sun spectrum to match the photo */
 .ig-page .product-card-v2::before {
   content: "";
   position: absolute;
@@ -2698,14 +2698,14 @@ body.ig-page-body::before {
   padding: 2px;
   background: conic-gradient(
     from 180deg at 50% 50%,
-    #c9533a, #d99a4e, #8aa86b, #2f4a32, #e75480, #c9533a
+    #6e9ecf, #a9c8e3, #cfe0c4, #7da86e, #2f6b4a, #e4b258, #6e9ecf
   );
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
           mask-composite: exclude;
-  opacity: 0.35;
+  opacity: 0.4;
   transition: opacity .5s ease;
   pointer-events: none;
   z-index: 4;
@@ -2890,24 +2890,23 @@ body.ig-page-body::before {
   gap: 10px;
   border-top: 0;
 }
-/* PRICE PILL — fresh emerald → teal gradient */
-/* PRICE PILL — emerald→teal gradient, readable on every card tint */
+/* PRICE PILL — sky-blue → grass-green gradient, matches greenhouse photo */
 .ig-page .pcv2-price-wrap {
   position: relative;
   display: inline-flex;
   align-items: baseline;
   gap: 6px;
   background:
-    linear-gradient(135deg, #14533a 0%, #1f6b4a 35%, #2f9e6a 70%, #4ec9a4 100%);
+    linear-gradient(135deg, #1d4f7a 0%, #3b7fb5 35%, #5fa386 70%, #7fbf6a 100%);
   padding: 9px 16px;
   border-radius: 999px;
   /* Crisp dark outline + soft white halo isolate the pill from any card color */
-  border: 1px solid rgba(10, 40, 28, 0.55);
+  border: 1px solid rgba(15, 40, 60, 0.55);
   box-shadow:
     0 0 0 2px rgba(255, 255, 255, 0.85),
     0 1px 0 rgba(255, 255, 255, 0.4) inset,
     0 -1px 0 rgba(0, 0, 0, 0.18) inset,
-    0 10px 22px -10px rgba(10, 40, 28, 0.55);
+    0 10px 22px -10px rgba(15, 50, 80, 0.55);
   isolation: isolate;
 }
 .ig-page .pcv2-price {
