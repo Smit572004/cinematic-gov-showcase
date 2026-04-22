@@ -109,6 +109,92 @@ const LiveStatusBadge = ({
   );
 };
 
+/* ---------------- Sticky nav with animated indicator ---------------- */
+
+const NAV_ITEMS = [
+  { id: "ig-main", de: "Start", en: "Home" },
+  { id: "offers", de: "Angebote", en: "Offers" },
+  { id: "location", de: "Standort", en: "Location" },
+  { id: "contact", de: "Kontakt", en: "Contact" },
+] as const;
+
+const StickyIgNav = ({
+  lang,
+  activeSection,
+  navScrolled,
+  logo,
+}: {
+  lang: LangKey;
+  activeSection: string;
+  navScrolled: boolean;
+  logo: string;
+}) => {
+  const linksWrapRef = useRef<HTMLDivElement | null>(null);
+  const linkRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+  const [indicator, setIndicator] = useState<{ left: number; width: number; visible: boolean }>({
+    left: 0,
+    width: 0,
+    visible: false,
+  });
+
+  useEffect(() => {
+    const measure = () => {
+      const wrap = linksWrapRef.current;
+      const el = linkRefs.current[activeSection];
+      if (!wrap || !el) {
+        setIndicator((p) => ({ ...p, visible: false }));
+        return;
+      }
+      const wrapBox = wrap.getBoundingClientRect();
+      const elBox = el.getBoundingClientRect();
+      setIndicator({
+        left: elBox.left - wrapBox.left,
+        width: elBox.width,
+        visible: true,
+      });
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [activeSection, lang]);
+
+  return (
+    <nav
+      className={`hero-nav sticky-nav ${navScrolled ? "is-scrolled" : ""}`}
+      aria-label={lang === "de" ? "Seitennavigation" : "Page navigation"}
+    >
+      <a href="#ig-main" className="hn-logo" aria-label="TinPlant">
+        <img src={logo} alt="TinPlant" />
+      </a>
+      <span className="hn-divider" aria-hidden="true" />
+      <div className="hn-links" ref={linksWrapRef}>
+        <span
+          className="hn-indicator"
+          aria-hidden="true"
+          style={{
+            transform: `translateX(${indicator.left}px)`,
+            width: indicator.width,
+            opacity: indicator.visible ? 1 : 0,
+          }}
+        />
+        {NAV_ITEMS.map((it) => (
+          <a
+            key={it.id}
+            href={`#${it.id}`}
+            ref={(el) => {
+              linkRefs.current[it.id] = el;
+            }}
+            className={`hn-link ${activeSection === it.id ? "is-active" : ""}`}
+          >
+            <span className="hn-dot" aria-hidden="true" />
+            <span className="hn-label">{lang === "de" ? it.de : it.en}</span>
+          </a>
+        ))}
+      </div>
+    </nav>
+  );
+};
+
 /* ---------------- Page ---------------- */
 
 const IgLandingPage = () => {
