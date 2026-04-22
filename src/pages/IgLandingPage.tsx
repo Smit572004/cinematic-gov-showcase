@@ -847,7 +847,7 @@ const IgLandingPage = () => {
     () => [
       { id: "ig-main", label: pick(content, "ig_nav_home", lang, "Start") },
       { id: "offers", label: pick(content, "ig_nav_products", lang, pick(content, "ig_nav_offers", lang, lang === "de" ? "Produkte" : "Products")) },
-      { id: "location", label: pick(content, "ig_nav_location", lang, "Standort") },
+      { id: "gallery", label: pick(content, "ig_nav_gallery", lang, lang === "de" ? "Galerie" : "Gallery") },
       { id: "contact", label: pick(content, "ig_nav_contact", lang, "Kontakt") },
     ],
     [content, lang],
