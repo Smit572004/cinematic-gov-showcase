@@ -945,18 +945,8 @@ const IgLandingPage = () => {
   const hoursHeading = pick(content, "ig_hours_heading", lang, "Öffnungszeiten");
   const addressHeading = pick(content, "ig_address_heading", lang, "So findest du uns");
   const mapOpenLabel = pick(content, "ig_map_open", lang, "In Google Maps öffnen");
-  const mapRouteLabel = pick(content, "ig_map_route", lang, "Route");
-  const mapAppleLabel = pick(content, "ig_map_apple", lang, "Apple Maps");
-  const mapShareLabel = pick(content, "ig_map_share", lang, "Teilen");
   const qaCallLabel = pick(content, "ig_qa_call", lang, "Anrufen");
-  const qaWhatsappLabel = pick(content, "ig_qa_whatsapp", lang, "WhatsApp");
   const qaEmailLabel = pick(content, "ig_qa_email", lang, "E-Mail");
-  const whatsappMessage = pick(
-    content,
-    "ig_whatsapp_message",
-    lang,
-    "Hallo TinPlant, ich habe eine Frage zu euren Pflanzen.",
-  );
   const emailSubject = pick(content, "ig_email_subject", lang, "Anfrage Pflanzen");
   const footerCopyright = fillTemplate(
     pick(content, "ig_footer_copyright", lang, "© {year} TinPlant"),
