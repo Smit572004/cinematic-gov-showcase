@@ -1726,15 +1726,10 @@ body.ig-page-body::before {
 }
 .ig-page .products-viewport {
   width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  overflow: hidden;
   -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 80px, #000 calc(100% - 80px), transparent 100%);
           mask-image: linear-gradient(90deg, transparent 0, #000 80px, #000 calc(100% - 80px), transparent 100%);
-  scroll-behavior: smooth;
 }
-.ig-page .products-viewport::-webkit-scrollbar { display: none; }
 
 .ig-page .products-track {
   display: flex;
@@ -1742,11 +1737,11 @@ body.ig-page-body::before {
   /* Gap between the two duplicated rows MUST equal the inter-card gap
      so the loop is mathematically seamless (no visible jump at reset). */
   gap: 22px;
-  animation: igProductsScroll 38s linear infinite;
+  animation: igProductsScroll 32s linear infinite;
   will-change: transform;
   /* Hint the browser so transforms stay on the compositor thread. */
   backface-visibility: hidden;
-  transform: translateZ(0);
+  transform: translate3d(0, 0, 0);
 }
 /* Pause when hovering / focusing the section, when a card is hovered, or
    when the user just clicked an arrow. */
