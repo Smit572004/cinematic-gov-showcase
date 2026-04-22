@@ -945,21 +945,30 @@ const OffersTab = () => {
             />
           </Field>
           <div className="grid grid-cols-2 gap-3">
-            <Field label={de ? "Preis" : "Price"}>
+            <Field label={de ? "Preis *" : "Price *"}>
               <input
                 value={editing.price_text}
                 onChange={(e) => setEditing({ ...editing, price_text: e.target.value })}
-                className="ig-admin-input"
+                className={`ig-admin-input ${priceError ? "!border-destructive" : ""}`}
                 placeholder="ab €0,88"
+                aria-invalid={!!priceError}
               />
+              {priceError && (
+                <p className="text-[11px] text-destructive font-body mt-1">{priceError}</p>
+              )}
             </Field>
-            <Field label={de ? "Einheit" : "Unit"}>
+            <Field label={de ? "Einheit *" : "Unit *"}>
               <input
                 value={editing.unit_text}
                 onChange={(e) => setEditing({ ...editing, unit_text: e.target.value })}
-                className="ig-admin-input"
+                className={`ig-admin-input ${unitError ? "!border-destructive" : ""}`}
                 placeholder="/ Stück"
+                aria-invalid={!!unitError}
+                maxLength={40}
               />
+              {unitError && (
+                <p className="text-[11px] text-destructive font-body mt-1">{unitError}</p>
+              )}
             </Field>
           </div>
           <div className="grid grid-cols-2 gap-3">
