@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 /**
  * Instagram Landing Page — React port of the original public/ig.html.
@@ -7,30 +7,8 @@ import { useEffect, useRef, useState } from "react";
  * Visual Edits.
  */
 const IgLandingPage = () => {
-  const [gateOpen, setGateOpen] = useState(false);
-  const [mainVisible, setMainVisible] = useState(false);
+  const mainVisible = true;
   const heroRef = useRef<HTMLElement | null>(null);
-
-  // ---- Access gate (Instagram referrer / ?src=ig / remembered flag) ----
-  useEffect(() => {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const fromIg = (document.referrer || "").includes("instagram.com");
-      const srcIg = ["ig", "instagram"].includes(
-        (params.get("src") || params.get("utm_source") || "").toLowerCase()
-      );
-      const remembered = localStorage.getItem("ig_ok") === "1";
-      const ok = fromIg || srcIg || remembered;
-      if (ok) {
-        localStorage.setItem("ig_ok", "1");
-        setMainVisible(true);
-      } else {
-        setGateOpen(true);
-      }
-    } catch {
-      setMainVisible(true);
-    }
-  }, []);
 
   // ---- Page meta + body class for scoped background ----
   useEffect(() => {
@@ -240,34 +218,6 @@ const IgLandingPage = () => {
   return (
     <>
       <style>{IG_STYLES}</style>
-
-      {/* Access gate */}
-      {gateOpen && (
-        <div id="ig-gate" className="ig-gate show" role="dialog" aria-modal="true">
-          <div className="box">
-            <h1>Willkommen 👋</h1>
-            <p>
-              Diese Seite ist eigentlich für unsere Instagram-Besucher gedacht. Du kannst sie
-              trotzdem ansehen — viel Spaß beim Stöbern!
-            </p>
-            <button
-              type="button"
-              className="gate-btn"
-              onClick={() => {
-                try {
-                  localStorage.setItem("ig_ok", "1");
-                } catch {
-                  /* ignore */
-                }
-                setGateOpen(false);
-                setMainVisible(true);
-              }}
-            >
-              Seite ansehen →
-            </button>
-          </div>
-        </div>
-      )}
 
       {mainVisible && (
         <main className="ig-page" id="ig-main">
