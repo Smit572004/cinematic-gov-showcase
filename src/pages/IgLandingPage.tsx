@@ -926,16 +926,7 @@ const IgLandingPage = () => {
                 <h2 className="on-dark">{galleryTitle}</h2>
                 {gallerySubtitle && <p className="on-dark-soft">{gallerySubtitle}</p>}
               </div>
-              <div className="gallery">
-                {activeGallery.map((g) => {
-                  const alt = lang === "de" ? g.title_de : g.title_en || g.title_de;
-                  return (
-                    <figure key={g.id} className={`tile reveal ${g.span === "wide" ? "wide" : ""}`}>
-                      <img loading="lazy" src={g.image_url!} alt={alt} />
-                    </figure>
-                  );
-                })}
-              </div>
+              <GallerySlideshow items={activeGallery} lang={lang} />
             </div>
           </section>
         )}
