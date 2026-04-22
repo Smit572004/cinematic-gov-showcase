@@ -245,11 +245,26 @@ const IgLandingPage = () => {
       {gateOpen && (
         <div id="ig-gate" className="ig-gate show" role="dialog" aria-modal="true">
           <div className="box">
-            <h1>Zugang beschränkt</h1>
+            <h1>Willkommen 👋</h1>
             <p>
-              Diese Seite ist exklusiv für unsere Instagram-Besucher reserviert. Bitte öffne den
-              Link erneut über unsere Instagram-Seite.
+              Diese Seite ist eigentlich für unsere Instagram-Besucher gedacht. Du kannst sie
+              trotzdem ansehen — viel Spaß beim Stöbern!
             </p>
+            <button
+              type="button"
+              className="gate-btn"
+              onClick={() => {
+                try {
+                  localStorage.setItem("ig_ok", "1");
+                } catch {
+                  /* ignore */
+                }
+                setGateOpen(false);
+                setMainVisible(true);
+              }}
+            >
+              Seite ansehen →
+            </button>
           </div>
         </div>
       )}
@@ -486,7 +501,16 @@ body.ig-page-body::after {
   background: linear-gradient(135deg, #ff6fae, #ff8a3d);
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
-.ig-gate p { color: #4a3f5e; font-size: 15px; }
+.ig-gate p { color: #4a3f5e; font-size: 15px; margin-bottom: 24px; }
+.ig-gate .gate-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 28px; border-radius: 999px; border: 0; cursor: pointer;
+  font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 15px; color: #fff;
+  background: linear-gradient(135deg, #ff6fae, #ff8a3d 55%, #ffd233);
+  box-shadow: 0 16px 42px -10px rgba(255,111,174,.6);
+  transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
+}
+.ig-gate .gate-btn:hover { transform: translateY(-2px); filter: brightness(1.06); box-shadow: 0 22px 52px -12px rgba(255,138,61,.7); }
 
 /* Hero */
 .ig-page .hero {
