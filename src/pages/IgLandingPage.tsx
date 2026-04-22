@@ -2706,42 +2706,43 @@ body.ig-page-body::before {
   gap: 10px;
   border-top: 0;
 }
-/* PRICE PILL — sky-blue → grass-green gradient, matches greenhouse photo */
+/* PRICE PILL — forest-green theme, matches site primary palette */
 .ig-page .pcv2-price-wrap {
   position: relative;
   display: inline-flex;
   align-items: baseline;
   gap: 6px;
   background:
-    linear-gradient(135deg, #1d4f7a 0%, #3b7fb5 35%, #5fa386 70%, #7fbf6a 100%);
+    linear-gradient(135deg,
+      hsl(145 50% 22%) 0%,
+      hsl(145 45% 28%) 45%,
+      hsl(140 40% 38%) 100%);
   padding: 9px 16px;
   border-radius: 999px;
-  /* Crisp dark outline + soft white halo isolate the pill from any card color */
-  border: 1px solid rgba(15, 40, 60, 0.55);
+  border: 1px solid hsl(145 45% 18% / 0.55);
   box-shadow:
-    0 0 0 2px rgba(255, 255, 255, 0.85),
-    0 1px 0 rgba(255, 255, 255, 0.4) inset,
-    0 -1px 0 rgba(0, 0, 0, 0.18) inset,
-    0 10px 22px -10px rgba(15, 50, 80, 0.55);
+    0 0 0 2px hsl(0 0% 100% / 0.85),
+    0 1px 0 hsl(0 0% 100% / 0.35) inset,
+    0 -1px 0 hsl(0 0% 0% / 0.18) inset,
+    0 10px 22px -10px hsl(145 50% 18% / 0.55);
   isolation: isolate;
 }
 .ig-page .pcv2-price {
   font-family: 'Fraunces', Georgia, serif;
   font-size: 20px;
   font-weight: 800;
-  color: #ffffff;
-  -webkit-text-fill-color: #ffffff;
+  color: hsl(var(--primary-foreground));
+  -webkit-text-fill-color: hsl(var(--primary-foreground));
   letter-spacing: -0.01em;
-  /* Subtle drop shadow guarantees legibility on light gradient end */
-  text-shadow: 0 1px 2px rgba(10, 40, 28, 0.45);
+  text-shadow: 0 1px 2px hsl(145 50% 12% / 0.45);
 }
 .ig-page .pcv2-unit {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.92);
+  color: hsl(var(--primary-foreground) / 0.92);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  text-shadow: 0 1px 1px rgba(10, 40, 28, 0.4);
+  text-shadow: 0 1px 1px hsl(145 50% 12% / 0.4);
 }
 
 .ig-page .product-card-v2 { cursor: pointer; }
