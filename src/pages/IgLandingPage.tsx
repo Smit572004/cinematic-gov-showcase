@@ -1127,7 +1127,7 @@ const IgLandingPage = () => {
                 </span>
                 {gallerySubtitle && <p className="on-dark-soft">{gallerySubtitle}</p>}
               </div>
-              <GallerySlideshow items={activeGallery} lang={lang} />
+              <GallerySlideshow items={activeGallery} lang={lang} rotateMs={galleryRotateMs} />
             </div>
           </section>
         )}
