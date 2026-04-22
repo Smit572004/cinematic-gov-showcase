@@ -857,7 +857,7 @@ const IgLandingPage = () => {
   const [activeSection, setActiveSection] = useState<string>("ig-main");
   const [navScrolled, setNavScrolled] = useState(false);
   useEffect(() => {
-    const ids = ["ig-main", "offers", "location", "contact"];
+    const ids = ["ig-main", "offers", "gallery", "contact"];
     const onScroll = () => {
       setNavScrolled(window.scrollY > 40);
       const probe = window.innerHeight * 0.35;
