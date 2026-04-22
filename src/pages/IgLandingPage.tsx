@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import logoWhite from "@/assets/tinplant-logo-white.png";
+import locationBg from "@/assets/ig-location-bg.jpeg";
 import { useLanguage } from "@/i18n/LanguageContext";
 import {
   HOUR_KEYS,
@@ -1352,7 +1353,13 @@ const IgLandingPage = () => {
         )}
 
         {/* ============== HOURS + LOCATION ============== */}
-        <section id="location" className="snap-section section section-sand">
+        <section id="location" className="snap-section section section-sand has-floral-bg">
+          <div
+            className="floral-bg"
+            aria-hidden="true"
+            style={{ backgroundImage: `url(${locationBg})` }}
+          />
+          <div className="floral-bg-tint" aria-hidden="true" />
           <div className="container">
             <div className="section-head reveal">
               <span className="section-tag">
