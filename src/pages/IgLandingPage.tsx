@@ -824,21 +824,21 @@ const IgLandingPage = () => {
 
             {/* 3. CENTERED CTA — late, subtle pop */}
             <div className="container">
-              {productsPdfUrl && (
-                <motion.div
-                  className="products-cta"
-                  variants={{
-                    hidden: prefersReducedMotion
-                      ? { opacity: 1, y: 0, scale: 1 }
-                      : { opacity: 0, y: 24, scale: 0.94 },
-                    show: {
-                      opacity: 1,
-                      y: 0,
-                      scale: 1,
-                      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
-                    },
-                  }}
-                >
+              <motion.div
+                className="products-cta"
+                variants={{
+                  hidden: prefersReducedMotion
+                    ? { opacity: 1, y: 0, scale: 1 }
+                    : { opacity: 0, y: 24, scale: 0.94 },
+                  show: {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+                  },
+                }}
+              >
+                {productsPdfUrl ? (
                   <motion.a
                     href={productsPdfUrl}
                     target="_blank"
@@ -856,8 +856,21 @@ const IgLandingPage = () => {
                     </svg>
                     {productsViewMore}
                   </motion.a>
-                </motion.div>
-              )}
+                ) : (
+                  <motion.a
+                    href="/products"
+                    className="products-download-btn"
+                    whileHover={prefersReducedMotion ? undefined : { y: -3 }}
+                    whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
+                    transition={{ type: "spring", stiffness: 320, damping: 22 }}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M5 12h14M13 5l7 7-7 7" />
+                    </svg>
+                    {productsViewMore}
+                  </motion.a>
+                )}
+              </motion.div>
               {offersBanner && (
                 <motion.p
                   className="producer-banner"
