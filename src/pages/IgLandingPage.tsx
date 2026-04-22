@@ -638,6 +638,23 @@ const ProductsMarquee = ({
                     className="product-card-v2"
                     data-color={o.color_tag}
                     aria-label={`${title} — ${detailsLabel}`}
+                    onMouseMove={(e) => {
+                      const el = e.currentTarget;
+                      const r = el.getBoundingClientRect();
+                      const x = (e.clientX - r.left) / r.width;
+                      const y = (e.clientY - r.top) / r.height;
+                      const rx = (0.5 - y) * 10; // tilt X
+                      const ry = (x - 0.5) * 12; // tilt Y
+                      el.style.setProperty("--rx", `${rx}deg`);
+                      el.style.setProperty("--ry", `${ry}deg`);
+                      el.style.setProperty("--mx", `${x * 100}%`);
+                      el.style.setProperty("--my", `${y * 100}%`);
+                    }}
+                    onMouseLeave={(e) => {
+                      const el = e.currentTarget;
+                      el.style.setProperty("--rx", `0deg`);
+                      el.style.setProperty("--ry", `0deg`);
+                    }}
                   >
                     <div className="pcv2-art" data-color={o.color_tag}>
                       {o.image_url ? (
