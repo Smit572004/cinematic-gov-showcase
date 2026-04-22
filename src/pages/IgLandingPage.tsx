@@ -1704,11 +1704,11 @@ body.ig-page-body::before {
 }
 .ig-page .hn-logo:hover { transform: scale(1.06); }
 .ig-page .hn-divider {
-  width: 1px; height: 20px; background: rgba(255, 255, 255, 0.14);
-  margin: 0 4px;
+  display: none;
 }
 .ig-page .hn-links {
-  position: relative;
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
   display: flex; align-items: center; gap: 2px;
 }
 .ig-page .hn-indicator {
