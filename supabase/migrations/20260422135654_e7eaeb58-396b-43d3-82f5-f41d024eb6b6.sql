@@ -1,0 +1,1 @@
+UPDATE public.site_content SET value_de='Produkte ansehen', value_en='View products' WHERE content_key='ig_hero_cta_primary';
