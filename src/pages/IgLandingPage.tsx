@@ -132,6 +132,9 @@ const IgLandingPage = () => {
           </svg>
 
           <div className="hero-content reveal">
+            <a href="/" className="hero-logo" aria-label="TinPlant Startseite">
+              <img src={logoWhite} alt="TinPlant" />
+            </a>
             <span className="eyebrow">
               <span className="eb-dot" /> Direkt vom Erzeuger · Magdeburg
             </span>
