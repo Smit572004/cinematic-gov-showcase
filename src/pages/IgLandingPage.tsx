@@ -259,8 +259,13 @@ const IgLandingPage = () => {
   /* Resolved content shortcuts */
   const heroPhoto = pick(content, "ig_hero_image_url", "de", "/ig-hero.jpg");
   const heroEyebrow = pick(content, "ig_hero_eyebrow", lang, "Direkt vom Erzeuger · Magdeburg");
-  const heroTitleA = pick(content, "ig_hero_title_a", lang, "Frische Pflanzen,");
-  const heroTitleB = pick(content, "ig_hero_title_b", lang, "direkt aus dem Gewächshaus");
+  const heroTitleA = pick(content, "ig_hero_title_a", lang, "Frische Pflanzen direkt");
+  const heroTitleB = pick(
+    content,
+    "ig_hero_title_b",
+    lang,
+    lang === "de" ? "vom Erzeuger – {{nur 15 Minuten}} von Magdeburg" : "from the grower — {{just 15 minutes}} from Magdeburg",
+  );
   const heroLead = pick(
     content,
     "ig_hero_lead",
