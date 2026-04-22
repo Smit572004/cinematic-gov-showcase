@@ -509,13 +509,11 @@ const ProductsMarquee = ({
   offers,
   lang,
   onSelect,
-  onBuy,
   ariaLabel,
 }: {
   offers: IgOffer[];
   lang: LangKey;
   onSelect: (o: IgOffer) => void;
-  onBuy: (o: IgOffer) => void;
   ariaLabel: string;
 }) => {
   const trackRef = useRef<HTMLDivElement | null>(null);
@@ -640,11 +638,11 @@ const ProductsMarquee = ({
                     role={dup === 0 ? "button" : undefined}
                     tabIndex={dup === 0 ? 0 : -1}
                     aria-label={`${title} — ${ctaLabel}`}
-                    onClick={() => { if (dup === 0) onBuy(o); }}
+                    onClick={() => { if (dup === 0) onSelect(o); }}
                     onKeyDown={(e) => {
                       if (dup === 0 && (e.key === "Enter" || e.key === " ")) {
                         e.preventDefault();
-                        onBuy(o);
+                        onSelect(o);
                       }
                     }}
                     onMouseMove={(e) => {
@@ -759,22 +757,7 @@ const IgLandingPage = () => {
 
   // Selected product for details modal
   const [selectedProduct, setSelectedProduct] = useState<IgOffer | null>(null);
-  const [buyOffer, setBuyOffer] = useState<IgOffer | null>(null);
 
-  // Lock body scroll + Escape close for buy modal
-  useEffect(() => {
-    if (!buyOffer) return;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setBuyOffer(null);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = prevOverflow;
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [buyOffer]);
   const [pdfOpen, setPdfOpen] = useState(false);
 
   // Lock body scroll + Escape close for PDF modal
@@ -1297,7 +1280,6 @@ const IgLandingPage = () => {
                 offers={activeOffers}
                 lang={lang}
                 onSelect={setSelectedProduct}
-                onBuy={setBuyOffer}
                 ariaLabel={offersTitle}
               />
             </motion.div>
@@ -1514,7 +1496,7 @@ const IgLandingPage = () => {
           .split(/[•\n;]+/)
           .map((s) => s.trim())
           .filter(Boolean);
-        const ctaLabel = lang === "de" ? "Vor Ort kaufen" : "Buy on site";
+        const ctaLabel = lang === "de" ? "Im Laden besuchen" : "Visit our shop";
         return (
           <div
             className="ig-modal"
@@ -1585,67 +1567,7 @@ const IgLandingPage = () => {
         );
       })()}
 
-      {/* ============== BUY (visit shop) MODAL ============== */}
-      {buyOffer && (() => {
-        const o = buyOffer;
-        const title = lang === "de" ? o.title_de : o.title_en || o.title_de;
-        const heading = lang === "de" ? "Vor Ort kaufen" : "Buy on site";
-        const message = lang === "de"
-          ? "Aktuell bieten wir leider keine Online-Bestellung an. Bitte besuche uns direkt im Laden, um diesen Artikel zu kaufen — wir freuen uns auf dich!"
-          : "We're sorry, but we don't offer online orders right now. Please visit our shop in person to purchase this item — we'd love to see you!";
-        const directionsLabel = lang === "de" ? "Wegbeschreibung" : "Get directions";
-        const closeLabel = lang === "de" ? "Schließen" : "Close";
-        return (
-          <div
-            className="ig-modal ig-buy-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-label={heading}
-            onClick={() => setBuyOffer(null)}
-          >
-            <div className="ig-buy-card" onClick={(e) => e.stopPropagation()}>
-              <button
-                type="button"
-                className="ig-buy-close"
-                onClick={() => setBuyOffer(null)}
-                aria-label={closeLabel}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
-              </button>
-              <div className="ig-buy-icon" aria-hidden="true">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 9l1-5h16l1 5" />
-                  <path d="M4 9v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9" />
-                  <path d="M9 21V13h6v8" />
-                </svg>
-              </div>
-              <h3 className="ig-buy-title">{heading}</h3>
-              <p className="ig-buy-product">{title}</p>
-              <p className="ig-buy-message">{message}</p>
-              <div className="ig-buy-actions">
-                <a
-                  href="#location"
-                  className="ig-buy-btn ig-buy-btn-primary"
-                  onClick={() => setBuyOffer(null)}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                    <circle cx="12" cy="10" r="3" />
-                  </svg>
-                  {directionsLabel}
-                </a>
-                <button
-                  type="button"
-                  className="ig-buy-btn ig-buy-btn-ghost"
-                  onClick={() => setBuyOffer(null)}
-                >
-                  {closeLabel}
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-      })()}
+
 
       {/* ============== PDF PREVIEW MODAL ============== */}
       {pdfOpen && (
@@ -3174,105 +3096,6 @@ body.ig-page-body::before {
   .ig-pdf-btn { padding: 7px 11px; font-size: 0.78rem; }
 }
 
-/* ---- Buy (visit shop) modal ---- */
-.ig-buy-modal { padding: 16px; }
-.ig-buy-card {
-  position: relative;
-  width: min(440px, 100%);
-  background: #ffffff;
-  border-radius: 22px;
-  padding: 36px 28px 28px;
-  text-align: center;
-  box-shadow: 0 40px 90px -20px rgba(0,0,0,0.35);
-  animation: igModalRise 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-.ig-buy-close {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 34px;
-  height: 34px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: #f5f5f3;
-  color: #4a4a3e;
-  border: none;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: background 0.18s ease, color 0.18s ease;
-}
-.ig-buy-close:hover { background: #ececec; color: #1a1a1a; }
-.ig-buy-icon {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #f0e4cf, #e6d4b0);
-  color: #2f4a32;
-  border-radius: 999px;
-}
-.ig-buy-title {
-  font-family: 'Fraunces', Georgia, serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin: 0 0 6px;
-  letter-spacing: -0.01em;
-}
-.ig-buy-product {
-  font-size: 0.92rem;
-  color: #c9533a;
-  font-weight: 600;
-  margin: 0 0 14px;
-  letter-spacing: 0.01em;
-}
-.ig-buy-message {
-  font-size: 0.95rem;
-  line-height: 1.55;
-  color: #5a5a52;
-  margin: 0 0 22px;
-}
-.ig-buy-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.ig-buy-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 20px;
-  border-radius: 999px;
-  font-size: 0.92rem;
-  font-weight: 600;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
-  transition: background 0.2s ease, transform 0.2s ease;
-}
-.ig-buy-btn-primary {
-  background: #2f4a32;
-  color: #ffffff;
-}
-.ig-buy-btn-primary:hover {
-  background: #3e6240;
-  transform: translateY(-1px);
-}
-.ig-buy-btn-ghost {
-  background: transparent;
-  color: #6b6b66;
-}
-.ig-buy-btn-ghost:hover {
-  background: #f5f5f3;
-  color: #1a1a1a;
-}
-@media (max-width: 480px) {
-  .ig-buy-card { padding: 30px 22px 22px; border-radius: 18px; }
-  .ig-buy-title { font-size: 1.3rem; }
-}
+
+
 `;
