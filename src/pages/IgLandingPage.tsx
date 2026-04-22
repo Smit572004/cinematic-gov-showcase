@@ -357,7 +357,17 @@ const ProductsMarquee = ({
                     aria-label={`${title} — ${detailsLabel}`}
                   >
                     <div className="pcv2-art" data-color={o.color_tag}>
-                      <span className="pcv2-emoji" aria-hidden="true">{o.emoji}</span>
+                      {o.image_url ? (
+                        <img
+                          src={o.image_url}
+                          alt={title}
+                          className="pcv2-img"
+                          loading="lazy"
+                          draggable={false}
+                        />
+                      ) : (
+                        <span className="pcv2-emoji" aria-hidden="true">{o.emoji}</span>
+                      )}
                       <span className="pcv2-shine" aria-hidden="true" />
                     </div>
                     <div className="pcv2-body">
