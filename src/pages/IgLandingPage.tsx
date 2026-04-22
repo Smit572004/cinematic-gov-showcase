@@ -2661,14 +2661,14 @@ body.ig-page-body::before {
   will-change: transform;
 }
 
-/* Colorful card backgrounds tinted by product type */
-.ig-page .product-card-v2[data-color="tomato"]   { background: linear-gradient(160deg, #fff1ec 0%, #ffffff 55%, #ffe6dc 100%); }
-.ig-page .product-card-v2[data-color="pepper"]   { background: linear-gradient(160deg, #fff5e0 0%, #ffffff 55%, #ffe9c2 100%); }
-.ig-page .product-card-v2[data-color="zucchini"] { background: linear-gradient(160deg, #f1faea 0%, #ffffff 55%, #e2f1ce 100%); }
-.ig-page .product-card-v2[data-color="herb"]     { background: linear-gradient(160deg, #e8f5ec 0%, #ffffff 55%, #d6ecde 100%); }
-.ig-page .product-card-v2[data-color="berry"]    { background: linear-gradient(160deg, #ffeaf2 0%, #ffffff 55%, #ffd4e4 100%); }
+/* Sky / cloud / glass / grass palette — harmonizes with greenhouse backdrop */
+.ig-page .product-card-v2[data-color="tomato"]   { background: linear-gradient(160deg, #f4f9ff 0%, #ffffff 55%, #e6eef7 100%); } /* soft cloud blue */
+.ig-page .product-card-v2[data-color="pepper"]   { background: linear-gradient(160deg, #fff8e6 0%, #ffffff 55%, #fbe9c0 100%); } /* warm sun glow */
+.ig-page .product-card-v2[data-color="zucchini"] { background: linear-gradient(160deg, #effaf0 0%, #ffffff 55%, #d8ecd5 100%); } /* fresh grass */
+.ig-page .product-card-v2[data-color="herb"]     { background: linear-gradient(160deg, #e8f3ec 0%, #ffffff 55%, #cfe3d4 100%); } /* meadow herb */
+.ig-page .product-card-v2[data-color="berry"]    { background: linear-gradient(160deg, #eaf2fb 0%, #ffffff 55%, #cfe0f2 100%); } /* glass-pane blue */
 
-/* Colorful corner glow blob */
+/* Corner glow — sky/grass tinted to match each card */
 .ig-page .product-card-v2::after {
   content: "";
   position: absolute;
@@ -2677,19 +2677,19 @@ body.ig-page-body::before {
   width: 160px;
   height: 160px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(201, 83, 58, 0.28) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(110, 158, 207, 0.32) 0%, transparent 70%); /* default sky */
   filter: blur(20px);
   z-index: 0;
   pointer-events: none;
   transition: transform .8s cubic-bezier(.2,.8,.2,1), opacity .4s ease;
 }
 .ig-page .product-card-v2[data-color="zucchini"]::after,
-.ig-page .product-card-v2[data-color="herb"]::after { background: radial-gradient(circle, rgba(138, 168, 107, 0.32) 0%, transparent 70%); }
-.ig-page .product-card-v2[data-color="pepper"]::after { background: radial-gradient(circle, rgba(217, 154, 78, 0.32) 0%, transparent 70%); }
-.ig-page .product-card-v2[data-color="berry"]::after  { background: radial-gradient(circle, rgba(231, 84, 128, 0.32) 0%, transparent 70%); }
+.ig-page .product-card-v2[data-color="herb"]::after { background: radial-gradient(circle, rgba(125, 168, 110, 0.32) 0%, transparent 70%); }
+.ig-page .product-card-v2[data-color="pepper"]::after { background: radial-gradient(circle, rgba(228, 178, 88, 0.34) 0%, transparent 70%); }
+.ig-page .product-card-v2[data-color="berry"]::after  { background: radial-gradient(circle, rgba(95, 145, 200, 0.34) 0%, transparent 70%); }
 .ig-page .product-card-v2:hover::after { transform: scale(1.25); }
 
-/* Animated gradient ring on hover */
+/* Animated ring — sky → grass → sun spectrum to match the photo */
 .ig-page .product-card-v2::before {
   content: "";
   position: absolute;
@@ -2698,14 +2698,14 @@ body.ig-page-body::before {
   padding: 2px;
   background: conic-gradient(
     from 180deg at 50% 50%,
-    #c9533a, #d99a4e, #8aa86b, #2f4a32, #e75480, #c9533a
+    #6e9ecf, #a9c8e3, #cfe0c4, #7da86e, #2f6b4a, #e4b258, #6e9ecf
   );
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
           mask-composite: exclude;
-  opacity: 0.35;
+  opacity: 0.4;
   transition: opacity .5s ease;
   pointer-events: none;
   z-index: 4;
