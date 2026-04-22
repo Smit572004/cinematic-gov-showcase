@@ -862,6 +862,17 @@ const IgLandingPage = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="products-download-btn"
+                    onClick={(e) => {
+                      // In-app browsers (Instagram, Facebook, some Android WebViews) often
+                      // block target=_blank silently. Try window.open first; if it returns
+                      // null (blocked), fall back to same-tab navigation so the click
+                      // never appears to "do nothing" on mobile.
+                      e.preventDefault();
+                      const win = window.open(productsPdfUrl, "_blank", "noopener,noreferrer");
+                      if (!win || win.closed || typeof win.closed === "undefined") {
+                        window.location.href = productsPdfUrl;
+                      }
+                    }}
                     whileHover={prefersReducedMotion ? undefined : { y: -3 }}
                     whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
                     transition={{ type: "spring", stiffness: 320, damping: 22 }}
