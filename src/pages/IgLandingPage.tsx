@@ -2235,6 +2235,7 @@ body.ig-page-body::before {
   gap: clamp(40px, 5vw, 64px);
   padding-top: clamp(80px, 9vw, 120px);
   padding-bottom: clamp(80px, 9vw, 120px);
+  background: transparent !important; /* let the photo backdrop show through */
 }
 /* Greenhouse photo as the section backdrop */
 .ig-page .products-section::before {
