@@ -923,6 +923,19 @@ const OffersTab = () => {
   const handleNew = () => {
     setEditing({ ...emptyOffer, sort_order: offers.length });
     setIsNew(true);
+    setShowErrors(false);
+  };
+
+  const handleSave = () => {
+    if (!editing) return;
+    setShowErrors(true);
+    const titleOk = editing.title_de.trim().length > 0;
+    const descOk = editing.description_de.trim().length > 0;
+    if (!titleOk || !descOk || validatePrice(editing.price_text) || validateUnit(editing.unit_text)) {
+      toast.error(de ? "Bitte alle Pflichtfelder korrekt ausfüllen" : "Please fix the required fields");
+      return;
+    }
+    saveMutation.mutate(editing);
   };
 
   return (
