@@ -717,9 +717,11 @@ body.ig-page-body::before {
 .ig-page .hn-link.is-active { color: #fff; background: rgba(255, 255, 255, 0.14); }
 .ig-page .hn-link.is-active .hn-dot { background: #cfe9b8; box-shadow: 0 0 0 4px rgba(207, 233, 184, 0.18); }
 @media (max-width: 640px) {
-  .ig-page .hero-nav { top: 12px; gap: 2px; padding: 6px 8px; }
-  .ig-page .hn-link { padding: 8px 10px; font-size: 12px; }
+  .ig-page .hero-nav { top: 12px; gap: 2px; padding: 5px 8px; }
+  .ig-page .hn-link { padding: 7px 9px; font-size: 12px; }
   .ig-page .hn-dot { display: none; }
+  .ig-page .hn-logo img { height: 22px; }
+  .ig-page .hn-divider { height: 18px; margin: 0 2px; }
 }
 .ig-page .eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
