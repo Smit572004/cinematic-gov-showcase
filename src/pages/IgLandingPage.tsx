@@ -720,10 +720,15 @@ body.ig-page-body::before {
 .ig-page .hero-photo-tint {
   position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse at 50% 30%, rgba(47, 74, 50, 0.2) 0%, rgba(32, 34, 28, 0.65) 70%),
-    linear-gradient(180deg, rgba(47, 74, 50, 0.55) 0%, rgba(47, 74, 50, 0.85) 100%);
+    radial-gradient(ellipse at 30% 50%, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.15) 55%, rgba(0, 0, 0, 0) 80%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.10) 0%, rgba(0, 0, 0, 0.55) 100%);
 }
-.ig-page .hero-content { position: relative; z-index: 3; max-width: 820px; text-align: center; margin: 0 auto; padding: 0 12px; }
+.ig-page .hero-content {
+  position: relative; z-index: 3;
+  max-width: 1240px; width: 100%;
+  text-align: left; margin: 0 auto;
+  padding: 0 clamp(20px, 5vw, 64px);
+}
 .ig-page .hero-nav {
   position: fixed; top: 0; left: 0; right: 0; transform: none;
   z-index: 50; display: flex; flex-direction: row; align-items: center;
