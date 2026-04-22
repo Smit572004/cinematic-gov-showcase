@@ -2925,7 +2925,7 @@ body.ig-page-body::before {
   .ig-page .pcv2-art { height: 200px; border-radius: 16px; }
   .ig-page .pcv2-title { font-size: 19px; }
   .ig-page .pcv2-price { font-size: 18px; }
-  .ig-page .pcv2-cta { padding: 10px 14px; font-size: 12px; }
+  .ig-page .pcv2-tap-hint { font-size: 11px; }
 }
 
 /* ============== PRODUCT DETAILS MODAL ============== */
