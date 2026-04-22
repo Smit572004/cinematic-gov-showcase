@@ -675,15 +675,17 @@ const ProductsMarquee = ({
                           className="pcv2-cta"
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (dup === 0) onSelect(o);
+                            if (dup === 0) onBuy(o);
                           }}
                           tabIndex={dup === 1 ? -1 : 0}
-                          aria-label={`${title} — ${detailsLabel}`}
+                          aria-label={`${title} — ${ctaLabel}`}
                         >
-                          <span>{ctaLabel}</span>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <path d="M5 12h14M13 5l7 7-7 7" />
+                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                            <line x1="3" y1="6" x2="21" y2="6" />
+                            <path d="M16 10a4 4 0 0 1-8 0" />
                           </svg>
+                          <span>{ctaLabel}</span>
                         </button>
                       </div>
                     </div>
