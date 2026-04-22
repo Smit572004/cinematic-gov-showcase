@@ -959,8 +959,8 @@ const GalleryTab = () => {
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground font-body">
           {de
-            ? "Bilder im Einblicke-Bereich. „Wide" = volle Breite."
-            : "Images in the Glimpses section. \"Wide\" = full width."}
+            ? 'Bilder im Einblicke-Bereich. „Wide" = volle Breite.'
+            : 'Images in the Glimpses section. "Wide" = full width.'}
         </p>
         <button
           onClick={() => {
