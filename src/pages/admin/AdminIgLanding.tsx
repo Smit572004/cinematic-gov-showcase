@@ -810,6 +810,31 @@ const OffersTab = () => {
   const de = lang === "de";
   const [editing, setEditing] = useState<(Omit<IgOffer, "id"> & { id?: string }) | null>(null);
   const [isNew, setIsNew] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
+
+  // Accepts numbers like "0,88", "12.50", "€0,88", "ab €0.88", "from $5"
+  // At least one digit-group must appear; commas/periods are valid decimal separators.
+  const PRICE_PATTERN = /\d+([.,]\d{1,2})?/;
+  const validatePrice = (raw: string): string | null => {
+    const v = raw.trim();
+    if (!v) return de ? "Preis ist erforderlich" : "Price is required";
+    if (v.length > 40) return de ? "Preis ist zu lang" : "Price is too long";
+    if (!PRICE_PATTERN.test(v))
+      return de
+        ? "Preis muss eine gültige Zahl enthalten (z. B. €0,88)"
+        : "Price must include a valid number (e.g. €0.88)";
+    return null;
+  };
+  const validateUnit = (raw: string): string | null => {
+    const v = raw.trim();
+    if (!v) return de ? "Einheit ist erforderlich" : "Unit is required";
+    if (v.length > 40) return de ? "Einheit ist zu lang (max. 40 Zeichen)" : "Unit is too long (max 40 chars)";
+    return null;
+  };
+
+  const priceError = showErrors && editing ? validatePrice(editing.price_text) : null;
+  const unitError = showErrors && editing ? validateUnit(editing.unit_text) : null;
+
 
   const { data: offers = [], isLoading } = useQuery({
     queryKey: ["admin-ig-offers"],
