@@ -1034,8 +1034,8 @@ const OffersTab = () => {
           </div>
           <div className="flex gap-2 pt-1">
             <button
-              onClick={() => editing && saveMutation.mutate(editing)}
-              disabled={saveMutation.isPending || !editing.title_de.trim()}
+              onClick={handleSave}
+              disabled={saveMutation.isPending}
               className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity"
             >
               <Save size={14} />
@@ -1045,6 +1045,7 @@ const OffersTab = () => {
               onClick={() => {
                 setEditing(null);
                 setIsNew(false);
+                setShowErrors(false);
               }}
               className="flex items-center gap-1.5 px-4 py-2 border border-border rounded-lg text-sm font-body hover:bg-muted transition-colors"
             >
