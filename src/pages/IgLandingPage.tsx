@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import logoWhite from "@/assets/tinplant-logo-white.png";
+import logoColour from "@/assets/tinplant-logo-colour.png";
 
 /** Hours per weekday (0=Sun ... 6=Sat). null = closed. */
 const HOURS: Record<number, { open: number; close: number } | null> = {
