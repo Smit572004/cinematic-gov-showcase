@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
-import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import logoWhite from "@/assets/tinplant-logo-white.png";
 import locationBg from "@/assets/ig-location-bg.jpeg";
-import productsBg from "@/assets/products-bg.jpg";
+
 import { useLanguage } from "@/i18n/LanguageContext";
 import {
   HOUR_KEYS,
@@ -407,123 +407,6 @@ const StickyIgNav = ({
         ))}
       </div>
     </nav>
-  );
-};
-
-/* ---------------- Products parallax backdrop ----------------
-   Subtle cinematic layered backdrop sitting BEHIND the product cards.
-   - 2 soft radial moss glows that drift on scroll (parallax)
-   - A handful of small floating dots with gentle CSS drift
-   - Disabled for prefers-reduced-motion and on small screens (perf)
-*/
-type ParallaxLayerProps = {
-  scrollYProgress: MotionValue<number>;
-  range: [number, number];
-  className: string;
-  style?: React.CSSProperties;
-};
-
-const ParallaxLayer = ({ scrollYProgress, range, className, style }: ParallaxLayerProps) => {
-  const y = useTransform(scrollYProgress, [0, 1], range);
-  return <motion.div className={className} style={{ ...style, y }} aria-hidden="true" />;
-};
-
-type ParticleSpec = {
-  left: string;
-  top: string;
-  size: number;
-  delay: number;
-  dur: number;
-  range: [number, number];
-};
-
-const ParallaxParticle = ({
-  scrollYProgress,
-  spec,
-}: {
-  scrollYProgress: MotionValue<number>;
-  spec: ParticleSpec;
-}) => {
-  const y = useTransform(scrollYProgress, [0, 1], spec.range);
-  return (
-    <motion.div
-      className="products-backdrop-particle-wrap"
-      style={{
-        left: spec.left,
-        top: spec.top,
-        width: spec.size,
-        height: spec.size,
-        y,
-      }}
-      aria-hidden="true"
-    >
-      <div
-        className="products-backdrop-particle"
-        style={{
-          animationDelay: `${spec.delay}s`,
-          animationDuration: `${spec.dur}s`,
-        }}
-      />
-    </motion.div>
-  );
-};
-
-const PARTICLE_SPECS: ParticleSpec[] = [
-  { left: "8%",  top: "18%", size: 10, delay: 0,   dur: 14, range: [-40, 40] },
-  { left: "22%", top: "70%", size: 6,  delay: 2,   dur: 18, range: [60, -60] },
-  { left: "38%", top: "12%", size: 8,  delay: 1,   dur: 16, range: [-30, 30] },
-  { left: "55%", top: "78%", size: 12, delay: 3,   dur: 20, range: [50, -50] },
-  { left: "70%", top: "22%", size: 7,  delay: 0.5, dur: 15, range: [-45, 45] },
-  { left: "84%", top: "60%", size: 9,  delay: 2.5, dur: 17, range: [40, -40] },
-  { left: "92%", top: "30%", size: 5,  delay: 1.5, dur: 19, range: [-25, 25] },
-  { left: "14%", top: "44%", size: 6,  delay: 3.5, dur: 21, range: [30, -30] },
-];
-
-const ProductsParallaxBackdrop = ({
-  sectionRef,
-}: {
-  sectionRef: React.RefObject<HTMLElement>;
-}) => {
-  const prefersReducedMotion = useReducedMotion();
-  const [enabled, setEnabled] = useState(false);
-
-  useEffect(() => {
-    if (prefersReducedMotion) return;
-    const mq = window.matchMedia("(min-width: 768px)");
-    const update = () => setEnabled(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, [prefersReducedMotion]);
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-
-  if (!enabled) return null;
-
-  return (
-    <div className="products-backdrop" aria-hidden="true">
-      <div
-        className="products-backdrop-photo"
-        style={{ backgroundImage: `url(${productsBg})` }}
-      />
-      <div className="products-backdrop-wash" />
-      <ParallaxLayer
-        scrollYProgress={scrollYProgress}
-        range={[-80, 80]}
-        className="products-backdrop-glow products-backdrop-glow--a"
-      />
-      <ParallaxLayer
-        scrollYProgress={scrollYProgress}
-        range={[120, -120]}
-        className="products-backdrop-glow products-backdrop-glow--b"
-      />
-      {PARTICLE_SPECS.map((spec, i) => (
-        <ParallaxParticle key={i} scrollYProgress={scrollYProgress} spec={spec} />
-      ))}
-    </div>
   );
 };
 
