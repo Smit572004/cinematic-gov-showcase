@@ -1816,9 +1816,12 @@ body.ig-page-body::before {
 .ig-page .products-viewport {
   width: 100%;
   overflow: hidden;
+  cursor: grab;
+  touch-action: pan-y;
   -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 80px, #000 calc(100% - 80px), transparent 100%);
           mask-image: linear-gradient(90deg, transparent 0, #000 80px, #000 calc(100% - 80px), transparent 100%);
 }
+.ig-page .products-viewport:active { cursor: grabbing; }
 
 .ig-page .products-track {
   display: flex;
