@@ -25,6 +25,7 @@ const AdminTeam = lazy(() => import("./pages/admin/AdminTeam.tsx"));
 const AdminContent = lazy(() => import("./pages/admin/AdminContent.tsx"));
 const AdminOffers = lazy(() => import("./pages/admin/AdminOffers.tsx"));
 const AdminGallery = lazy(() => import("./pages/admin/AdminGallery.tsx"));
+const AdminIgLanding = lazy(() => import("./pages/admin/AdminIgLanding.tsx"));
 const IgLandingPage = lazy(() => import("./pages/IgLandingPage.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 
@@ -59,6 +60,7 @@ const App = () => (
                   <Route path="/admin/content" element={<AdminContent />} />
                   <Route path="/admin/offers" element={<AdminOffers />} />
                   <Route path="/admin/gallery" element={<AdminGallery />} />
+                  <Route path="/admin/ig-landing" element={<AdminIgLanding />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
