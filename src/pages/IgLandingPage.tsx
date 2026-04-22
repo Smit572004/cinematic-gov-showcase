@@ -1575,6 +1575,68 @@ const IgLandingPage = () => {
         );
       })()}
 
+      {/* ============== BUY (visit shop) MODAL ============== */}
+      {buyOffer && (() => {
+        const o = buyOffer;
+        const title = lang === "de" ? o.title_de : o.title_en || o.title_de;
+        const heading = lang === "de" ? "Vor Ort kaufen" : "Buy on site";
+        const message = lang === "de"
+          ? "Aktuell bieten wir leider keine Online-Bestellung an. Bitte besuche uns direkt im Laden, um diesen Artikel zu kaufen — wir freuen uns auf dich!"
+          : "We're sorry, but we don't offer online orders right now. Please visit our shop in person to purchase this item — we'd love to see you!";
+        const directionsLabel = lang === "de" ? "Wegbeschreibung" : "Get directions";
+        const closeLabel = lang === "de" ? "Schließen" : "Close";
+        return (
+          <div
+            className="ig-modal ig-buy-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label={heading}
+            onClick={() => setBuyOffer(null)}
+          >
+            <div className="ig-buy-card" onClick={(e) => e.stopPropagation()}>
+              <button
+                type="button"
+                className="ig-buy-close"
+                onClick={() => setBuyOffer(null)}
+                aria-label={closeLabel}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
+              </button>
+              <div className="ig-buy-icon" aria-hidden="true">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 9l1-5h16l1 5" />
+                  <path d="M4 9v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9" />
+                  <path d="M9 21V13h6v8" />
+                </svg>
+              </div>
+              <h3 className="ig-buy-title">{heading}</h3>
+              <p className="ig-buy-product">{title}</p>
+              <p className="ig-buy-message">{message}</p>
+              <div className="ig-buy-actions">
+                <a
+                  href="#location"
+                  className="ig-buy-btn ig-buy-btn-primary"
+                  onClick={() => setBuyOffer(null)}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  {directionsLabel}
+                </a>
+                <button
+                  type="button"
+                  className="ig-buy-btn ig-buy-btn-ghost"
+                  onClick={() => setBuyOffer(null)}
+                >
+                  {closeLabel}
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* ============== PDF PREVIEW MODAL ============== */}
       {pdfOpen && (
         <div
