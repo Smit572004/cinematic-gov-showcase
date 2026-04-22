@@ -2890,24 +2890,23 @@ body.ig-page-body::before {
   gap: 10px;
   border-top: 0;
 }
-/* PRICE PILL — fresh emerald → teal gradient */
-/* PRICE PILL — emerald→teal gradient, readable on every card tint */
+/* PRICE PILL — sky-blue → grass-green gradient, matches greenhouse photo */
 .ig-page .pcv2-price-wrap {
   position: relative;
   display: inline-flex;
   align-items: baseline;
   gap: 6px;
   background:
-    linear-gradient(135deg, #14533a 0%, #1f6b4a 35%, #2f9e6a 70%, #4ec9a4 100%);
+    linear-gradient(135deg, #1d4f7a 0%, #3b7fb5 35%, #5fa386 70%, #7fbf6a 100%);
   padding: 9px 16px;
   border-radius: 999px;
   /* Crisp dark outline + soft white halo isolate the pill from any card color */
-  border: 1px solid rgba(10, 40, 28, 0.55);
+  border: 1px solid rgba(15, 40, 60, 0.55);
   box-shadow:
     0 0 0 2px rgba(255, 255, 255, 0.85),
     0 1px 0 rgba(255, 255, 255, 0.4) inset,
     0 -1px 0 rgba(0, 0, 0, 0.18) inset,
-    0 10px 22px -10px rgba(10, 40, 28, 0.55);
+    0 10px 22px -10px rgba(15, 50, 80, 0.55);
   isolation: isolate;
 }
 .ig-page .pcv2-price {
