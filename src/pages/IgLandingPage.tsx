@@ -2152,7 +2152,7 @@ body.ig-page-body::before {
 
 .ig-page .pcv2-art {
   position: relative;
-  height: 168px;
+  height: 240px;
   display: flex;
   align-items: center;
   justify-content: center;
