@@ -218,6 +218,24 @@ const IgLandingPage = () => {
   const activeOffers = useMemo(() => offers.filter((o) => o.is_active), [offers]);
   const activeGallery = useMemo(() => gallery.filter((g) => g.is_active && g.image_url), [gallery]);
 
+  // Selected product for details modal
+  const [selectedProduct, setSelectedProduct] = useState<IgOffer | null>(null);
+
+  // Lock body scroll when modal is open + close on Escape
+  useEffect(() => {
+    if (!selectedProduct) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedProduct(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [selectedProduct]);
+
   // ---- Page meta ----
   useEffect(() => {
     const prevTitle = document.title;
