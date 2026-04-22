@@ -667,14 +667,20 @@ body.ig-page-body::before {
 }
 .ig-page .hero-content { position: relative; z-index: 3; max-width: 820px; text-align: center; margin: 0 auto; padding: 0 12px; }
 .ig-page .hero-nav {
-  position: absolute; top: 22px; left: 50%; transform: translateX(-50%);
-  z-index: 4; display: flex; flex-direction: row; gap: 6px;
+  position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+  z-index: 50; display: flex; flex-direction: row; gap: 6px;
   padding: 8px 12px; border-radius: 999px;
   background: rgba(20, 32, 22, 0.32);
   backdrop-filter: blur(10px) saturate(140%);
   -webkit-backdrop-filter: blur(10px) saturate(140%);
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  transition: background .3s ease, border-color .3s ease, box-shadow .3s ease, top .3s ease;
+}
+.ig-page .hero-nav.is-scrolled {
+  background: rgba(20, 32, 22, 0.78);
+  border-color: rgba(255, 255, 255, 0.10);
+  box-shadow: 0 14px 48px rgba(0, 0, 0, 0.35);
 }
 .ig-page .hn-link {
   display: flex; align-items: center; gap: 8px;
