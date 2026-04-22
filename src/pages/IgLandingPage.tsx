@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import logoWhite from "@/assets/tinplant-logo-white.png";
+
 import { useLanguage } from "@/i18n/LanguageContext";
 import {
   HOUR_KEYS,
