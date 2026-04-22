@@ -923,38 +923,29 @@ const OffersTab = () => {
           <h3 className="font-display font-bold text-sm">
             {isNew ? (de ? "Neues Angebot" : "New offer") : de ? "Angebot bearbeiten" : "Edit offer"}
           </h3>
-          <div className="grid sm:grid-cols-2 gap-3">
-            <Field label={de ? "Titel (DE) *" : "Title (DE) *"}>
-              <input
-                value={editing.title_de}
-                onChange={(e) => setEditing({ ...editing, title_de: e.target.value })}
-                className="ig-admin-input"
-                placeholder="Tomatenpflanzen"
-              />
-            </Field>
-            <Field label={de ? "Badge (DE)" : "Badge (DE)"}>
-              <input
-                value={editing.badge_de}
-                onChange={(e) => setEditing({ ...editing, badge_de: e.target.value })}
-                className="ig-admin-input"
-                placeholder="Tomaten"
-              />
-            </Field>
-          </div>
-          <Field label={de ? "Beschreibung (DE) *" : "Description (DE) *"}>
-            <textarea
-              value={editing.description_de}
-              rows={2}
-              onChange={(e) => setEditing({ ...editing, description_de: e.target.value })}
-              className="ig-admin-input resize-none"
+          <Field label={de ? "Produktname (DE) *" : "Product name (DE) *"}>
+            <input
+              value={editing.title_de}
+              onChange={(e) => setEditing({ ...editing, title_de: e.target.value })}
+              className="ig-admin-input"
+              placeholder={de ? "Tomatenpflanzen" : "Tomato plants"}
             />
           </Field>
           <OfferImageField
             imageUrl={editing.image_url ?? null}
             onChange={(url) => setEditing({ ...editing, image_url: url })}
           />
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <Field label={de ? "Preis-Text" : "Price text"}>
+          <Field label={de ? "Beschreibung / Details (DE) *" : "Description / Details (DE) *"}>
+            <textarea
+              value={editing.description_de}
+              rows={3}
+              onChange={(e) => setEditing({ ...editing, description_de: e.target.value })}
+              className="ig-admin-input resize-none"
+              placeholder={de ? "Beschreibung und Details des Produkts…" : "Product description and details…"}
+            />
+          </Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label={de ? "Preis" : "Price"}>
               <input
                 value={editing.price_text}
                 onChange={(e) => setEditing({ ...editing, price_text: e.target.value })}
@@ -969,27 +960,6 @@ const OffersTab = () => {
                 className="ig-admin-input"
                 placeholder="/ Stück"
               />
-            </Field>
-            <Field label="Emoji">
-              <input
-                value={editing.emoji}
-                onChange={(e) => setEditing({ ...editing, emoji: e.target.value })}
-                className="ig-admin-input text-center text-lg"
-                maxLength={4}
-              />
-            </Field>
-            <Field label={de ? "Farbe" : "Color"}>
-              <select
-                value={editing.color_tag}
-                onChange={(e) => setEditing({ ...editing, color_tag: e.target.value })}
-                className="ig-admin-input"
-              >
-                {OFFER_COLORS.map((c) => (
-                  <option key={c.value} value={c.value}>
-                    {c.label}
-                  </option>
-                ))}
-              </select>
             </Field>
           </div>
           <div className="grid grid-cols-2 gap-3">
