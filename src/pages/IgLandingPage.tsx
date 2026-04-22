@@ -745,6 +745,22 @@ const IgLandingPage = () => {
 
   // Selected product for details modal
   const [selectedProduct, setSelectedProduct] = useState<IgOffer | null>(null);
+  const [pdfOpen, setPdfOpen] = useState(false);
+
+  // Lock body scroll + Escape close for PDF modal
+  useEffect(() => {
+    if (!pdfOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setPdfOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [pdfOpen]);
 
   // Lock body scroll when modal is open + close on Escape
   useEffect(() => {
