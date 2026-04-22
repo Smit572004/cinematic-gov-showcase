@@ -298,24 +298,6 @@ const IgLandingPage = () => {
             <path d="M8 56 C 18 28, 40 18, 60 6 C 56 30, 38 50, 12 60 Z" fill="currentColor" opacity=".35" />
           </svg>
 
-          <nav className="hero-nav" aria-label={lang === "de" ? "Seitennavigation" : "Page navigation"}>
-            <a href="#ig-main" className="hn-link is-active">
-              <span className="hn-dot" aria-hidden="true" />
-              <span className="hn-label">{lang === "de" ? "Start" : "Home"}</span>
-            </a>
-            <a href="#offers" className="hn-link">
-              <span className="hn-dot" aria-hidden="true" />
-              <span className="hn-label">{lang === "de" ? "Angebote" : "Offers"}</span>
-            </a>
-            <a href="#location" className="hn-link">
-              <span className="hn-dot" aria-hidden="true" />
-              <span className="hn-label">{lang === "de" ? "Standort" : "Location"}</span>
-            </a>
-            <a href="#contact" className="hn-link">
-              <span className="hn-dot" aria-hidden="true" />
-              <span className="hn-label">{lang === "de" ? "Kontakt" : "Contact"}</span>
-            </a>
-          </nav>
 
           <div className="hero-content reveal">
             <span className="eyebrow">
