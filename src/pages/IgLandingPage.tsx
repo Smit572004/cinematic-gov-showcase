@@ -1769,7 +1769,7 @@ body.ig-page-body::before {
 .ig-page .product-card,
 .ig-page .product-card-v2 {
   flex: 0 0 auto;
-  width: clamp(240px, 24vw, 290px);
+  width: clamp(260px, 26vw, 320px);
   margin: 0;
 }
 /* Translate by exactly one row + the inter-row gap so the second
