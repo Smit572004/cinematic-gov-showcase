@@ -78,19 +78,24 @@ const Navbar = () => {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 + index * 0.05 }}
+        className="relative"
       >
         <Link
           to={link.href}
-          className={`relative text-xs font-body font-medium tracking-wide uppercase whitespace-nowrap transition-colors duration-300 group ${
-            isActive ? "text-primary" : "text-muted-foreground hover:text-primary"
+          className={`relative px-3 py-1.5 rounded-full text-xs font-body font-medium tracking-wide uppercase whitespace-nowrap transition-all duration-300 group ${
+            isActive
+              ? "text-primary bg-primary/10"
+              : "text-muted-foreground hover:text-primary hover:bg-primary/5"
           }`}
         >
-          {t(link.key)}
-          <span
-            className={`absolute -bottom-1 left-0 h-[2px] bg-primary transition-all duration-300 ${
-              isActive ? "w-full" : "w-0 group-hover:w-full"
-            }`}
-          />
+          <span className="relative z-10">{t(link.key)}</span>
+          {isActive && (
+            <motion.span
+              layoutId="navbar-active-dot"
+              className="absolute left-1/2 -translate-x-1/2 -bottom-1 w-1 h-1 rounded-full bg-primary"
+              transition={{ type: "spring", stiffness: 380, damping: 30 }}
+            />
+          )}
         </Link>
       </motion.div>
     );
