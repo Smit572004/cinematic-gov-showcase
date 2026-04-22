@@ -42,12 +42,25 @@ const formatHHMM = (s: string): string => {
 
 /* ---------------- Live status badge (data-driven) ---------------- */
 
+type StatusTemplates = {
+  closed: string;
+  openUntil: string; // uses {time}
+  closesIn: string; // uses {minutes}
+  opensToday: string; // uses {time}
+  opensTomorrow: string; // uses {time}
+  opensOn: string; // uses {day} and {time}
+  dayShort: string[]; // Sun..Sat
+};
+
+const fillTemplate = (tpl: string, vars: Record<string, string | number>) =>
+  tpl.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? ""));
+
 const LiveStatusBadge = ({
   hours,
-  lang,
+  templates,
 }: {
   hours: ({ open: string; close: string } | null)[];
-  lang: LangKey;
+  templates: StatusTemplates;
 }) => {
   const [now, setNow] = useState<Date>(() => new Date());
   useEffect(() => {
@@ -63,20 +76,12 @@ const LiveStatusBadge = ({
     minsNow >= minutesFromHHMM(today.open) &&
     minsNow < minutesFromHHMM(today.close);
 
-  const dayNamesDe = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
-  const dayNamesEn = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const dayNames = lang === "de" ? dayNamesDe : dayNamesEn;
-
-  let label = lang === "de" ? "Geschlossen" : "Closed";
+  let label = templates.closed;
   if (isOpen && today) {
     const closeMins = minutesFromHHMM(today.close) - minsNow;
     if (closeMins <= 60)
-      label = lang === "de" ? `Schließt in ${closeMins} Min.` : `Closes in ${closeMins} min`;
-    else
-      label =
-        lang === "de"
-          ? `Geöffnet · bis ${formatHHMM(today.close)}`
-          : `Open · until ${formatHHMM(today.close)}`;
+      label = fillTemplate(templates.closesIn, { minutes: closeMins });
+    else label = fillTemplate(templates.openUntil, { time: formatHHMM(today.close) });
   } else {
     for (let i = 0; i < 7; i++) {
       const next = (day + i) % 7;
@@ -84,18 +89,18 @@ const LiveStatusBadge = ({
       if (!h) continue;
       const openMins = minutesFromHHMM(h.open);
       if (i === 0 && minsNow < openMins) {
-        label =
-          lang === "de"
-            ? `Öffnet heute um ${formatHHMM(h.open)}`
-            : `Opens today at ${formatHHMM(h.open)}`;
+        label = fillTemplate(templates.opensToday, { time: formatHHMM(h.open) });
         break;
       }
       if (i > 0) {
-        const when = i === 1 ? (lang === "de" ? "morgen" : "tomorrow") : dayNames[next];
-        label =
-          lang === "de"
-            ? `Öffnet ${when} um ${formatHHMM(h.open)}`
-            : `Opens ${when} at ${formatHHMM(h.open)}`;
+        if (i === 1) {
+          label = fillTemplate(templates.opensTomorrow, { time: formatHHMM(h.open) });
+        } else {
+          label = fillTemplate(templates.opensOn, {
+            day: templates.dayShort[next] ?? "",
+            time: formatHHMM(h.open),
+          });
+        }
         break;
       }
     }
