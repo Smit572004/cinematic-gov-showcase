@@ -620,24 +620,27 @@ const IgLandingPage = () => {
 
         {/* ============== PRODUCTS ============== */}
         {activeOffers.length > 0 && (
-          <section id="offers" className="snap-section section section-cream">
+          <section id="offers" className="snap-section section section-cream products-section">
+            {/* 1. HEADING */}
             <div className="container">
-              {/* 1. HEADER — always visible, centered above the cards */}
-              <header className="section-head products-head products-head-centered">
-                <h2>{offersTitle}</h2>
-                {offersSubtitle && <p>{offersSubtitle}</p>}
+              <header className="products-header">
+                <h2 className="products-title">{offersTitle}</h2>
+                <span className="products-rule" aria-hidden="true" />
+                {offersSubtitle && <p className="products-sub">{offersSubtitle}</p>}
               </header>
             </div>
 
-            {/* 2. PRODUCT CARDS — auto-scrolling marquee with hover arrows */}
-            <ProductsMarquee
-              offers={activeOffers}
-              lang={lang}
-              onSelect={setSelectedProduct}
-              ariaLabel={offersTitle}
-            />
+            {/* 2. PRODUCT CARDS */}
+            <div className="products-cards-wrap">
+              <ProductsMarquee
+                offers={activeOffers}
+                lang={lang}
+                onSelect={setSelectedProduct}
+                ariaLabel={offersTitle}
+              />
+            </div>
 
-            {/* 3. DOWNLOAD / VIEW MORE BUTTON — always visible */}
+            {/* 3. CENTERED CTA */}
             <div className="container">
               {productsPdfUrl && (
                 <div className="products-cta">
@@ -645,7 +648,7 @@ const IgLandingPage = () => {
                     href={productsPdfUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn btn-primary btn-on-light products-download-btn"
+                    className="products-download-btn"
                     download
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -658,7 +661,7 @@ const IgLandingPage = () => {
                 </div>
               )}
               {offersBanner && (
-                <p className="producer-banner reveal">
+                <p className="producer-banner">
                   <span aria-hidden="true">— </span>{offersBanner}<span aria-hidden="true"> —</span>
                 </p>
               )}
@@ -1373,33 +1376,102 @@ body.ig-page-body::before {
   .ig-page .pm-arrow { display: none; }
 }
 
-/* Products header — always visible (no reveal gating) */
-.ig-page .products-head { opacity: 1 !important; transform: none !important; margin-bottom: 8px; }
+/* ============== PRODUCTS SECTION (pro layout) ============== */
+.ig-page .products-section {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(40px, 5vw, 64px);
+  padding-top: clamp(80px, 9vw, 120px);
+  padding-bottom: clamp(80px, 9vw, 120px);
+}
 
-/* Products download CTA */
-.ig-page .products-cta { display: flex; justify-content: center; margin-top: 28px; opacity: 1; }
-.ig-page .btn.btn-on-light.btn-primary { color: #fff; }
-.ig-page .btn.btn-on-light.btn-primary:hover { color: #fff; }
+/* 1. Heading block — centered, refined, with decorative rule */
+.ig-page .products-header {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+.ig-page .products-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(32px, 4.8vw, 54px);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0;
+  font-weight: 600;
+}
+.ig-page .products-rule {
+  display: block;
+  width: 56px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--moss-2), var(--moss-1));
+  opacity: 0.85;
+}
+.ig-page .products-sub {
+  font-size: clamp(15px, 1.35vw, 17px);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+/* 2. Cards wrapper — provides breathing room around the marquee */
+.ig-page .products-cards-wrap {
+  width: 100%;
+}
+
+/* 3. Centered CTA group */
+.ig-page .products-cta {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  opacity: 1;
+}
 .ig-page .products-download-btn {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 16px 30px;
+  gap: 12px;
+  padding: 17px 34px;
   font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.02em;
   border-radius: 999px;
   background: var(--moss-1);
   color: #fffaf0;
-  box-shadow: 0 18px 40px -16px rgba(47, 74, 50, 0.55);
+  border: 1px solid transparent;
+  text-decoration: none;
+  box-shadow: 0 18px 40px -18px rgba(47, 74, 50, 0.55);
   transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease, background .3s ease;
+  cursor: pointer;
 }
 .ig-page .products-download-btn:hover {
   transform: translateY(-3px);
   background: var(--moss-2);
-  box-shadow: 0 24px 50px -16px rgba(47, 74, 50, 0.7);
+  box-shadow: 0 26px 54px -18px rgba(47, 74, 50, 0.7);
+}
+.ig-page .products-download-btn:focus-visible {
+  outline: 3px solid var(--moss-2);
+  outline-offset: 4px;
 }
 .ig-page .products-download-btn svg { flex-shrink: 0; }
+
+/* Producer banner — sits below CTA */
+.ig-page .products-section .producer-banner {
+  margin-top: 28px;
+  text-align: center;
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-size: 14.5px;
+  color: var(--bark);
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+}
+
 
 
 
