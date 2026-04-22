@@ -1094,6 +1094,7 @@ const OffersTab = () => {
                   onClick={() => {
                     setEditing(offer);
                     setIsNew(false);
+                    setShowErrors(false);
                   }}
                   className="p-2 rounded-lg hover:bg-muted"
                 >
