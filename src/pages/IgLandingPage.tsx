@@ -2396,12 +2396,10 @@ body.ig-page-body::before {
   z-index: 1;
   background:
     linear-gradient(180deg,
-      rgba(225, 236, 245, 0.78) 0%,    /* soft cloud-blue at top */
-      rgba(238, 244, 240, 0.70) 40%,   /* misty mid */
-      rgba(232, 240, 230, 0.78) 75%,   /* hint of grass green */
-      rgba(228, 236, 222, 0.92) 100%); /* settles into the grass tone */
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+      rgba(225, 236, 245, 0.40) 0%,    /* soft cloud-blue at top */
+      rgba(238, 244, 240, 0.30) 40%,   /* misty mid — let photo breathe */
+      rgba(232, 240, 230, 0.40) 75%,   /* hint of grass green */
+      rgba(228, 236, 222, 0.55) 100%); /* settles into the grass tone */
 }
 @keyframes productsBgPan {
   0%   { transform: scale(1.06) translate3d(0, 0, 0); }
