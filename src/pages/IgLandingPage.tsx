@@ -1,13 +1,12 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Instagram Landing Page — React port of the original public/ig.html.
- * Self-contained (no Navbar/Footer), scoped CSS via a unique root class so
- * styles don't leak into the rest of the app, and now fully editable via
- * Visual Edits.
+ * Instagram Landing Page — Earthy & Natural redesign.
+ * Story-style snap-scroll sections, warm green/beige palette, organic shapes,
+ * hand-drawn touches. All content (offers, gallery, location, footer) is
+ * preserved from the previous version.
  */
 const IgLandingPage = () => {
-  const mainVisible = true;
   const heroRef = useRef<HTMLElement | null>(null);
 
   // ---- Page meta + body class for scoped background ----
@@ -21,197 +20,31 @@ const IgLandingPage = () => {
     };
   }, []);
 
-  // ---- Cinematic effects: reveals, word splits, parallax, tilt, aurora ----
+  // ---- Reveal-on-scroll observer (no parallax / no orbs anymore) ----
   useEffect(() => {
-    if (!mainVisible) return;
-
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // Staggered reveal
     const io = new IntersectionObserver(
       (entries) => {
-        const groups = new Map<Element, Element[]>();
         entries.forEach((e) => {
-          if (!e.isIntersecting) return;
-          const parent = e.target.parentElement || document.body;
-          if (!groups.has(parent)) groups.set(parent, []);
-          groups.get(parent)!.push(e.target);
-        });
-        groups.forEach((els) => {
-          els.forEach((el, i) => {
-            const base = parseInt((el as HTMLElement).dataset.delay || "0", 10);
-            (el as HTMLElement).style.setProperty("--d", base + i * 110 + "ms");
-            el.classList.add("in");
-            io.unobserve(el);
-          });
+          if (e.isIntersecting) {
+            (e.target as HTMLElement).classList.add("in");
+            io.unobserve(e.target);
+          }
         });
       },
-      { threshold: 0.14, rootMargin: "0px 0px -8% 0px" }
+      { threshold: 0.18, rootMargin: "0px 0px -8% 0px" }
     );
     document.querySelectorAll(".ig-page .reveal").forEach((el) => io.observe(el));
 
-    // Word splitting for [data-words] headings
-    document.querySelectorAll<HTMLElement>(".ig-page [data-words]").forEach((h) => {
-      if (h.dataset.split === "1") return;
-      h.dataset.split = "1";
-      const wrap = document.createElement("span");
-      wrap.className = "word-reveal";
-      const frag = document.createDocumentFragment();
-      let wi = 0;
-      const stagger = 70;
-      Array.from(h.childNodes).forEach((node) => {
-        if (node.nodeType === Node.TEXT_NODE) {
-          (node.textContent || "").split(/(\s+)/).forEach((part) => {
-            if (!part) return;
-            if (/^\s+$/.test(part)) {
-              frag.appendChild(document.createTextNode(part));
-              return;
-            }
-            const s = document.createElement("span");
-            s.className = "w";
-            s.style.setProperty("--wd", wi * stagger + "ms");
-            s.textContent = part;
-            frag.appendChild(s);
-            wi++;
-          });
-        } else if (node.nodeType === Node.ELEMENT_NODE) {
-          const s = document.createElement("span");
-          s.className = "w";
-          s.style.setProperty("--wd", wi * stagger + "ms");
-          s.appendChild(node.cloneNode(true));
-          frag.appendChild(s);
-          wi++;
-        }
-      });
-      wrap.appendChild(frag);
-      h.innerHTML = "";
-      h.appendChild(wrap);
-      const wordIO = new IntersectionObserver(
-        (es) => {
-          es.forEach((e) => {
-            if (e.isIntersecting) {
-              wrap.classList.add("in");
-              wordIO.unobserve(h);
-            }
-          });
-        },
-        { threshold: 0.2 }
-      );
-      wordIO.observe(h);
-    });
-
-    // Hero parallax
-    const hero = heroRef.current;
-    const heroInner = hero?.querySelector<HTMLElement>(".hero-inner") || null;
-    const orbs = hero ? hero.querySelectorAll<HTMLElement>(".orb") : ([] as unknown as NodeListOf<HTMLElement>);
-    const layers = hero
-      ? hero.querySelectorAll<HTMLElement>("[data-layer]")
-      : ([] as unknown as NodeListOf<HTMLElement>);
-    let scrolling = false;
-    const onScroll = () => {
-      if (scrolling || reduce) return;
-      scrolling = true;
-      requestAnimationFrame(() => {
-        const y = window.scrollY;
-        const h = window.innerHeight;
-        const t = Math.min(y / h, 1.2);
-        if (hero) hero.style.setProperty("--py", `${-y * 0.18}px`);
-        orbs.forEach((o) => {
-          const d = parseFloat(o.dataset.depth || "0.05");
-          o.style.transform = `translate3d(${y * d * 0.4}px, ${-y * d}px, 0) scale(${1 + t * 0.05})`;
-        });
-        if (heroInner) heroInner.style.transform = `translate3d(0, ${y * 0.12}px, 0)`;
-        layers.forEach((el) => {
-          const l = parseFloat(el.dataset.layer || "0.4");
-          el.style.opacity = String(Math.max(0, 1 - t * (0.5 + l * 0.5)));
-        });
-        scrolling = false;
-      });
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-
-    // Inject the scoped ::before transform style (only once)
-    let injectedStyle: HTMLStyleElement | null = null;
-    if (!reduce) {
-      injectedStyle = document.createElement("style");
-      injectedStyle.textContent = `.ig-page .hero::before { transform: translate3d(0, var(--py, 0px), 0) scale(1.12); }`;
-      document.head.appendChild(injectedStyle);
+    // Subtle leaf drift on hero — pure CSS handles motion;
+    // we just attach a will-change hint when not reduced-motion.
+    if (!reduce && heroRef.current) {
+      heroRef.current.classList.add("hero-anim");
     }
 
-    // 3D pointer tilt (desktop)
-    const isCoarse = window.matchMedia("(pointer: coarse)").matches;
-    const tiltCleanups: Array<() => void> = [];
-    if (!reduce && !isCoarse) {
-      document.querySelectorAll<HTMLElement>(".ig-page [data-tilt]").forEach((el) => {
-        let raf = 0;
-        const move = (ev: PointerEvent) => {
-          const r = el.getBoundingClientRect();
-          const x = (ev.clientX - r.left) / r.width;
-          const y = (ev.clientY - r.top) / r.height;
-          const rx = (0.5 - y) * 10;
-          const ry = (x - 0.5) * 12;
-          cancelAnimationFrame(raf);
-          raf = requestAnimationFrame(() => {
-            el.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-6px)`;
-            el.style.setProperty("--mx", x * 100 + "%");
-            el.style.setProperty("--my", y * 100 + "%");
-          });
-        };
-        const leave = () => {
-          el.style.transform = "";
-        };
-        el.addEventListener("pointermove", move);
-        el.addEventListener("pointerleave", leave);
-        tiltCleanups.push(() => {
-          el.removeEventListener("pointermove", move);
-          el.removeEventListener("pointerleave", leave);
-        });
-      });
-    }
-
-    // Mobile subtle tilt on scroll
-    let mobileTilt: IntersectionObserver | null = null;
-    if (!reduce && isCoarse) {
-      mobileTilt = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((e) => {
-            if (!e.isIntersecting) return;
-            const r = e.target.getBoundingClientRect();
-            const center = window.innerHeight / 2;
-            const offset = (r.top + r.height / 2 - center) / center;
-            (e.target as HTMLElement).style.transform = `perspective(900px) rotateX(${offset * 4}deg)`;
-          });
-        },
-        { threshold: Array.from({ length: 11 }, (_, i) => i / 10) }
-      );
-      document.querySelectorAll(".ig-page .card").forEach((c) => mobileTilt!.observe(c));
-    }
-
-    // Aurora light follows scroll
-    let aurRaf = 0;
-    const auroraScroll = () => {
-      cancelAnimationFrame(aurRaf);
-      aurRaf = requestAnimationFrame(() => {
-        const p = Math.min(
-          1,
-          window.scrollY / Math.max(1, document.body.scrollHeight - window.innerHeight)
-        );
-        document.body.style.setProperty("--aur-x", 20 + p * 60 + "%");
-        document.body.style.setProperty("--aur-y", 15 + p * 70 + "%");
-      });
-    };
-    if (!reduce) window.addEventListener("scroll", auroraScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("scroll", auroraScroll);
-      io.disconnect();
-      mobileTilt?.disconnect();
-      tiltCleanups.forEach((fn) => fn());
-      if (injectedStyle && injectedStyle.parentNode) injectedStyle.parentNode.removeChild(injectedStyle);
-    };
-  }, [mainVisible]);
+    return () => io.disconnect();
+  }, []);
 
   const year = new Date().getFullYear();
 
@@ -219,645 +52,778 @@ const IgLandingPage = () => {
     <>
       <style>{IG_STYLES}</style>
 
-      {mainVisible && (
-        <main className="ig-page" id="ig-main">
-          {/* HERO */}
-          <section className="hero" data-parallax ref={heroRef}>
-            {/* Cinematic letterbox bars */}
-            <div className="cine-bar cine-bar-top" aria-hidden="true"></div>
-            <div className="cine-bar cine-bar-bottom" aria-hidden="true"></div>
-            {/* Film grain overlay */}
-            <div className="film-grain" aria-hidden="true"></div>
-            {/* Subtle vignette */}
-            <div className="hero-vignette" aria-hidden="true"></div>
+      <main className="ig-page" id="ig-main">
+        {/* ============== HERO ============== */}
+        <section className="snap-section hero" ref={heroRef}>
+          <div className="hero-photo" aria-hidden="true" />
+          <div className="hero-photo-tint" aria-hidden="true" />
 
-            <span className="orb o1" data-depth="0.05"></span>
-            <span className="orb o2" data-depth="0.09"></span>
-            <span className="orb o3" data-depth="0.07"></span>
-            <div className="hero-inner">
-              <span className="eyebrow reveal reveal-blur" data-layer="0.4">
-                <span className="dot"></span> Direkt vom Erzeuger · Magdeburg
+          {/* Floating leaves */}
+          <svg className="leaf leaf-1" viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M8 56 C 18 28, 40 18, 60 6 C 56 30, 38 50, 12 60 Z" fill="currentColor" opacity=".55" />
+            <path d="M14 54 C 28 38, 44 26, 58 12" stroke="rgba(0,0,0,.15)" strokeWidth="1.4" fill="none" />
+          </svg>
+          <svg className="leaf leaf-2" viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M8 56 C 18 28, 40 18, 60 6 C 56 30, 38 50, 12 60 Z" fill="currentColor" opacity=".45" />
+          </svg>
+          <svg className="leaf leaf-3" viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M8 56 C 18 28, 40 18, 60 6 C 56 30, 38 50, 12 60 Z" fill="currentColor" opacity=".35" />
+          </svg>
+
+          <div className="hero-content reveal">
+            <span className="eyebrow">
+              <span className="eb-dot" /> Direkt vom Erzeuger · Magdeburg
+            </span>
+            <h1>
+              Frische Pflanzen,
+              <br />
+              <span className="hand-underline">
+                direkt aus dem Gewächshaus
+                <svg viewBox="0 0 300 12" preserveAspectRatio="none" aria-hidden="true">
+                  <path
+                    d="M2 8 C 60 2, 130 12, 200 6 C 240 2, 280 8, 298 4"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                  />
+                </svg>
               </span>
-              <h1 className="reveal reveal-blur" data-layer="0.8" data-words>
-                Frische Pflanzen direkt vom Erzeuger –{" "}
-                <span className="accent">nur 15 Minuten</span> von Magdeburg
-              </h1>
-              <p className="lead reveal" data-layer="0.5">
-                Bessere Qualität. Bessere Preise. Direkt aus dem Gewächshaus.
+            </h1>
+            <p className="lead">
+              Bessere Qualität. Faire Preise. Nur 15 Minuten von Magdeburg —
+              gewachsen, nicht gehandelt.
+            </p>
+            <div className="cta-row">
+              <a href="#offers" className="btn btn-primary">
+                Angebote ansehen
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
+              </a>
+              <a href="#location" className="btn btn-ghost">So findest du uns</a>
+            </div>
+          </div>
+
+          {/* Hand-drawn arrow scroll hint */}
+          <a href="#offers" className="scroll-hint" aria-label="Weiter scrollen">
+            <span>weiterlesen</span>
+            <svg width="22" height="34" viewBox="0 0 22 34" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M11 2 C 14 12, 8 22, 11 32" />
+              <path d="M5 26 L 11 32 L 17 26" />
+            </svg>
+          </a>
+
+          {/* Organic divider */}
+          <svg className="divider-bottom" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 50 C 240 90, 480 10, 720 40 C 960 70, 1200 20, 1440 50 L 1440 80 L 0 80 Z" fill="var(--cream)" />
+          </svg>
+        </section>
+
+        {/* ============== OFFERS ============== */}
+        <section id="offers" className="snap-section section section-cream">
+          <div className="container">
+            <div className="section-head reveal">
+              <span className="section-tag">
+                <span className="tag-leaf" aria-hidden="true">🌱</span> Saisonangebote
+              </span>
+              <h2>Erzeugerpreise — direkt zu dir</h2>
+              <p>Faire Preise statt Großhandel. Eine kleine Auswahl unserer Saisonpflanzen.</p>
+            </div>
+            <div className="grid">
+              <article className="card reveal">
+                <div className="card-illust" data-color="tomato">
+                  <span className="illust-emoji" aria-hidden="true">🍅</span>
+                </div>
+                <span className="badge">Tomaten</span>
+                <h3>Tomatenpflanzen</h3>
+                <p className="desc">Veredelte und samenechte Sorten — kräftige Jungpflanzen.</p>
+                <div className="price-row">
+                  <span className="price">ab €0,88</span>
+                  <span className="price-unit">/ Stück</span>
+                </div>
+              </article>
+              <article className="card reveal">
+                <div className="card-illust" data-color="pepper">
+                  <span className="illust-emoji" aria-hidden="true">🌶️</span>
+                </div>
+                <span className="badge">Paprika</span>
+                <h3>Paprikapflanzen</h3>
+                <p className="desc">Süß und scharf — handverlesen, im Gewächshaus aufgezogen.</p>
+                <div className="price-row">
+                  <span className="price">€1,20</span>
+                  <span className="price-unit">/ Stück</span>
+                </div>
+              </article>
+              <article className="card reveal">
+                <div className="card-illust" data-color="zucchini">
+                  <span className="illust-emoji" aria-hidden="true">🥒</span>
+                </div>
+                <span className="badge">Zucchini</span>
+                <h3>Zucchini</h3>
+                <p className="desc">Robust, ertragreich und perfekt für Garten oder Hochbeet.</p>
+                <div className="price-row">
+                  <span className="price">€1,25</span>
+                  <span className="price-unit">/ Stück</span>
+                </div>
+              </article>
+            </div>
+            <p className="producer-banner reveal">
+              <span aria-hidden="true">— </span>Direkt vom Erzeuger · keine Zwischenhändler<span aria-hidden="true"> —</span>
+            </p>
+          </div>
+        </section>
+
+        {/* ============== GALLERY ============== */}
+        <section className="snap-section section section-moss">
+          <div className="container">
+            <div className="section-head reveal">
+              <span className="section-tag light">
+                <span className="tag-leaf" aria-hidden="true">📸</span> Einblicke
+              </span>
+              <h2 className="on-dark">Aus dem Gewächshaus</h2>
+              <p className="on-dark-soft">
+                Echte Fotos. Echte Pflanzen. Gewachsen mit Sorgfalt vor deiner Haustür.
               </p>
-              <div className="cta-row reveal reveal-zoom" data-layer="0.3">
-                <a href="#offers" className="btn btn-primary">
-                  Angebote ansehen →
-                </a>
-                <a href="#location" className="btn btn-ghost">
-                  So findest du uns
-                </a>
-              </div>
             </div>
-            <a href="#offers" className="scroll-hint" aria-label="Nach unten scrollen">
-              <span className="mouse" aria-hidden="true">
-                <span className="wheel"></span>
+            <div className="gallery">
+              <figure className="tile wide reveal">
+                <img loading="lazy" src="/ig-seedlings.jpg" alt="Bunte Jungpflanzen im Gewächshaus" />
+              </figure>
+              <figure className="tile reveal">
+                <img loading="lazy" src="/ig-pansies.jpg" alt="Blühende Stiefmütterchen in vielen Farben" />
+              </figure>
+              <figure className="tile reveal">
+                <img loading="lazy" src="/ig-flowers.jpg" alt="Petunien und Husarenknopf" />
+              </figure>
+            </div>
+          </div>
+        </section>
+
+        {/* ============== HOURS + LOCATION ============== */}
+        <section id="location" className="snap-section section section-sand">
+          <div className="container">
+            <div className="section-head reveal">
+              <span className="section-tag">
+                <span className="tag-leaf" aria-hidden="true">📍</span> Besuch uns
               </span>
-              <span className="scroll-label">scroll</span>
-              <svg className="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </a>
-          </section>
-
-          {/* OFFERS */}
-          <section id="offers" className="offers-bg section-zoom reveal">
-            <div className="container">
-              <div className="section-head reveal">
-                <span className="section-tag">Angebote</span>
-                <h2>Erzeugerpreise — direkt zu dir</h2>
-                <p>Faire Preise statt Großhandel. Hier kommt eine kleine Auswahl unserer Saisonpflanzen.</p>
-              </div>
-              <div className="grid">
-                <div className="card reveal reveal-zoom tilt" data-tilt>
-                  <span className="shine"></span>
-                  <span className="badge">Tomaten</span>
-                  <h3>Tomatenpflanzen</h3>
-                  <p className="desc">Veredelte und samenechte Sorten — kräftige Jungpflanzen.</p>
-                  <div className="price">
-                    ab €0,88<small>/ Stück</small>
-                  </div>
-                </div>
-                <div className="card reveal reveal-zoom tilt" data-tilt>
-                  <span className="shine"></span>
-                  <span className="badge">Paprika</span>
-                  <h3>Paprikapflanzen</h3>
-                  <p className="desc">Süß und scharf — handverlesen, im Gewächshaus aufgezogen.</p>
-                  <div className="price">
-                    €1,20<small>/ Stück</small>
-                  </div>
-                </div>
-                <div className="card reveal reveal-zoom tilt" data-tilt>
-                  <span className="shine"></span>
-                  <span className="badge">Zucchini</span>
-                  <h3>Zucchini</h3>
-                  <p className="desc">Robust, ertragreich und perfekt für Garten oder Hochbeet.</p>
-                  <div className="price">
-                    €1,25<small>/ Stück</small>
-                  </div>
-                </div>
-              </div>
-              <p className="producer-banner reveal">— Direkt vom Erzeuger — keine Zwischenhändler —</p>
+              <h2>Öffnungszeiten & Standort</h2>
+              <p>Komm vorbei — wir freuen uns auf dich im Gewächshaus.</p>
             </div>
-          </section>
-
-          {/* GALLERY */}
-          <section className="section-zoom reveal">
-            <div className="container">
-              <div className="section-head reveal">
-                <span className="section-tag">Einblicke</span>
-                <h2>Aus dem Gewächshaus</h2>
+            <div className="split">
+              <div className="panel hours-panel reveal">
+                <h3>Öffnungszeiten</h3>
+                <ul className="hours-list">
+                  <li><span className="day">Montag</span><span className="time">9:00 – 18:00</span></li>
+                  <li><span className="day">Dienstag</span><span className="time">9:00 – 18:00</span></li>
+                  <li><span className="day">Mittwoch</span><span className="time">9:00 – 18:00</span></li>
+                  <li><span className="day">Donnerstag</span><span className="time">9:00 – 18:00</span></li>
+                  <li><span className="day">Freitag</span><span className="time">9:00 – 18:00</span></li>
+                  <li><span className="day">Samstag</span><span className="time">9:00 – 18:00</span></li>
+                  <li className="closed"><span className="day">Sonntag</span><span className="time">Geschlossen</span></li>
+                </ul>
               </div>
-              <div className="gallery">
-                <div className="tile wide reveal reveal-zoom">
-                  <img loading="lazy" src="/ig-seedlings.jpg" alt="Bunte Jungpflanzen im Gewächshaus" />
-                </div>
-                <div className="tile reveal reveal-left">
-                  <img loading="lazy" src="/ig-pansies.jpg" alt="Blühende Stiefmütterchen in vielen Farben" />
-                </div>
-                <div className="tile reveal reveal-right">
-                  <img loading="lazy" src="/ig-flowers.jpg" alt="Petunien und Husarenknopf" />
+              <div className="panel address-panel reveal">
+                <h3>So findest du uns</h3>
+                <p className="address">
+                  <strong>TinPlant Gewächshaus</strong>
+                  Magdeburger Landstraße 33<br />
+                  39164 Wanzleben-Börde
+                </p>
+                <div className="map-wrap">
+                  <iframe
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    src="https://www.google.com/maps?q=Magdeburger+Landstra%C3%9Fe+33,+39164+Wanzleben-B%C3%B6rde&output=embed"
+                    title="Standort auf Google Maps"
+                  />
                 </div>
               </div>
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* HOURS + LOCATION */}
-          <section id="location" className="location-bg section-zoom reveal">
-            <div className="container">
-              <div className="section-head reveal">
-                <span className="section-tag">Besuch uns</span>
-                <h2>Öffnungszeiten & Standort</h2>
-              </div>
-              <div className="split">
-                <div className="panel reveal">
-                  <h3>Öffnungszeiten</h3>
-                  <ul className="hours-list">
-                    <li><span className="day">Montag</span><span className="time">9:00 – 18:00</span></li>
-                    <li><span className="day">Dienstag</span><span className="time">9:00 – 18:00</span></li>
-                    <li><span className="day">Mittwoch</span><span className="time">9:00 – 18:00</span></li>
-                    <li><span className="day">Donnerstag</span><span className="time">9:00 – 18:00</span></li>
-                    <li><span className="day">Freitag</span><span className="time">9:00 – 18:00</span></li>
-                    <li><span className="day">Samstag</span><span className="time">9:00 – 18:00</span></li>
-                    <li className="closed"><span className="day">Sonntag</span><span className="time">Geschlossen</span></li>
-                  </ul>
-                </div>
-                <div className="panel reveal">
-                  <h3>So findest du uns</h3>
-                  <p className="address">
-                    <strong>TinPlant Gewächshaus</strong>
-                    Magdeburger Landstraße 33<br />
-                    39164 Wanzleben-Börde
-                  </p>
-                  <div className="map-wrap">
-                    <iframe
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                      src="https://www.google.com/maps?q=Magdeburger+Landstra%C3%9Fe+33,+39164+Wanzleben-B%C3%B6rde&output=embed"
-                      title="Standort auf Google Maps"
-                    ></iframe>
-                  </div>
-                </div>
-              </div>
+        {/* ============== FOOTER ============== */}
+        <footer className="ig-footer">
+          <div className="container footer-grid">
+            <div className="footer-brand">
+              <div className="logo">TinPlant <span aria-hidden="true">🌱</span></div>
+              <p className="tagline">Direkt vom Erzeuger — gewachsen mit Sorgfalt.</p>
             </div>
-          </section>
-
-          {/* FOOTER */}
-          <footer>
-            <div className="logo">TinPlant 🌱</div>
-            <div className="contact">
-              Magdeburger Landstraße 33 · 39164 Wanzleben-Börde<br />
+            <div className="footer-contact">
+              <p>Magdeburger Landstraße 33<br />39164 Wanzleben-Börde</p>
               <a href="tel:+4900000000000">+49 (0) 0000 000 000</a>
             </div>
-            <div className="copy">© {year} TinPlant — Direkt vom Erzeuger</div>
-          </footer>
-        </main>
-      )}
+            <div className="footer-copy">© {year} TinPlant</div>
+          </div>
+        </footer>
+      </main>
     </>
   );
 };
 
 export default IgLandingPage;
 
-/* ---- Scoped CSS for the IG landing page (everything under .ig-page) ---- */
+/* ---- Scoped CSS (everything under .ig-page) ---- */
 const IG_STYLES = `
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap');
 
 .ig-page {
-  --bg-1: #fffdf8; --bg-2: #fff5ec; --bg-3: #fdeef7; --cream: #ffffff;
-  --ink: #1a1530; --ink-soft: #4a3f5e; --ink-mute: #7a6f8a;
-  --yellow: #ffd233; --yellow-soft: #fff0a8; --orange: #ff8a3d; --orange-soft: #ffc9a3;
-  --pink: #ff6fae; --pink-soft: #ffc4dd; --red: #ff5a5a; --red-soft: #ffb3b3;
-  --purple: #b67aff; --purple-soft: #e0c8ff; --green: #4ec57a; --green-soft: #b8f0c8;
-  --teal: #2dd4bf; --teal-soft: #a8f0e8;
-  --soft: rgba(255,255,255,0.65); --line: rgba(26,21,48,0.08); --line-strong: rgba(26,21,48,0.14);
-  --shadow: 0 24px 60px -22px rgba(182,122,255,.35);
-  --shadow-soft: 0 14px 40px -18px rgba(255,111,174,.3);
+  /* Earthy / natural palette */
+  --cream: #f7f1e3;
+  --cream-2: #efe6d2;
+  --sand: #e8dcc1;
+  --moss-1: #2f4a32;
+  --moss-2: #3e6240;
+  --moss-3: #5b7d52;
+  --leaf: #8aa86b;
+  --bark: #5a4632;
+  --bark-soft: #8a6f54;
+  --ink: #20221c;
+  --ink-soft: #4a4a3e;
+  --ink-mute: #7a7867;
+  --tomato: #c9533a;
+  --pepper: #d97a26;
+  --line: rgba(32, 34, 28, 0.10);
+  --line-strong: rgba(32, 34, 28, 0.18);
+  --shadow-soft: 0 18px 40px -22px rgba(47, 74, 50, 0.45);
+  --shadow: 0 28px 60px -28px rgba(32, 34, 28, 0.35);
   --radius: 22px;
+
   font-family: 'Inter', system-ui, -apple-system, Segoe UI, sans-serif;
-  color: var(--ink); line-height: 1.55; -webkit-font-smoothing: antialiased;
+  color: var(--ink);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
   display: block;
 }
 .ig-page * { box-sizing: border-box; }
-.ig-page h1, .ig-page h2, .ig-page h3 { font-family: 'Fraunces', Georgia, serif; font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; margin: 0; }
+.ig-page h1, .ig-page h2, .ig-page h3 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.08;
+  margin: 0;
+  color: var(--ink);
+}
 .ig-page p { margin: 0; }
-.ig-page ul { margin: 0; padding: 0; }
+.ig-page ul { margin: 0; padding: 0; list-style: none; }
 .ig-page a { color: inherit; text-decoration: none; }
 .ig-page img { max-width: 100%; display: block; }
 
-/* Body background only when the IG page is mounted */
+/* Body background — warm cream + paper grain */
 body.ig-page-body {
-  background: var(--bg-1, #fffdf8);
+  background: var(--cream, #f7f1e3);
   background-image:
-    radial-gradient(ellipse 60% 50% at 8% 0%, rgba(255,210,51,.28), transparent 60%),
-    radial-gradient(ellipse 55% 45% at 95% 8%, rgba(255,111,174,.25), transparent 60%),
-    radial-gradient(ellipse 50% 40% at 50% 35%, rgba(182,122,255,.16), transparent 60%),
-    radial-gradient(ellipse 60% 50% at 0% 60%, rgba(78,197,122,.18), transparent 60%),
-    radial-gradient(ellipse 60% 50% at 100% 80%, rgba(255,138,61,.22), transparent 60%),
-    radial-gradient(ellipse 50% 40% at 50% 100%, rgba(45,212,191,.18), transparent 60%);
+    radial-gradient(ellipse 60% 50% at 8% 0%, rgba(138, 168, 107, 0.18), transparent 60%),
+    radial-gradient(ellipse 55% 45% at 95% 100%, rgba(90, 70, 50, 0.10), transparent 60%);
   overflow-x: hidden;
 }
 body.ig-page-body::before {
-  content: ""; position: fixed; inset: -20vh -20vw; z-index: -1; pointer-events: none;
-  background:
-    radial-gradient(ellipse 50% 35% at var(--aur-x, 30%) var(--aur-y, 20%), rgba(255,210,51,.18), transparent 60%),
-    radial-gradient(ellipse 45% 35% at calc(100% - var(--aur-x, 30%)) calc(100% - var(--aur-y, 20%)), rgba(255,111,174,.16), transparent 60%);
-  transition: background 2s linear;
-  animation: igAuroraDrift 22s ease-in-out infinite alternate;
-}
-body.ig-page-body::after {
   content: ""; position: fixed; inset: 0; z-index: 9998; pointer-events: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-  opacity: .055; mix-blend-mode: multiply;
-  animation: igGrainShift 1.2s steps(3) infinite;
-}
-@keyframes igAuroraDrift {
-  0%   { transform: translate3d(0, 0, 0) scale(1); }
-  50%  { transform: translate3d(2vw, 3vh, 0) scale(1.05); }
-  100% { transform: translate3d(-2vw, -2vh, 0) scale(1.02); }
-}
-@keyframes igGrainShift {
-  0% { transform: translate(0, 0); } 33% { transform: translate(-4px, 3px); }
-  66% { transform: translate(3px, -2px); } 100% { transform: translate(0, 0); }
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.35  0 0 0 0 0.28  0 0 0 0 0.18  0 0 0 0.5 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  opacity: 0.05;
+  mix-blend-mode: multiply;
 }
 
-/* Gate */
-.ig-gate {
-  position: fixed; inset: 0; z-index: 9999;
-  display: none; align-items: center; justify-content: center;
-  background:
-    radial-gradient(ellipse at 25% 20%, rgba(255,210,51,.4), transparent 55%),
-    radial-gradient(ellipse at 75% 80%, rgba(255,111,174,.4), transparent 55%),
-    #fffdf8;
-  color: #1a1530; padding: 24px; text-align: center;
-  font-family: 'Inter', system-ui, sans-serif;
+/* Snap-scroll story sections */
+.ig-page {
+  scroll-snap-type: y proximity;
 }
-.ig-gate.show { display: flex; }
-.ig-gate .box { max-width: 460px; }
-.ig-gate h1 {
-  font-family: 'Fraunces', Georgia, serif;
-  font-size: clamp(28px, 5vw, 40px); margin-bottom: 14px;
-  background: linear-gradient(135deg, #ff6fae, #ff8a3d);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
-.ig-gate p { color: #4a3f5e; font-size: 15px; margin-bottom: 24px; }
-.ig-gate .gate-btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 14px 28px; border-radius: 999px; border: 0; cursor: pointer;
-  font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 15px; color: #fff;
-  background: linear-gradient(135deg, #ff6fae, #ff8a3d 55%, #ffd233);
-  box-shadow: 0 16px 42px -10px rgba(255,111,174,.6);
-  transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
-}
-.ig-gate .gate-btn:hover { transform: translateY(-2px); filter: brightness(1.06); box-shadow: 0 22px 52px -12px rgba(255,138,61,.7); }
-
-/* Hero */
-.ig-page .hero {
-  position: relative; min-height: 100svh;
-  display: flex; flex-direction: column; justify-content: center;
-  padding: 72px 24px 48px; overflow: hidden; perspective: 1200px;
-}
-.ig-page .hero::before {
-  content: ""; position: absolute; inset: 0;
-  background: url('/ig-hero.jpg') no-repeat;
-  background-size: 130% auto;
-  background-position: 50% 40%;
-  transform: scale(1.08); will-change: transform, background-position; z-index: 0;
-  transition: transform .9s cubic-bezier(.2,.8,.2,1);
-  animation: igKenBurns 24s ease-in-out infinite alternate;
-}
-@keyframes igKenBurns {
-  0%   { background-size: 130% auto; background-position: 48% 38%; }
-  100% { background-size: 145% auto; background-position: 54% 46%; }
-}
-.ig-page .hero::after {
-  content: ""; position: absolute; inset: 0; z-index: 1;
-  background:
-    linear-gradient(180deg, rgba(26,21,48,.15) 0%, rgba(26,21,48,.35) 55%, rgba(255,253,248,.96) 100%),
-    linear-gradient(120deg, rgba(255,210,51,.18), rgba(255,111,174,.14) 40%, rgba(78,197,122,.18));
-}
-
-/* Cinematic letterbox bars */
-.ig-page .cine-bar {
-  position: absolute; left: 0; right: 0; height: 56px; z-index: 4;
-  background: linear-gradient(180deg, #0b0716 0%, rgba(11,7,22,.85) 100%);
-  pointer-events: none;
-  animation: igCineIn 1.4s cubic-bezier(.2,.8,.2,1) .1s both;
-}
-.ig-page .cine-bar-top { top: 0; }
-.ig-page .cine-bar-bottom { bottom: 0; transform: scaleY(-1); animation-delay: .2s; }
-@keyframes igCineIn {
-  from { transform: translateY(-100%); }
-  to   { transform: translateY(0); }
-}
-.ig-page .cine-bar-bottom { animation-name: igCineInBottom; }
-@keyframes igCineInBottom {
-  from { transform: translateY(100%) scaleY(-1); }
-  to   { transform: translateY(0) scaleY(-1); }
-}
-
-/* Film grain — animated SVG noise */
-.ig-page .film-grain {
-  position: absolute; inset: -50%; z-index: 3; pointer-events: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-  opacity: .12; mix-blend-mode: overlay;
-  animation: igGrain 1.2s steps(6) infinite;
-  will-change: transform;
-}
-@keyframes igGrain {
-  0%   { transform: translate(0, 0); }
-  20%  { transform: translate(-3%, 2%); }
-  40%  { transform: translate(2%, -2%); }
-  60%  { transform: translate(-1%, 3%); }
-  80%  { transform: translate(3%, 1%); }
-  100% { transform: translate(0, 0); }
-}
-
-/* Soft vignette to focus eye */
-.ig-page .hero-vignette {
-  position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  background: radial-gradient(ellipse at 50% 45%, transparent 40%, rgba(11,7,22,.45) 100%);
-}
-
-.ig-page .hero-inner { position: relative; z-index: 3; max-width: 980px; margin: 0 auto; width: 100%; transform-style: preserve-3d; }
-.ig-page .hero-inner > * { transform: translateZ(0); transition: transform .8s cubic-bezier(.2,.8,.2,1); }
-.ig-page .eyebrow {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
-  background: rgba(255,255,255,.92); border: 1px solid var(--line-strong);
-  padding: 8px 14px; border-radius: 999px; backdrop-filter: blur(10px);
-  color: var(--ink); font-weight: 700; margin-bottom: 22px;
-  box-shadow: 0 6px 22px -10px rgba(255,111,174,.45);
-}
-.ig-page .eyebrow .dot { width: 7px; height: 7px; background: var(--pink); border-radius: 50%; box-shadow: 0 0 12px var(--pink); animation: igPulse 2s ease-in-out infinite; }
-@keyframes igPulse {
-  0%,100% { box-shadow: 0 0 0 0 rgba(255,111,174,.6), 0 0 12px var(--pink); }
-  50%     { box-shadow: 0 0 0 10px rgba(255,111,174,0), 0 0 20px var(--pink); }
-}
-.ig-page .hero h1 {
-  font-size: clamp(36px, 6.4vw, 76px); margin-bottom: 18px;
-  color: #ffffff; text-shadow: 0 4px 26px rgba(26,21,48,.45), 0 1px 2px rgba(26,21,48,.35);
-}
-.ig-page .hero h1 .accent {
-  font-style: italic; font-weight: 500;
-  background: linear-gradient(120deg, var(--yellow) 0%, var(--pink) 35%, var(--orange) 60%, var(--yellow) 100%);
-  background-size: 250% 100%;
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  -webkit-text-fill-color: transparent; text-shadow: none;
-  animation: igShimmer 6s ease-in-out infinite;
-}
-@keyframes igShimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50%      { background-position: 100% 50%; }
-}
-.ig-page .hero p.lead {
-  font-size: clamp(16px, 1.8vw, 20px); max-width: 560px;
-  color: #ffffff; text-shadow: 0 2px 12px rgba(26,21,48,.5);
-  margin-bottom: 32px; font-weight: 500;
-}
-.ig-page .cta-row { display: flex; flex-wrap: wrap; gap: 14px; }
-.ig-page .btn {
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 16px 28px; border-radius: 999px;
-  font-weight: 700; font-size: 15px;
-  border: 1px solid transparent; cursor: pointer;
-  transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
-  will-change: transform; color: #fff;
-}
-.ig-page .btn-primary {
-  background: linear-gradient(135deg, var(--pink), var(--orange) 55%, var(--yellow));
-  background-size: 200% 200%;
-  box-shadow: 0 16px 42px -10px rgba(255,111,174,.6);
-  animation: igBtnFlow 8s ease-in-out infinite;
-}
-@keyframes igBtnFlow {
-  0%, 100% { background-position: 0% 50%; }
-  50%      { background-position: 100% 50%; }
-}
-.ig-page .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.06); box-shadow: 0 22px 52px -12px rgba(255,138,61,.7); }
-.ig-page .btn-ghost {
-  background: rgba(255,255,255,.95); color: var(--ink);
-  border-color: var(--line-strong); backdrop-filter: blur(10px);
-  box-shadow: 0 8px 24px -10px rgba(26,21,48,.25);
-}
-.ig-page .btn-ghost:hover { background: #fff; transform: translateY(-2px); }
-
-/* Smooth interactive scroll indicator */
-.ig-page .scroll-hint {
-  position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-  z-index: 4; font-size: 10px; letter-spacing: .35em; text-transform: uppercase;
-  color: #fff; display: flex; flex-direction: column; align-items: center; gap: 10px;
-  font-weight: 700; text-decoration: none;
-  opacity: .9; transition: transform .3s ease, opacity .3s ease;
-  text-shadow: 0 2px 10px rgba(0,0,0,.5);
-}
-.ig-page .scroll-hint:hover { opacity: 1; transform: translate(-50%, -4px); }
-.ig-page .scroll-hint .mouse {
-  width: 22px; height: 36px; border: 2px solid rgba(255,255,255,.85);
-  border-radius: 14px; position: relative; display: block;
-  box-shadow: 0 0 18px rgba(255,255,255,.18), inset 0 0 8px rgba(255,255,255,.08);
-}
-.ig-page .scroll-hint .wheel {
-  position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
-  width: 3px; height: 7px; border-radius: 2px; background: #fff;
-  animation: igWheel 1.8s cubic-bezier(.6,.05,.4,1) infinite;
-}
-@keyframes igWheel {
-  0%   { opacity: 0; transform: translate(-50%, -2px); }
-  30%  { opacity: 1; }
-  100% { opacity: 0; transform: translate(-50%, 14px); }
-}
-.ig-page .scroll-hint .chev { animation: igDrop 2s ease-in-out infinite; opacity: .85; }
-@keyframes igDrop {
-  0%, 100% { transform: translateY(0); opacity: .65; }
-  50%      { transform: translateY(4px); opacity: 1; }
-}
-
-/* Hero orbs */
-.ig-page .hero .orb {
-  position: absolute; z-index: 1; border-radius: 50%;
-  filter: blur(60px); opacity: .55; pointer-events: none; will-change: transform;
-  animation: igOrbFloat 14s ease-in-out infinite;
-}
-.ig-page .hero .orb.o1 { width: 380px; height: 380px; top: -80px; left: -60px; background: radial-gradient(circle, var(--yellow) 0%, transparent 65%); animation-delay: 0s; }
-.ig-page .hero .orb.o2 { width: 320px; height: 320px; top: 30%; right: -80px; background: radial-gradient(circle, var(--pink) 0%, transparent 65%); animation-delay: -4s; }
-.ig-page .hero .orb.o3 { width: 300px; height: 300px; bottom: -60px; left: 30%; background: radial-gradient(circle, var(--purple) 0%, transparent 65%); animation-delay: -8s; }
-@keyframes igOrbFloat {
-  0%, 100% { transform: translate(0, 0); }
-  50%      { transform: translate(2%, -3%); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ig-page .hero::before,
-  .ig-page .film-grain,
-  .ig-page .hero h1 .accent,
-  .ig-page .btn-primary,
-  .ig-page .hero .orb,
-  .ig-page .scroll-hint .wheel,
-  .ig-page .scroll-hint .chev,
-  .ig-page .eyebrow .dot,
-  .ig-page .cine-bar { animation: none !important; }
-}
-
-/* Sections */
-.ig-page section { padding: clamp(64px, 9vw, 120px) 24px; position: relative; isolation: isolate; }
-.ig-page section + section::before {
-  content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 120px;
-  background: linear-gradient(180deg, rgba(255,253,248,0) 0%, rgba(255,253,248,.6) 60%, rgba(255,253,248,0) 100%);
-  pointer-events: none; z-index: 1;
-}
-.ig-page .container { max-width: 1100px; margin: 0 auto; }
-.ig-page .section-head { max-width: 720px; margin: 0 auto clamp(40px, 6vw, 64px); text-align: center; }
-.ig-page .section-tag {
-  font-size: 12px; letter-spacing: .2em; text-transform: uppercase;
-  margin-bottom: 14px; display: inline-block;
-  background: linear-gradient(135deg, var(--purple), var(--pink));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  font-weight: 700;
-}
-.ig-page .section-head h2 { font-size: clamp(32px, 4.8vw, 56px); margin-bottom: 14px; color: var(--ink); }
-.ig-page .section-head p { color: var(--ink-soft); font-size: 17px; }
-
-/* Offers */
-.ig-page .offers-bg {
-  background:
-    radial-gradient(ellipse at 0% 0%, rgba(255,111,174,.22), transparent 50%),
-    radial-gradient(ellipse at 100% 100%, rgba(78,197,122,.2), transparent 55%),
-    radial-gradient(ellipse at 50% 50%, rgba(255,210,51,.12), transparent 60%),
-    linear-gradient(180deg, var(--bg-2) 0%, var(--bg-3) 100%);
-}
-
-/* Location — photo background of the greenhouse */
-.ig-page .location-bg {
+.ig-page .snap-section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
   position: relative;
-  background-image:
-    linear-gradient(180deg, rgba(255,255,255,.78) 0%, rgba(255,255,255,.62) 50%, rgba(255,255,255,.82) 100%),
-    url('/ig-location-bg.jpg');
-  background-size: cover, cover;
-  background-position: center, center;
-  background-attachment: scroll, fixed;
-  background-repeat: no-repeat, no-repeat;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(72px, 9vw, 120px) 24px;
+  overflow: hidden;
 }
-.ig-page .location-bg .panel {
-  background: rgba(255,255,255,.92);
+.ig-page .container {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+/* Reveal animation */
+.ig-page .reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .9s cubic-bezier(.2,.8,.2,1), transform .9s cubic-bezier(.2,.8,.2,1);
+}
+.ig-page .reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============== HERO ============== */
+.ig-page .hero {
+  background: linear-gradient(180deg, #2f4a32 0%, #3e6240 100%);
+  color: #fffaf0;
+  padding-top: clamp(80px, 10vw, 120px);
+  padding-bottom: clamp(120px, 14vw, 180px);
+}
+.ig-page .hero h1, .ig-page .hero h3 { color: #fffaf0; }
+.ig-page .hero-photo {
+  position: absolute; inset: 0;
+  background: url('/ig-hero.jpg') center 40% / cover no-repeat;
+  opacity: 0.35;
+  filter: saturate(.85) contrast(1.05);
+}
+.ig-page .hero-photo-tint {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(47, 74, 50, 0.2) 0%, rgba(32, 34, 28, 0.65) 70%),
+    linear-gradient(180deg, rgba(47, 74, 50, 0.55) 0%, rgba(47, 74, 50, 0.85) 100%);
+}
+.ig-page .hero-content {
+  position: relative; z-index: 3;
+  max-width: 820px;
+  text-align: center;
+  margin: 0 auto;
+  padding: 0 12px;
+}
+.ig-page .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  background: rgba(255, 250, 240, 0.12);
+  border: 1px solid rgba(255, 250, 240, 0.3);
+  padding: 8px 16px;
+  border-radius: 999px;
+  color: #fffaf0;
+  font-weight: 600;
+  margin-bottom: 28px;
   backdrop-filter: blur(8px);
 }
-@media (max-width: 768px) {
-  .ig-page .location-bg { background-attachment: scroll, scroll; }
+.ig-page .eyebrow .eb-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--leaf);
+  box-shadow: 0 0 10px var(--leaf);
 }
-.ig-page .grid { display: grid; gap: 22px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); perspective: 1400px; }
+.ig-page .hero h1 {
+  font-size: clamp(38px, 6.4vw, 78px);
+  font-weight: 700;
+  margin-bottom: 22px;
+  letter-spacing: -0.02em;
+}
+.ig-page .hand-underline {
+  position: relative;
+  display: inline-block;
+  font-style: italic;
+  font-weight: 500;
+  color: #f5e7b8;
+}
+.ig-page .hand-underline svg {
+  position: absolute;
+  left: 0; right: 0; bottom: -10px;
+  width: 100%; height: 12px;
+  color: var(--leaf);
+  opacity: 0;
+  stroke-dasharray: 320;
+  stroke-dashoffset: 320;
+}
+.ig-page .reveal.in .hand-underline svg {
+  opacity: 1;
+  animation: igDraw 1.4s cubic-bezier(.2,.8,.2,1) .6s forwards;
+}
+@keyframes igDraw { to { stroke-dashoffset: 0; } }
+
+.ig-page .hero p.lead {
+  font-size: clamp(16px, 1.7vw, 19px);
+  max-width: 560px;
+  margin: 0 auto 36px;
+  color: rgba(255, 250, 240, 0.88);
+  line-height: 1.6;
+}
+
+.ig-page .cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+}
+.ig-page .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 28px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 15px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform .25s ease, box-shadow .25s ease, background .25s ease, color .25s ease;
+  font-family: inherit;
+}
+.ig-page .btn-primary {
+  background: var(--cream);
+  color: var(--moss-1);
+  box-shadow: 0 14px 30px -12px rgba(0, 0, 0, 0.4);
+}
+.ig-page .btn-primary:hover {
+  transform: translateY(-2px);
+  background: #fffaf0;
+  box-shadow: 0 18px 38px -14px rgba(0, 0, 0, 0.5);
+}
+.ig-page .btn-ghost {
+  background: transparent;
+  color: #fffaf0;
+  border-color: rgba(255, 250, 240, 0.45);
+}
+.ig-page .btn-ghost:hover {
+  background: rgba(255, 250, 240, 0.1);
+  border-color: rgba(255, 250, 240, 0.7);
+  transform: translateY(-2px);
+}
+
+/* Floating leaves */
+.ig-page .leaf {
+  position: absolute;
+  color: var(--leaf);
+  z-index: 2;
+  pointer-events: none;
+}
+.ig-page .leaf-1 { width: 90px; top: 12%; left: 6%; transform: rotate(-15deg); }
+.ig-page .leaf-2 { width: 70px; top: 22%; right: 8%; transform: rotate(40deg); }
+.ig-page .leaf-3 { width: 110px; bottom: 18%; right: 14%; transform: rotate(-30deg); color: #c0d49a; }
+.ig-page.ig-page .hero-anim .leaf-1 { animation: igLeafA 8s ease-in-out infinite; }
+.ig-page.ig-page .hero-anim .leaf-2 { animation: igLeafB 9s ease-in-out infinite; }
+.ig-page.ig-page .hero-anim .leaf-3 { animation: igLeafA 11s ease-in-out infinite reverse; }
+@keyframes igLeafA {
+  0%, 100% { transform: rotate(-15deg) translate(0, 0); }
+  50%      { transform: rotate(-8deg) translate(8px, -10px); }
+}
+@keyframes igLeafB {
+  0%, 100% { transform: rotate(40deg) translate(0, 0); }
+  50%      { transform: rotate(48deg) translate(-6px, 8px); }
+}
+
+/* Scroll hint */
+.ig-page .scroll-hint {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  color: rgba(255, 250, 240, 0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  font-weight: 600;
+  transition: opacity .25s ease, transform .25s ease;
+}
+.ig-page .scroll-hint:hover { opacity: 1; transform: translate(-50%, -3px); }
+.ig-page .scroll-hint svg { animation: igFloat 2.4s ease-in-out infinite; }
+@keyframes igFloat {
+  0%, 100% { transform: translateY(0); opacity: .85; }
+  50%      { transform: translateY(5px); opacity: 1; }
+}
+
+/* Organic divider */
+.ig-page .divider-bottom {
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  width: 100%;
+  height: 80px;
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* ============== SECTION DEFAULTS ============== */
+.ig-page .section { padding: clamp(72px, 9vw, 120px) 24px; }
+.ig-page .section-cream { background: var(--cream); }
+.ig-page .section-sand  { background: var(--sand); }
+.ig-page .section-moss  {
+  background: linear-gradient(180deg, var(--moss-2) 0%, var(--moss-1) 100%);
+  color: #fffaf0;
+}
+
+.ig-page .section-head {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 56px;
+}
+.ig-page .section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--moss-1);
+  background: rgba(138, 168, 107, 0.18);
+  border: 1px solid rgba(138, 168, 107, 0.35);
+  padding: 7px 14px;
+  border-radius: 999px;
+  margin-bottom: 18px;
+}
+.ig-page .section-tag.light {
+  color: #f5e7b8;
+  background: rgba(255, 250, 240, 0.1);
+  border-color: rgba(255, 250, 240, 0.25);
+}
+.ig-page .section-tag .tag-leaf { font-size: 13px; }
+.ig-page .section-head h2 {
+  font-size: clamp(30px, 4.6vw, 52px);
+  margin-bottom: 14px;
+}
+.ig-page .section-head h2.on-dark { color: #fffaf0; }
+.ig-page .section-head p {
+  font-size: clamp(15px, 1.4vw, 17px);
+  color: var(--ink-soft);
+  max-width: 560px;
+  margin: 0 auto;
+}
+.ig-page .section-head p.on-dark-soft { color: rgba(255, 250, 240, 0.82); }
+
+/* ============== OFFERS / CARDS ============== */
+.ig-page .grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
 .ig-page .card {
-  background: rgba(255,255,255,.85);
-  border: 1px solid var(--line-strong);
+  background: #fffaf0;
+  border: 1px solid var(--line);
   border-radius: var(--radius);
-  padding: 32px 28px;
-  backdrop-filter: blur(14px);
-  transition: transform .35s cubic-bezier(.2,.8,.2,1), border-color .3s ease, box-shadow .35s ease;
-  position: relative; overflow: hidden;
-  box-shadow: 0 12px 32px -16px rgba(26,21,48,.18);
-  transform-style: preserve-3d;
+  padding: 0 28px 28px;
+  position: relative;
+  box-shadow: var(--shadow-soft);
+  transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease;
+  overflow: hidden;
 }
-.ig-page .card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--accent, var(--pink)); }
-.ig-page .card:nth-child(1) { --accent: linear-gradient(90deg, var(--pink), var(--red)); }
-.ig-page .card:nth-child(2) { --accent: linear-gradient(90deg, var(--yellow), var(--orange), var(--green)); }
-.ig-page .card:nth-child(3) { --accent: linear-gradient(90deg, var(--purple), var(--teal)); }
-.ig-page .card:hover { box-shadow: 0 32px 60px -22px rgba(182,122,255,.45); }
-.ig-page .card .badge, .ig-page .card h3, .ig-page .card .price, .ig-page .card .desc { transform: translateZ(28px); transition: transform .35s cubic-bezier(.2,.8,.2,1); }
-.ig-page .card .badge {
-  display: inline-block; font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
-  padding: 5px 12px; border-radius: 999px; margin-bottom: 16px; font-weight: 700;
+.ig-page .card:hover {
+  transform: translateY(-6px) rotate(-0.4deg);
+  box-shadow: var(--shadow);
 }
-.ig-page .card:nth-child(1) .badge { background: var(--pink-soft); color: #b32a6a; }
-.ig-page .card:nth-child(2) .badge { background: var(--yellow-soft); color: #8a6500; }
-.ig-page .card:nth-child(3) .badge { background: var(--purple-soft); color: #5d2db2; }
-.ig-page .card h3 { font-size: 26px; margin-bottom: 8px; color: var(--ink); }
-.ig-page .card .price {
-  font-family: 'Fraunces', serif; font-size: 44px; font-weight: 700;
-  line-height: 1; margin: 18px 0 6px;
-  background: linear-gradient(135deg, var(--pink), var(--red));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
+.ig-page .card-illust {
+  margin: 0 -28px 22px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
 }
-.ig-page .card:nth-child(2) .price { background: linear-gradient(135deg, var(--orange), var(--green)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.ig-page .card:nth-child(3) .price { background: linear-gradient(135deg, var(--purple), var(--teal)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.ig-page .card .price small { font-size: 14px; color: var(--ink-mute); font-weight: 500; margin-left: 4px; -webkit-text-fill-color: var(--ink-mute); }
-.ig-page .card .desc { color: var(--ink-soft); font-size: 14px; }
-.ig-page .card .shine {
-  position: absolute; inset: 0; pointer-events: none; opacity: 0;
-  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.55), transparent 45%);
-  transition: opacity .4s ease; mix-blend-mode: overlay;
+.ig-page .card-illust[data-color="tomato"]   { background: linear-gradient(135deg, #f6dcd2, #ecb8a6); }
+.ig-page .card-illust[data-color="pepper"]   { background: linear-gradient(135deg, #f5e0c4, #e9c191); }
+.ig-page .card-illust[data-color="zucchini"] { background: linear-gradient(135deg, #d8e6c4, #b8d098); }
+.ig-page .card-illust::after {
+  content: ""; position: absolute; inset: -20%;
+  background-image: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.5), transparent 50%);
+  pointer-events: none;
 }
-.ig-page .card:hover .shine { opacity: 1; }
+.ig-page .illust-emoji {
+  font-size: 64px;
+  line-height: 1;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.18));
+  transition: transform .4s cubic-bezier(.2,.8,.2,1);
+  position: relative; z-index: 1;
+}
+.ig-page .card:hover .illust-emoji { transform: scale(1.1) rotate(-6deg); }
 
+.ig-page .badge {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(47, 74, 50, 0.1);
+  color: var(--moss-1);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.ig-page .card h3 {
+  font-size: 26px;
+  margin-bottom: 8px;
+}
+.ig-page .card .desc {
+  color: var(--ink-soft);
+  font-size: 14.5px;
+  margin-bottom: 18px;
+}
+.ig-page .price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--line-strong);
+}
+.ig-page .price {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--moss-1);
+}
+.ig-page .price-unit {
+  font-size: 13px;
+  color: var(--ink-mute);
+}
 .ig-page .producer-banner {
-  text-align: center; margin-top: 40px;
-  font-size: 13px; letter-spacing: .25em; text-transform: uppercase; font-weight: 700;
-  background: linear-gradient(135deg, var(--orange), var(--pink), var(--purple));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-align: center;
+  margin-top: 56px;
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-size: 15px;
+  color: var(--bark);
+  letter-spacing: 0.04em;
 }
 
-/* Gallery */
-.ig-page .gallery { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); perspective: 1600px; }
-.ig-page .gallery .tile {
-  border-radius: var(--radius); overflow: hidden; aspect-ratio: 4/5;
-  border: 1px solid var(--line-strong); position: relative;
-  background: var(--bg-2); box-shadow: 0 12px 28px -16px rgba(26,21,48,.25);
-  transform: translateZ(0) rotateX(0deg);
-  transition: transform .6s cubic-bezier(.2,.8,.2,1), box-shadow .5s ease;
-  will-change: transform;
+/* ============== GALLERY ============== */
+.ig-page .gallery {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(2, 1fr);
 }
-.ig-page .gallery .tile img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s cubic-bezier(.2,.8,.2,1); }
-.ig-page .gallery .tile:hover { transform: translateZ(40px) rotateX(2deg) rotateY(-2deg); box-shadow: 0 40px 80px -30px rgba(26,21,48,.45); }
-.ig-page .gallery .tile:hover img { transform: scale(1.06); }
-.ig-page .gallery .tile.wide { aspect-ratio: 16/10; grid-column: span 2; }
-@media (max-width: 600px) { .ig-page .gallery .tile.wide { grid-column: span 1; aspect-ratio: 4/5; } }
-
-/* Hours + Location */
-.ig-page .split { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
-@media (max-width: 800px) { .ig-page .split { grid-template-columns: 1fr; } }
-.ig-page .panel {
-  background: rgba(255,255,255,.88);
-  border: 1px solid var(--line-strong);
+.ig-page .tile {
+  position: relative;
   border-radius: var(--radius);
-  padding: 36px 32px; backdrop-filter: blur(14px);
-  box-shadow: 0 14px 36px -20px rgba(26,21,48,.22);
+  overflow: hidden;
+  box-shadow: 0 22px 50px -22px rgba(0, 0, 0, 0.5);
+  margin: 0;
+  background: var(--moss-1);
+  aspect-ratio: 4 / 3;
+  transition: transform .5s cubic-bezier(.2,.8,.2,1);
+}
+.ig-page .tile.wide { grid-column: 1 / -1; aspect-ratio: 16 / 7; }
+.ig-page .tile img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .8s cubic-bezier(.2,.8,.2,1);
+}
+.ig-page .tile:hover { transform: translateY(-4px); }
+.ig-page .tile:hover img { transform: scale(1.05); }
+
+/* ============== HOURS + LOCATION ============== */
+.ig-page .split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+.ig-page .panel {
+  background: #fffaf0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 36px 32px;
+  box-shadow: var(--shadow-soft);
 }
 .ig-page .panel h3 {
-  font-size: 24px; margin-bottom: 18px;
-  background: linear-gradient(135deg, var(--green), var(--teal));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
+  font-size: 24px;
+  margin-bottom: 22px;
+  color: var(--moss-1);
 }
-.ig-page .panel:nth-of-type(2) h3 {
-  background: linear-gradient(135deg, var(--orange), var(--pink));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
-.ig-page .hours-list { list-style: none; }
 .ig-page .hours-list li {
-  display: flex; justify-content: space-between; padding: 14px 0;
-  border-bottom: 1px solid var(--line); font-size: 16px; color: var(--ink);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px dashed var(--line);
+  font-size: 15px;
 }
-.ig-page .hours-list li:last-child { border-bottom: 0; }
-.ig-page .hours-list .day { font-weight: 500; }
-.ig-page .hours-list .time { color: #1a8c79; font-variant-numeric: tabular-nums; font-weight: 600; }
-.ig-page .hours-list li.closed .time { color: var(--ink-mute); }
-
+.ig-page .hours-list li:last-child { border-bottom: none; }
+.ig-page .hours-list .day { font-weight: 600; color: var(--ink); }
+.ig-page .hours-list .time { color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.ig-page .hours-list li.closed .time {
+  color: var(--tomato);
+  font-weight: 600;
+}
+.ig-page .address {
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.7;
+  margin-bottom: 22px;
+}
+.ig-page .address strong {
+  display: block;
+  color: var(--ink);
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 19px;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
 .ig-page .map-wrap {
-  border-radius: var(--radius); overflow: hidden;
-  border: 1px solid var(--line-strong); aspect-ratio: 16/10;
-  margin-top: 20px; background: var(--bg-2);
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  aspect-ratio: 4 / 3;
 }
-.ig-page .map-wrap iframe { width: 100%; height: 100%; border: 0; }
-.ig-page .address { font-size: 16px; line-height: 1.7; color: var(--ink); }
-.ig-page .address strong { color: #c44a16; display: block; margin-bottom: 4px; }
-
-/* Footer */
-.ig-page footer {
-  padding: 48px 24px 36px; text-align: center;
-  border-top: 1px solid var(--line);
-  background: var(--bg-2);
-  position: relative; overflow: hidden;
+.ig-page .map-wrap iframe {
+  width: 100%; height: 100%; border: 0;
+  filter: saturate(.85) hue-rotate(-10deg);
 }
-.ig-page footer::before {
-  content: ""; position: absolute; inset: -50% -10% auto -10%; height: 280px;
-  background: radial-gradient(ellipse at center, rgba(255,111,174,.25), transparent 70%);
-  filter: blur(40px); pointer-events: none; z-index: 0;
+
+/* ============== FOOTER ============== */
+.ig-page .ig-footer {
+  background: var(--moss-1);
+  color: rgba(255, 250, 240, 0.85);
+  padding: 60px 24px 40px;
 }
-.ig-page footer > * { position: relative; z-index: 1; }
-.ig-page footer .logo {
-  font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700;
-  margin-bottom: 12px; letter-spacing: -.02em;
-  background: linear-gradient(135deg, var(--pink), var(--orange), var(--yellow), var(--green), var(--purple));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
+.ig-page .footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 32px;
+  align-items: center;
 }
-.ig-page footer .contact { font-size: 14px; color: var(--ink-soft); }
-.ig-page footer .contact a { color: #c44a16; font-weight: 600; }
-.ig-page footer .copy { font-size: 12px; color: var(--ink-mute); margin-top: 14px; }
+.ig-page .footer-brand .logo {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #fffaf0;
+  margin-bottom: 6px;
+}
+.ig-page .footer-brand .tagline {
+  font-style: italic;
+  font-size: 14px;
+  color: rgba(255, 250, 240, 0.7);
+}
+.ig-page .footer-contact {
+  font-size: 14px;
+  line-height: 1.7;
+}
+.ig-page .footer-contact a {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--leaf);
+  font-weight: 600;
+  border-bottom: 1px dashed currentColor;
+}
+.ig-page .footer-copy {
+  text-align: right;
+  font-size: 13px;
+  color: rgba(255, 250, 240, 0.55);
+}
 
-/* Cinematic reveals */
-.ig-page .reveal { opacity: 0; transform: translate3d(0, 44px, 0); transition: opacity 1.1s cubic-bezier(.16,.84,.24,1), transform 1.2s cubic-bezier(.16,.84,.24,1); will-change: transform, opacity; transition-delay: var(--d, 0ms); }
-.ig-page .reveal.in { opacity: 1; transform: translate3d(0, 0, 0); }
-.ig-page .reveal-left { transform: translate3d(-56px, 0, 0); }
-.ig-page .reveal-right { transform: translate3d(56px, 0, 0); }
-.ig-page .reveal-zoom { transform: scale(.9); }
-.ig-page .reveal-zoom.in { transform: scale(1); }
-.ig-page .reveal-blur { filter: blur(16px); transition: opacity 1.1s cubic-bezier(.16,.84,.24,1), transform 1.2s cubic-bezier(.16,.84,.24,1), filter 1.3s ease-out; }
-.ig-page .reveal-blur.in { filter: blur(0); }
-
-.ig-page .word-reveal { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .12em; }
-.ig-page .word-reveal .w { display: inline-block; transform: translate3d(0, 110%, 0) rotate(6deg); opacity: 0; transition: transform 1.05s cubic-bezier(.16,.84,.24,1), opacity .9s ease-out; transition-delay: var(--wd, 0ms); will-change: transform, opacity; }
-.ig-page .word-reveal.in .w { transform: translate3d(0, 0, 0) rotate(0); opacity: 1; }
-
-.ig-page .section-zoom { transform: scale(.985); transition: transform 1.4s cubic-bezier(.16,.84,.24,1); transform-origin: 50% 30%; }
-.ig-page .section-zoom.in { transform: scale(1); }
+/* ============== RESPONSIVE ============== */
+@media (max-width: 820px) {
+  .ig-page .split { grid-template-columns: 1fr; }
+  .ig-page .gallery { grid-template-columns: 1fr; }
+  .ig-page .tile.wide { aspect-ratio: 4 / 3; }
+  .ig-page .footer-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .ig-page .footer-copy { text-align: center; }
+  .ig-page .leaf-1 { width: 60px; }
+  .ig-page .leaf-2 { width: 50px; }
+  .ig-page .leaf-3 { width: 70px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .ig-page .reveal, .ig-page .reveal-left, .ig-page .reveal-right, .ig-page .reveal-zoom, .ig-page .reveal-blur, .ig-page .section-zoom { opacity: 1 !important; transform: none !important; filter: none !important; transition: none !important; }
-  .ig-page .word-reveal .w { opacity: 1 !important; transform: none !important; transition: none !important; }
-  .ig-page .hero::before { transform: none !important; }
-  .ig-page .hero .orb { display: none; }
-  .ig-page .card, .ig-page .gallery .tile { transform: none !important; transition: none !important; }
-  body.ig-page-body::before, body.ig-page-body::after { animation: none !important; }
+  .ig-page .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .ig-page .leaf,
+  .ig-page .scroll-hint svg,
+  .ig-page .hand-underline svg { animation: none !important; }
+  .ig-page .hand-underline svg { stroke-dashoffset: 0 !important; opacity: 1 !important; }
 }
 `;
