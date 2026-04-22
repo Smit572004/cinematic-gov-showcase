@@ -199,6 +199,91 @@ const StickyIgNav = ({
   );
 };
 
+/* ---------------- Products parallax backdrop ----------------
+   Subtle cinematic layered backdrop sitting BEHIND the product cards.
+   - 2 soft radial moss glows that drift on scroll (parallax)
+   - A handful of small floating dots with gentle CSS drift
+   - Disabled for prefers-reduced-motion and on small screens (perf)
+*/
+type ParallaxLayerProps = {
+  scrollYProgress: MotionValue<number>;
+  range: [number, number];
+  className: string;
+  style?: React.CSSProperties;
+};
+
+const ParallaxLayer = ({ scrollYProgress, range, className, style }: ParallaxLayerProps) => {
+  const y = useTransform(scrollYProgress, [0, 1], range);
+  return <motion.div className={className} style={{ ...style, y }} aria-hidden="true" />;
+};
+
+const ProductsParallaxBackdrop = ({
+  sectionRef,
+}: {
+  sectionRef: React.RefObject<HTMLElement>;
+}) => {
+  const prefersReducedMotion = useReducedMotion();
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    const mq = window.matchMedia("(min-width: 768px)");
+    const update = () => setEnabled(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, [prefersReducedMotion]);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  if (!enabled) return null;
+
+  const particles = [
+    { left: "8%",  top: "18%", size: 10, delay: 0,   dur: 14, range: [-40, 40] as [number, number] },
+    { left: "22%", top: "70%", size: 6,  delay: 2,   dur: 18, range: [60, -60] as [number, number] },
+    { left: "38%", top: "12%", size: 8,  delay: 1,   dur: 16, range: [-30, 30] as [number, number] },
+    { left: "55%", top: "78%", size: 12, delay: 3,   dur: 20, range: [50, -50] as [number, number] },
+    { left: "70%", top: "22%", size: 7,  delay: 0.5, dur: 15, range: [-45, 45] as [number, number] },
+    { left: "84%", top: "60%", size: 9,  delay: 2.5, dur: 17, range: [40, -40] as [number, number] },
+    { left: "92%", top: "30%", size: 5,  delay: 1.5, dur: 19, range: [-25, 25] as [number, number] },
+    { left: "14%", top: "44%", size: 6,  delay: 3.5, dur: 21, range: [30, -30] as [number, number] },
+  ];
+
+  return (
+    <div className="products-backdrop" aria-hidden="true">
+      <ParallaxLayer
+        scrollYProgress={scrollYProgress}
+        range={[-80, 80]}
+        className="products-backdrop-glow products-backdrop-glow--a"
+      />
+      <ParallaxLayer
+        scrollYProgress={scrollYProgress}
+        range={[120, -120]}
+        className="products-backdrop-glow products-backdrop-glow--b"
+      />
+      {particles.map((p, i) => (
+        <ParallaxLayer
+          key={i}
+          scrollYProgress={scrollYProgress}
+          range={p.range}
+          className="products-backdrop-particle"
+          style={{
+            left: p.left,
+            top: p.top,
+            width: p.size,
+            height: p.size,
+            animationDelay: `${p.delay}s`,
+            animationDuration: `${p.dur}s`,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
 /* ---------------- Products auto-scrolling marquee ---------------- */
 
 const ProductsMarquee = ({
