@@ -2914,7 +2914,7 @@ body.ig-page-body::before {
 
 @media (max-width: 640px) {
   .ig-page .product-card-v2 { padding: 10px; border-radius: 22px; }
-  .ig-page .pcv2-art { height: 200px; border-radius: 16px; }
+  .ig-page .pcv2-art { border-radius: 16px; }
   .ig-page .pcv2-title { font-size: 19px; }
   .ig-page .pcv2-price { font-size: 18px; }
   .ig-page .pcv2-tap-hint { font-size: 11px; }
