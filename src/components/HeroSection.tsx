@@ -217,13 +217,25 @@ const HeroSection = () => {
           transition={{ duration: 0.6, delay: 0.7 }}
           className="mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4"
         >
-          <a
+          <motion.a
             href="/contact"
-            className="group inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm md:text-base shadow-[0_10px_30px_-10px_hsl(var(--primary)/0.6)] hover:shadow-[var(--glow-green)] transition-all duration-300 hover:scale-[1.03]"
+            className="group relative inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm md:text-base shadow-[0_10px_30px_-10px_hsl(var(--primary)/0.6)] hover:shadow-[var(--glow-green)] transition-all duration-300 hover:scale-[1.03] overflow-hidden"
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.98 }}
           >
-            {t("hero.exploreServices")}
-            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-          </a>
+            {!prefersReducedMotion && (
+              <motion.span
+                aria-hidden="true"
+                className="absolute inset-0 rounded-full bg-primary/40"
+                animate={{ scale: [1, 1.35], opacity: [0.5, 0] }}
+                transition={{ duration: 2.2, repeat: Infinity, ease: "easeOut" }}
+              />
+            )}
+            <span className="relative z-10 inline-flex items-center gap-2">
+              {t("hero.exploreServices")}
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </span>
+          </motion.a>
           <a
             href="/services"
             className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full border border-white/40 bg-white/5 backdrop-blur-sm text-white font-semibold text-sm md:text-base hover:border-primary hover:bg-primary/10 transition-all duration-300"
