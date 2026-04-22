@@ -1407,7 +1407,7 @@ const IgLandingPage = () => {
         </section>
 
         {/* ============== FOOTER ============== */}
-        <footer className="ig-footer">
+        <footer id="contact" className="ig-footer">
           <div className="container footer-grid">
             <div className="footer-brand">
               <a href="/" className="footer-logo" aria-label="TinPlant">
