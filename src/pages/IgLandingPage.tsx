@@ -771,6 +771,88 @@ const IgLandingPage = () => {
           </div>
         </footer>
       </main>
+
+      {/* ============== PRODUCT DETAILS MODAL ============== */}
+      {selectedProduct && (() => {
+        const o = selectedProduct;
+        const title = lang === "de" ? o.title_de : o.title_en || o.title_de;
+        const desc = lang === "de" ? o.description_de : o.description_en || o.description_de;
+        const badge = lang === "de" ? o.badge_de : o.badge_en || o.badge_de;
+        const closeLabel = lang === "de" ? "Schließen" : "Close";
+        const specsLabel = lang === "de" ? "Eckdaten" : "Key specs";
+        const priceLabel = lang === "de" ? "Preis" : "Price";
+        const categoryLabel = lang === "de" ? "Kategorie" : "Category";
+        // Derive simple key specs from description bullet-style splits
+        const specs = (desc || "")
+          .split(/[•\n;]+/)
+          .map((s) => s.trim())
+          .filter(Boolean);
+        const ctaLabel = lang === "de" ? "Vor Ort kaufen" : "Buy on site";
+        return (
+          <div
+            className="ig-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label={title}
+            onClick={() => setSelectedProduct(null)}
+          >
+            <div className="ig-modal-card" onClick={(e) => e.stopPropagation()}>
+              <button
+                type="button"
+                className="ig-modal-close"
+                onClick={() => setSelectedProduct(null)}
+                aria-label={closeLabel}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
+              </button>
+              <div className="ig-modal-art" data-color={o.color_tag}>
+                <span className="ig-modal-emoji" aria-hidden="true">{o.emoji}</span>
+                {badge && <span className="ig-modal-cat">{badge}</span>}
+              </div>
+              <div className="ig-modal-body">
+                <h3 className="ig-modal-title">{title}</h3>
+                {badge && (
+                  <p className="ig-modal-meta">
+                    <span className="ig-modal-meta-key">{categoryLabel}</span>
+                    <span className="ig-modal-meta-val">{badge}</span>
+                  </p>
+                )}
+                {specs.length > 0 && (
+                  <div className="ig-modal-specs">
+                    <p className="ig-modal-specs-head">{specsLabel}</p>
+                    <ul>
+                      {specs.map((s, i) => (
+                        <li key={i}>
+                          <span className="ig-modal-bullet" aria-hidden="true" />
+                          <span>{s}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {(o.price_text || o.unit_text) && (
+                  <div className="ig-modal-price">
+                    <span className="ig-modal-price-key">{priceLabel}</span>
+                    <span className="ig-modal-price-val">
+                      {o.price_text}
+                      {o.unit_text && <span className="ig-modal-price-unit"> {o.unit_text}</span>}
+                    </span>
+                  </div>
+                )}
+                <div className="ig-modal-actions">
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-on-light"
+                    onClick={() => setSelectedProduct(null)}
+                  >
+                    {ctaLabel}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </>
   );
 };
