@@ -1287,6 +1287,7 @@ const IgLandingPage = () => {
                 offers={activeOffers}
                 lang={lang}
                 onSelect={setSelectedProduct}
+                onBuy={setBuyOffer}
                 ariaLabel={offersTitle}
               />
             </motion.div>
