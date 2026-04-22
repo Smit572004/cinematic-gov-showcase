@@ -620,24 +620,27 @@ const IgLandingPage = () => {
 
         {/* ============== PRODUCTS ============== */}
         {activeOffers.length > 0 && (
-          <section id="offers" className="snap-section section section-cream">
+          <section id="offers" className="snap-section section section-cream products-section">
+            {/* 1. HEADING */}
             <div className="container">
-              {/* 1. HEADER — always visible, centered above the cards */}
-              <header className="section-head products-head products-head-centered">
-                <h2>{offersTitle}</h2>
-                {offersSubtitle && <p>{offersSubtitle}</p>}
+              <header className="products-header">
+                <h2 className="products-title">{offersTitle}</h2>
+                <span className="products-rule" aria-hidden="true" />
+                {offersSubtitle && <p className="products-sub">{offersSubtitle}</p>}
               </header>
             </div>
 
-            {/* 2. PRODUCT CARDS — auto-scrolling marquee with hover arrows */}
-            <ProductsMarquee
-              offers={activeOffers}
-              lang={lang}
-              onSelect={setSelectedProduct}
-              ariaLabel={offersTitle}
-            />
+            {/* 2. PRODUCT CARDS */}
+            <div className="products-cards-wrap">
+              <ProductsMarquee
+                offers={activeOffers}
+                lang={lang}
+                onSelect={setSelectedProduct}
+                ariaLabel={offersTitle}
+              />
+            </div>
 
-            {/* 3. DOWNLOAD / VIEW MORE BUTTON — always visible */}
+            {/* 3. CENTERED CTA */}
             <div className="container">
               {productsPdfUrl && (
                 <div className="products-cta">
@@ -645,7 +648,7 @@ const IgLandingPage = () => {
                     href={productsPdfUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn btn-primary btn-on-light products-download-btn"
+                    className="products-download-btn"
                     download
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -658,7 +661,7 @@ const IgLandingPage = () => {
                 </div>
               )}
               {offersBanner && (
-                <p className="producer-banner reveal">
+                <p className="producer-banner">
                   <span aria-hidden="true">— </span>{offersBanner}<span aria-hidden="true"> —</span>
                 </p>
               )}
