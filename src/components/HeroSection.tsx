@@ -44,36 +44,42 @@ const HeroSection = () => {
       className="relative h-screen min-h-[640px] overflow-hidden"
       aria-label="Hero"
     >
-      {/* Parallax background layer (video + image fallback) */}
+      {/* Parallax background layer (video + image fallback) with slow Ken Burns zoom */}
       <motion.div
         className="absolute inset-0"
         style={prefersReducedMotion ? undefined : { y: bgY, scale: bgScale }}
       >
-        {/* Image fallback — always rendered behind the video so the hero never looks blank */}
-        <div
-          className="absolute inset-0 bg-center bg-cover"
-          style={{ backgroundImage: `url(${heroBg})` }}
-          aria-hidden="true"
-        />
-        {!prefersReducedMotion && (
-          <video
-            ref={videoRef}
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
-              videoReady ? "opacity-100" : "opacity-0"
-            }`}
-            src={heroVideo}
-            poster={heroBg}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            disablePictureInPicture
+        <motion.div
+          className="absolute inset-0"
+          animate={prefersReducedMotion ? undefined : { scale: [1, 1.08, 1] }}
+          transition={{ duration: 24, repeat: Infinity, ease: "easeInOut" }}
+        >
+          {/* Image fallback — always rendered behind the video so the hero never looks blank */}
+          <div
+            className="absolute inset-0 bg-center bg-cover"
+            style={{ backgroundImage: `url(${heroBg})` }}
             aria-hidden="true"
-            onLoadedData={() => setVideoReady(true)}
-            onCanPlay={() => setVideoReady(true)}
           />
-        )}
+          {!prefersReducedMotion && (
+            <video
+              ref={videoRef}
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
+                videoReady ? "opacity-100" : "opacity-0"
+              }`}
+              src={heroVideo}
+              poster={heroBg}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              disablePictureInPicture
+              aria-hidden="true"
+              onLoadedData={() => setVideoReady(true)}
+              onCanPlay={() => setVideoReady(true)}
+            />
+          )}
+        </motion.div>
       </motion.div>
 
       {/* Cinematic gradient stack — top→bottom + left vignette for headline contrast */}
@@ -123,6 +129,32 @@ const HeroSection = () => {
         className="absolute inset-0 pointer-events-none"
         style={{ boxShadow: "inset 0 0 220px 60px hsl(var(--background))" }}
       />
+
+      {/* Floating ambient particles */}
+      {!prefersReducedMotion && (
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {[...Array(8)].map((_, i) => (
+            <motion.span
+              key={i}
+              className="absolute block w-1.5 h-1.5 rounded-full bg-primary/40 blur-[1px]"
+              style={{
+                left: `${(i * 13 + 8) % 100}%`,
+                top: `${(i * 23 + 15) % 100}%`,
+              }}
+              animate={{
+                y: [0, -40, 0],
+                opacity: [0, 0.8, 0],
+              }}
+              transition={{
+                duration: 6 + (i % 4),
+                repeat: Infinity,
+                delay: i * 0.7,
+                ease: "easeInOut",
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Content */}
       <motion.div
@@ -185,13 +217,25 @@ const HeroSection = () => {
           transition={{ duration: 0.6, delay: 0.7 }}
           className="mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4"
         >
-          <a
+          <motion.a
             href="/contact"
-            className="group inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm md:text-base shadow-[0_10px_30px_-10px_hsl(var(--primary)/0.6)] hover:shadow-[var(--glow-green)] transition-all duration-300 hover:scale-[1.03]"
+            className="group relative inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm md:text-base shadow-[0_10px_30px_-10px_hsl(var(--primary)/0.6)] hover:shadow-[var(--glow-green)] transition-all duration-300 hover:scale-[1.03] overflow-hidden"
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.98 }}
           >
-            {t("hero.exploreServices")}
-            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-          </a>
+            {!prefersReducedMotion && (
+              <motion.span
+                aria-hidden="true"
+                className="absolute inset-0 rounded-full bg-primary/40"
+                animate={{ scale: [1, 1.35], opacity: [0.5, 0] }}
+                transition={{ duration: 2.2, repeat: Infinity, ease: "easeOut" }}
+              />
+            )}
+            <span className="relative z-10 inline-flex items-center gap-2">
+              {t("hero.exploreServices")}
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </span>
+          </motion.a>
           <a
             href="/services"
             className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full border border-white/40 bg-white/5 backdrop-blur-sm text-white font-semibold text-sm md:text-base hover:border-primary hover:bg-primary/10 transition-all duration-300"
