@@ -810,6 +810,31 @@ const OffersTab = () => {
   const de = lang === "de";
   const [editing, setEditing] = useState<(Omit<IgOffer, "id"> & { id?: string }) | null>(null);
   const [isNew, setIsNew] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
+
+  // Accepts numbers like "0,88", "12.50", "€0,88", "ab €0.88", "from $5"
+  // At least one digit-group must appear; commas/periods are valid decimal separators.
+  const PRICE_PATTERN = /\d+([.,]\d{1,2})?/;
+  const validatePrice = (raw: string): string | null => {
+    const v = raw.trim();
+    if (!v) return de ? "Preis ist erforderlich" : "Price is required";
+    if (v.length > 40) return de ? "Preis ist zu lang" : "Price is too long";
+    if (!PRICE_PATTERN.test(v))
+      return de
+        ? "Preis muss eine gültige Zahl enthalten (z. B. €0,88)"
+        : "Price must include a valid number (e.g. €0.88)";
+    return null;
+  };
+  const validateUnit = (raw: string): string | null => {
+    const v = raw.trim();
+    if (!v) return de ? "Einheit ist erforderlich" : "Unit is required";
+    if (v.length > 40) return de ? "Einheit ist zu lang (max. 40 Zeichen)" : "Unit is too long (max 40 chars)";
+    return null;
+  };
+
+  const priceError = showErrors && editing ? validatePrice(editing.price_text) : null;
+  const unitError = showErrors && editing ? validateUnit(editing.unit_text) : null;
+
 
   const { data: offers = [], isLoading } = useQuery({
     queryKey: ["admin-ig-offers"],
@@ -898,6 +923,19 @@ const OffersTab = () => {
   const handleNew = () => {
     setEditing({ ...emptyOffer, sort_order: offers.length });
     setIsNew(true);
+    setShowErrors(false);
+  };
+
+  const handleSave = () => {
+    if (!editing) return;
+    setShowErrors(true);
+    const titleOk = editing.title_de.trim().length > 0;
+    const descOk = editing.description_de.trim().length > 0;
+    if (!titleOk || !descOk || validatePrice(editing.price_text) || validateUnit(editing.unit_text)) {
+      toast.error(de ? "Bitte alle Pflichtfelder korrekt ausfüllen" : "Please fix the required fields");
+      return;
+    }
+    saveMutation.mutate(editing);
   };
 
   return (
@@ -945,21 +983,30 @@ const OffersTab = () => {
             />
           </Field>
           <div className="grid grid-cols-2 gap-3">
-            <Field label={de ? "Preis" : "Price"}>
+            <Field label={de ? "Preis *" : "Price *"}>
               <input
                 value={editing.price_text}
                 onChange={(e) => setEditing({ ...editing, price_text: e.target.value })}
-                className="ig-admin-input"
+                className={`ig-admin-input ${priceError ? "!border-destructive" : ""}`}
                 placeholder="ab €0,88"
+                aria-invalid={!!priceError}
               />
+              {priceError && (
+                <p className="text-[11px] text-destructive font-body mt-1">{priceError}</p>
+              )}
             </Field>
-            <Field label={de ? "Einheit" : "Unit"}>
+            <Field label={de ? "Einheit *" : "Unit *"}>
               <input
                 value={editing.unit_text}
                 onChange={(e) => setEditing({ ...editing, unit_text: e.target.value })}
-                className="ig-admin-input"
+                className={`ig-admin-input ${unitError ? "!border-destructive" : ""}`}
                 placeholder="/ Stück"
+                aria-invalid={!!unitError}
+                maxLength={40}
               />
+              {unitError && (
+                <p className="text-[11px] text-destructive font-body mt-1">{unitError}</p>
+              )}
             </Field>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -987,8 +1034,8 @@ const OffersTab = () => {
           </div>
           <div className="flex gap-2 pt-1">
             <button
-              onClick={() => editing && saveMutation.mutate(editing)}
-              disabled={saveMutation.isPending || !editing.title_de.trim()}
+              onClick={handleSave}
+              disabled={saveMutation.isPending}
               className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity"
             >
               <Save size={14} />
@@ -998,6 +1045,7 @@ const OffersTab = () => {
               onClick={() => {
                 setEditing(null);
                 setIsNew(false);
+                setShowErrors(false);
               }}
               className="flex items-center gap-1.5 px-4 py-2 border border-border rounded-lg text-sm font-body hover:bg-muted transition-colors"
             >
@@ -1047,6 +1095,7 @@ const OffersTab = () => {
                   onClick={() => {
                     setEditing(offer);
                     setIsNew(false);
+                    setShowErrors(false);
                   }}
                   className="p-2 rounded-lg hover:bg-muted"
                 >
