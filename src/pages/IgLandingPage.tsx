@@ -2117,6 +2117,8 @@ body.ig-page-body::before {
 .ig-page .why-card[data-color="sun"]::before   { background: linear-gradient(90deg, #f2c46b, #f7d76e, #e8a04a); }
 .ig-page .why-card[data-color="berry"]::before { background: linear-gradient(90deg, #d27a90, #efb0bd, #a64a64); }
 .ig-page .why-card[data-color="sky"]::before   { background: linear-gradient(90deg, #7ab0c9, #b6dceb, #4d8aa6); }
+.ig-page .why-card[data-color="coin"]::before  { background: linear-gradient(90deg, #c9a14a, #f0d27a, #a8802b); }
+.ig-page .why-card[data-color="smile"]::before { background: linear-gradient(90deg, #e88c6e, #ffc6a8, #c2604a); }
 
 .ig-page .why-card-glow {
   position: absolute;
