@@ -165,7 +165,7 @@ const AdminIgLanding = () => {
 
   const tabs: { id: TabId; labelDe: string; labelEn: string }[] = [
     { id: "hero", labelDe: "Hero", labelEn: "Hero" },
-    { id: "offers", labelDe: "Angebote", labelEn: "Offers" },
+    { id: "offers", labelDe: "Produkte", labelEn: "Products" },
     { id: "gallery", labelDe: "Galerie", labelEn: "Gallery" },
     { id: "hours", labelDe: "Öffnungszeiten", labelEn: "Hours" },
     { id: "location", labelDe: "Standort & Kontakt", labelEn: "Location & Contact" },
