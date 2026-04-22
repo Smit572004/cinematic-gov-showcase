@@ -509,11 +509,13 @@ const ProductsMarquee = ({
   offers,
   lang,
   onSelect,
+  onBuy,
   ariaLabel,
 }: {
   offers: IgOffer[];
   lang: LangKey;
   onSelect: (o: IgOffer) => void;
+  onBuy: (o: IgOffer) => void;
   ariaLabel: string;
 }) => {
   const trackRef = useRef<HTMLDivElement | null>(null);
@@ -521,7 +523,7 @@ const ProductsMarquee = ({
   const [paused, setPaused] = useState(false);
   const [showArrows, setShowArrows] = useState(false);
   const detailsLabel = lang === "de" ? "Details ansehen" : "View details";
-  const ctaLabel = lang === "de" ? "Ansehen" : "View";
+  const ctaLabel = lang === "de" ? "Kaufen" : "Buy";
 
   // ----- Drag-to-scroll support (desktop pointer + touch) ---------------
   // We translate the track inline while dragging, then resume the CSS
