@@ -843,10 +843,6 @@ const IgLandingPage = () => {
   const addrCity = pick(content, "ig_address_city", lang, "39164 Wanzleben-Börde");
   const phoneDisplay = pick(content, "ig_contact_phone", lang, "+49 39209 69 69 0");
   const phoneTel = pick(content, "ig_contact_phone_tel", "de", "+493920969690");
-  const whatsappNumber = pick(content, "ig_contact_whatsapp", "de", "+493920969690").replace(
-    /[^0-9]/g,
-    "",
-  );
   const email = pick(content, "ig_contact_email", "de", "info@tinplant-gmbh.de");
   const mapQuery =
     pick(content, "ig_map_query", "de", "Magdeburger Landstraße 33, 39164 Wanzleben-Börde");
@@ -859,8 +855,7 @@ const IgLandingPage = () => {
 
   const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`;
   const mapDir = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapQuery)}`;
-  const mapApple = `https://maps.apple.com/?daddr=${encodeURIComponent(mapQuery)}`;
-  const mapShare = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}`;
+
 
   // Day labels (CMS-driven, with hardcoded fallbacks)
   const dayLabels = useMemo(() => {
@@ -945,18 +940,8 @@ const IgLandingPage = () => {
   const hoursHeading = pick(content, "ig_hours_heading", lang, "Öffnungszeiten");
   const addressHeading = pick(content, "ig_address_heading", lang, "So findest du uns");
   const mapOpenLabel = pick(content, "ig_map_open", lang, "In Google Maps öffnen");
-  const mapRouteLabel = pick(content, "ig_map_route", lang, "Route");
-  const mapAppleLabel = pick(content, "ig_map_apple", lang, "Apple Maps");
-  const mapShareLabel = pick(content, "ig_map_share", lang, "Teilen");
   const qaCallLabel = pick(content, "ig_qa_call", lang, "Anrufen");
-  const qaWhatsappLabel = pick(content, "ig_qa_whatsapp", lang, "WhatsApp");
   const qaEmailLabel = pick(content, "ig_qa_email", lang, "E-Mail");
-  const whatsappMessage = pick(
-    content,
-    "ig_whatsapp_message",
-    lang,
-    "Hallo TinPlant, ich habe eine Frage zu euren Pflanzen.",
-  );
   const emailSubject = pick(content, "ig_email_subject", lang, "Anfrage Pflanzen");
   const footerCopyright = fillTemplate(
     pick(content, "ig_footer_copyright", lang, "© {year} TinPlant"),
@@ -1404,18 +1389,6 @@ const IgLandingPage = () => {
                     {qaCallLabel}
                   </a>
                   <a
-                    className="qa-btn qa-wa"
-                    href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={qaWhatsappLabel}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d="M20.5 3.5A11.4 11.4 0 0 0 12 0C5.6 0 .4 5.2.4 11.6c0 2 .5 3.9 1.5 5.6L.3 24l7-1.8a11.6 11.6 0 0 0 4.7 1c6.4 0 11.6-5.2 11.6-11.6 0-3.1-1.2-6-3.1-8.1zM12 21.4a9.7 9.7 0 0 1-4.9-1.3l-.4-.2-4.1 1.1 1.1-4-.3-.4a9.6 9.6 0 0 1-1.5-5.1c0-5.3 4.3-9.6 9.6-9.6 2.6 0 5 1 6.8 2.8a9.6 9.6 0 0 1 2.8 6.8c0 5.3-4.3 9.6-9.6 9.6zm5.5-7.2c-.3-.2-1.8-.9-2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7 0c-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.7-1.7-2-.2-.3 0-.5.1-.6.1-.1.3-.4.4-.5l.3-.5c.1-.2 0-.4 0-.5l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.5.1-.7.4-.3.4-1 1-1 2.4s1 2.8 1.2 3c.2.2 2 3 4.8 4.2 1.7.7 2.4.7 3.2.6.5-.1 1.6-.6 1.9-1.3.2-.6.2-1.2.2-1.3-.1-.2-.3-.2-.6-.4z"/>
-                    </svg>
-                    {qaWhatsappLabel}
-                  </a>
-                  <a
                     className="qa-btn qa-mail"
                     href={`mailto:${email}?subject=${encodeURIComponent(emailSubject)}`}
                     aria-label={qaEmailLabel}
@@ -1459,40 +1432,7 @@ const IgLandingPage = () => {
                   </a>
                 </div>
 
-                <div className="route-actions">
-                  <a className="qa-btn qa-route" href={`${mapDir}&travelmode=driving`} target="_blank" rel="noopener noreferrer">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <circle cx="12" cy="12" r="10"/>
-                      <polygon points="16.24,7.76 14.12,14.12 7.76,16.24 9.88,9.88" fill="currentColor"/>
-                    </svg>
-                    {mapRouteLabel}
-                  </a>
-                  <a className="qa-btn qa-apple" href={mapApple} target="_blank" rel="noopener noreferrer">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d="M16.4 12.7c0-2.7 2.2-4 2.3-4-1.3-1.8-3.2-2.1-3.9-2.1-1.7-.2-3.3 1-4.1 1-.9 0-2.1-1-3.6-.9-1.8 0-3.5 1.1-4.5 2.7-1.9 3.3-.5 8.2 1.4 10.9.9 1.3 2 2.8 3.5 2.7 1.4-.1 1.9-.9 3.6-.9 1.7 0 2.2.9 3.6.9 1.5 0 2.5-1.3 3.4-2.7.7-1 1-1.5 1.6-2.7-.1 0-3.3-1.3-3.3-4.9zM13.7 4.6c.7-.9 1.3-2.2 1.1-3.5-1.1.1-2.5.8-3.3 1.7-.7.8-1.4 2.1-1.2 3.4 1.2.1 2.6-.7 3.4-1.6z"/>
-                    </svg>
-                    {mapAppleLabel}
-                  </a>
-                  <a
-                    className="qa-btn qa-share"
-                    href={mapShare}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => {
-                      const nav = navigator as Navigator & { share?: (data: ShareData) => Promise<void> };
-                      if (typeof nav.share === "function") {
-                        e.preventDefault();
-                        nav.share({ title: addrName, text: `${addrStreet}, ${addrCity}`, url: mapShare }).catch(() => {});
-                      }
-                    }}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-                      <line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/>
-                    </svg>
-                    {mapShareLabel}
-                  </a>
-                </div>
+
               </div>
             </div>
           </div>
