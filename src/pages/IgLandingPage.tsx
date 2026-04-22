@@ -1742,7 +1742,7 @@ body.ig-page-body::before {
   /* Gap between the two duplicated rows MUST equal the inter-card gap
      so the loop is mathematically seamless (no visible jump at reset). */
   gap: 22px;
-  animation: igProductsScroll 60s linear infinite;
+  animation: igProductsScroll 38s linear infinite;
   will-change: transform;
   /* Hint the browser so transforms stay on the compositor thread. */
   backface-visibility: hidden;
