@@ -1886,6 +1886,11 @@ body.ig-page-body::before {
 .ig-page .tile img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2,.8,.2,1); }
 .ig-page .tile:hover { transform: translateY(-4px); }
 .ig-page .tile:hover img { transform: scale(1.05); }
+.ig-page .gallery-slideshow { display: flex; flex-direction: column; gap: 18px; }
+.ig-page .gallery-dots { display: flex; justify-content: center; gap: 8px; margin-top: 4px; }
+.ig-page .gallery-dot { width: 8px; height: 8px; border-radius: 999px; border: 0; padding: 0; background: rgba(255,255,255,0.35); cursor: pointer; transition: background .25s ease, transform .25s ease; }
+.ig-page .gallery-dot:hover { background: rgba(255,255,255,0.6); }
+.ig-page .gallery-dot.active { background: #fff; transform: scale(1.25); }
 
 /* HOURS + LOCATION */
 .ig-page .split { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
