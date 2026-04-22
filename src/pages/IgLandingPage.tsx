@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import logoWhite from "@/assets/tinplant-logo-white.png";
 import { useLanguage } from "@/i18n/LanguageContext";
 import {
@@ -322,6 +323,8 @@ const IgLandingPage = () => {
   const { lang } = useLanguage();
   const heroRef = useRef<HTMLElement | null>(null);
 
+  const prefersReducedMotion = useReducedMotion();
+
   const { data: content } = useIgContent();
   const { data: offers = [] } = useIgOffers();
   const { data: gallery = [] } = useIgGallery();
@@ -620,36 +623,122 @@ const IgLandingPage = () => {
 
         {/* ============== PRODUCTS ============== */}
         {activeOffers.length > 0 && (
-          <section id="offers" className="snap-section section section-cream products-section">
+          <motion.section
+            id="offers"
+            className="snap-section section section-cream products-section"
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.18 }}
+            variants={{
+              hidden: {},
+              show: {
+                transition: prefersReducedMotion
+                  ? {}
+                  : { staggerChildren: 0.18, delayChildren: 0.05 },
+              },
+            }}
+          >
             {/* 1. HEADING */}
             <div className="container">
-              <header className="products-header">
-                <h2 className="products-title">{offersTitle}</h2>
-                <span className="products-rule" aria-hidden="true" />
-                {offersSubtitle && <p className="products-sub">{offersSubtitle}</p>}
-              </header>
+              <motion.header
+                className="products-header"
+                variants={{
+                  hidden: prefersReducedMotion
+                    ? { opacity: 1, y: 0 }
+                    : { opacity: 0, y: 32, filter: "blur(8px)" },
+                  show: {
+                    opacity: 1,
+                    y: 0,
+                    filter: "blur(0px)",
+                    transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] },
+                  },
+                }}
+              >
+                <motion.h2
+                  className="products-title"
+                  variants={{
+                    hidden: prefersReducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 },
+                    show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
+                  }}
+                >
+                  {offersTitle}
+                </motion.h2>
+                <motion.span
+                  className="products-rule"
+                  aria-hidden="true"
+                  variants={{
+                    hidden: prefersReducedMotion ? { scaleX: 1, opacity: 1 } : { scaleX: 0, opacity: 0 },
+                    show: {
+                      scaleX: 1,
+                      opacity: 0.85,
+                      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+                    },
+                  }}
+                  style={{ transformOrigin: "center" }}
+                />
+                {offersSubtitle && (
+                  <motion.p
+                    className="products-sub"
+                    variants={{
+                      hidden: prefersReducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 },
+                      show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+                    }}
+                  >
+                    {offersSubtitle}
+                  </motion.p>
+                )}
+              </motion.header>
             </div>
 
-            {/* 2. PRODUCT CARDS */}
-            <div className="products-cards-wrap">
+            {/* 2. PRODUCT CARDS — cinematic reveal: fade + lift + soft scale */}
+            <motion.div
+              className="products-cards-wrap"
+              variants={{
+                hidden: prefersReducedMotion
+                  ? { opacity: 1, y: 0, scale: 1 }
+                  : { opacity: 0, y: 60, scale: 0.96 },
+                show: {
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  transition: { duration: 1.1, ease: [0.22, 1, 0.36, 1] },
+                },
+              }}
+            >
               <ProductsMarquee
                 offers={activeOffers}
                 lang={lang}
                 onSelect={setSelectedProduct}
                 ariaLabel={offersTitle}
               />
-            </div>
+            </motion.div>
 
-            {/* 3. CENTERED CTA */}
+            {/* 3. CENTERED CTA — late, subtle pop */}
             <div className="container">
               {productsPdfUrl && (
-                <div className="products-cta">
-                  <a
+                <motion.div
+                  className="products-cta"
+                  variants={{
+                    hidden: prefersReducedMotion
+                      ? { opacity: 1, y: 0, scale: 1 }
+                      : { opacity: 0, y: 24, scale: 0.94 },
+                    show: {
+                      opacity: 1,
+                      y: 0,
+                      scale: 1,
+                      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+                    },
+                  }}
+                >
+                  <motion.a
                     href={productsPdfUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="products-download-btn"
                     download
+                    whileHover={prefersReducedMotion ? undefined : { y: -3 }}
+                    whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
+                    transition={{ type: "spring", stiffness: 320, damping: 22 }}
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -657,16 +746,22 @@ const IgLandingPage = () => {
                       <line x1="12" y1="15" x2="12" y2="3" />
                     </svg>
                     {productsViewMore}
-                  </a>
-                </div>
+                  </motion.a>
+                </motion.div>
               )}
               {offersBanner && (
-                <p className="producer-banner">
+                <motion.p
+                  className="producer-banner"
+                  variants={{
+                    hidden: prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 12 },
+                    show: { opacity: 0.85, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+                  }}
+                >
                   <span aria-hidden="true">— </span>{offersBanner}<span aria-hidden="true"> —</span>
-                </p>
+                </motion.p>
               )}
             </div>
-          </section>
+          </motion.section>
         )}
 
         {/* ============== GALLERY ============== */}
