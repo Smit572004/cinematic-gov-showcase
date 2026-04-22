@@ -438,10 +438,12 @@
   footer > * { position: relative; z-index: 1; }
 
   @media (prefers-reduced-motion: reduce) {
-    .reveal, .reveal-left, .reveal-right, .reveal-zoom, .reveal-blur { opacity: 1 !important; transform: none !important; filter: none !important; transition: none !important; }
+    .reveal, .reveal-left, .reveal-right, .reveal-zoom, .reveal-blur, .section-zoom { opacity: 1 !important; transform: none !important; filter: none !important; transition: none !important; }
+    .word-reveal .w { opacity: 1 !important; transform: none !important; transition: none !important; }
     .hero::before { transform: none !important; }
     .hero .orb { display: none; }
     .card, .gallery .tile { transform: none !important; transition: none !important; }
+    body::before, body::after { animation: none !important; }
   }
 </style>
 </head>
