@@ -2650,13 +2650,23 @@ body.ig-page-body::before {
     0 1px 0 rgba(255,255,255,0.9) inset,
     0 18px 40px -22px rgba(20, 30, 20, 0.18);
   transition:
-    transform .55s cubic-bezier(.2,.8,.2,1),
+    transform .35s cubic-bezier(.2,.8,.2,1),
     box-shadow .55s cubic-bezier(.2,.8,.2,1),
     border-color .3s ease;
   font: inherit;
   color: inherit;
   position: relative;
   user-select: none;
+
+  /* 3D tilt vars (set by JS on mouse move) */
+  --rx: 0deg;
+  --ry: 0deg;
+  --mx: 50%;
+  --my: 50%;
+  transform-style: preserve-3d;
+  perspective: 900px;
+  transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry));
+  will-change: transform;
 }
 
 /* Colorful card backgrounds tinted by product type */
@@ -2709,10 +2719,9 @@ body.ig-page-body::before {
   z-index: 4;
 }
 .ig-page .product-card-v2:hover {
-  transform: translateY(-8px);
   box-shadow:
     0 1px 0 rgba(255,255,255,0.9) inset,
-    0 32px 60px -22px rgba(201, 83, 58, 0.35);
+    0 38px 70px -22px rgba(201, 83, 58, 0.4);
   border-color: transparent;
 }
 .ig-page .product-card-v2:hover::before { opacity: 1; }
@@ -2721,25 +2730,23 @@ body.ig-page-body::before {
   outline-offset: 4px;
 }
 
-/* ----- IMAGE / ART AREA — photo fills the entire frame edge-to-edge ----- */
+/* ----- IMAGE / ART AREA — photo fits fully inside (no cropping) ----- */
 .ig-page .pcv2-art {
   position: relative;
   height: 240px;
   border-radius: 20px;
   display: block;
   overflow: hidden;
-  background: #ffffff;
+  background: linear-gradient(160deg, #fafafa 0%, #ffffff 50%, #f4f4f4 100%);
+  transform: translateZ(30px);
 }
-/* No tinted backgrounds — keep the frame clean so the photo dominates */
-.ig-page .pcv2-art[data-color="tomato"],
-.ig-page .pcv2-art[data-color="pepper"],
-.ig-page .pcv2-art[data-color="zucchini"],
-.ig-page .pcv2-art[data-color="herb"],
-.ig-page .pcv2-art[data-color="berry"] {
-  background: #ffffff;
-}
+/* Subtle tinted backdrops — soft so photo dominates but the frame doesn't look empty */
+.ig-page .pcv2-art[data-color="tomato"]   { background: radial-gradient(circle at 30% 30%, #fff5f0 0%, #ffffff 70%); }
+.ig-page .pcv2-art[data-color="pepper"]   { background: radial-gradient(circle at 30% 30%, #fff8e8 0%, #ffffff 70%); }
+.ig-page .pcv2-art[data-color="zucchini"] { background: radial-gradient(circle at 30% 30%, #f4faec 0%, #ffffff 70%); }
+.ig-page .pcv2-art[data-color="herb"]     { background: radial-gradient(circle at 30% 30%, #ecf6ef 0%, #ffffff 70%); }
+.ig-page .pcv2-art[data-color="berry"]    { background: radial-gradient(circle at 30% 30%, #ffeff5 0%, #ffffff 70%); }
 
-/* Remove the soft glow blob — it would peek around a cover-fit image */
 .ig-page .pcv2-art::before { content: none; }
 
 .ig-page .pcv2-emoji {
@@ -2762,9 +2769,9 @@ body.ig-page-body::before {
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
-  padding: 0;
+  padding: 10px;
   z-index: 1;
   transition: transform .8s cubic-bezier(.2,.8,.2,1);
   user-select: none;
@@ -2772,18 +2779,35 @@ body.ig-page-body::before {
   display: block;
 }
 .ig-page .product-card-v2:hover .pcv2-img {
-  transform: scale(1.06);
+  transform: scale(1.04);
 }
 .ig-page .ig-modal-img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   z-index: 1;
 }
 
-.ig-page .pcv2-shine { display: none; }
+/* Cinematic light sheen — radial highlight that follows cursor */
+.ig-page .pcv2-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  background:
+    radial-gradient(circle at var(--mx, 50%) var(--my, 50%),
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(255, 255, 255, 0.18) 18%,
+      transparent 45%);
+  mix-blend-mode: overlay;
+  transition: opacity .35s ease;
+}
+.ig-page .product-card-v2:hover .pcv2-shine { opacity: 1; }
+
 
 /* Floating category pill */
 .ig-page .pcv2-cat-float {
