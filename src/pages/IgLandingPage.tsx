@@ -637,14 +637,23 @@ const ProductsMarquee = ({
                     key={`${dup}-${o.id}`}
                     className="product-card-v2"
                     data-color={o.color_tag}
-                    aria-label={`${title} — ${detailsLabel}`}
+                    role={dup === 0 ? "button" : undefined}
+                    tabIndex={dup === 0 ? 0 : -1}
+                    aria-label={`${title} — ${ctaLabel}`}
+                    onClick={() => { if (dup === 0) onBuy(o); }}
+                    onKeyDown={(e) => {
+                      if (dup === 0 && (e.key === "Enter" || e.key === " ")) {
+                        e.preventDefault();
+                        onBuy(o);
+                      }
+                    }}
                     onMouseMove={(e) => {
                       const el = e.currentTarget;
                       const r = el.getBoundingClientRect();
                       const x = (e.clientX - r.left) / r.width;
                       const y = (e.clientY - r.top) / r.height;
-                      const rx = (0.5 - y) * 10; // tilt X
-                      const ry = (x - 0.5) * 12; // tilt Y
+                      const rx = (0.5 - y) * 10;
+                      const ry = (x - 0.5) * 12;
                       el.style.setProperty("--rx", `${rx}deg`);
                       el.style.setProperty("--ry", `${ry}deg`);
                       el.style.setProperty("--mx", `${x * 100}%`);
@@ -674,31 +683,21 @@ const ProductsMarquee = ({
                     <div className="pcv2-body">
                       <h3 className="pcv2-title">{title}</h3>
                       {desc && <p className="pcv2-desc">{desc}</p>}
-                      <div className="pcv2-foot">
-                        {(o.price_text || o.unit_text) ? (
+                      {(o.price_text || o.unit_text) && (
+                        <div className="pcv2-foot">
                           <span className="pcv2-price-wrap">
                             {o.price_text && <span className="pcv2-price">{o.price_text}</span>}
                             {o.unit_text && <span className="pcv2-unit">{o.unit_text}</span>}
                           </span>
-                        ) : <span />}
-                        <button
-                          type="button"
-                          className="pcv2-cta"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (dup === 0) onBuy(o);
-                          }}
-                          tabIndex={dup === 1 ? -1 : 0}
-                          aria-label={`${title} — ${ctaLabel}`}
-                        >
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-                            <line x1="3" y1="6" x2="21" y2="6" />
-                            <path d="M16 10a4 4 0 0 1-8 0" />
-                          </svg>
-                          <span>{ctaLabel}</span>
-                        </button>
-                      </div>
+                          <span className="pcv2-tap-hint" aria-hidden="true">
+                            {ctaLabel}
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M5 12h14" />
+                              <path d="M13 5l7 7-7 7" />
+                            </svg>
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </article>
                 );
@@ -2867,91 +2866,66 @@ body.ig-page-body::before {
   gap: 10px;
   border-top: 0;
 }
+/* PRICE PILL — fresh emerald → teal gradient */
 .ig-page .pcv2-price-wrap {
   display: inline-flex;
   align-items: baseline;
-  gap: 4px;
-  background: linear-gradient(135deg, #fff1ec 0%, #ffe1d4 100%);
-  padding: 8px 14px;
+  gap: 6px;
+  background: linear-gradient(135deg, #1f6b4a 0%, #2f9e6a 60%, #4ec9a4 100%);
+  padding: 9px 16px;
   border-radius: 999px;
-  border: 1px solid rgba(201, 83, 58, 0.18);
-  box-shadow: 0 4px 12px -6px rgba(201, 83, 58, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.35) inset,
+    0 8px 18px -8px rgba(31, 107, 74, 0.55);
 }
-/* PRICE — vibrant terracotta */
 .ig-page .pcv2-price {
   font-family: 'Fraunces', Georgia, serif;
   font-size: 20px;
   font-weight: 800;
-  color: #c9533a;
-  -webkit-text-fill-color: #c9533a;
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
   letter-spacing: -0.01em;
 }
 .ig-page .pcv2-unit {
   font-size: 11px;
-  color: #9a9890;
-  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
 }
 
-/* Buy CTA — bold dark pill with shine sweep on hover */
-.ig-page .pcv2-cta {
-  appearance: none;
-  border: 0;
-  cursor: pointer;
+/* Tap hint replaces the old Buy button — minimal, on-brand */
+.ig-page .pcv2-tap-hint {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 11px 18px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #c9533a 0%, #e07b4a 100%);
-  color: #ffffff;
-  font: inherit;
-  font-size: 13px;
+  gap: 6px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.02em;
-  box-shadow: 0 8px 22px -8px rgba(201, 83, 58, 0.6);
-  transition:
-    transform .35s cubic-bezier(.2,.8,.2,1),
-    background .3s ease,
-    box-shadow .3s ease;
-  position: relative;
-  overflow: hidden;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #1f6b4a;
+  padding: 6px 4px;
+  transition: transform .35s cubic-bezier(.2,.8,.2,1), color .25s ease;
 }
-.ig-page .pcv2-cta::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.25) 50%, transparent 70%);
-  transform: translateX(-100%);
-  transition: transform .8s ease;
-}
-.ig-page .product-card-v2:hover .pcv2-cta::after {
-  transform: translateX(100%);
-}
-.ig-page .pcv2-cta svg {
+.ig-page .pcv2-tap-hint svg {
   transition: transform .35s cubic-bezier(.2,.8,.2,1);
 }
-.ig-page .pcv2-cta:hover {
-  background: linear-gradient(135deg, #2f4a32 0%, #5b8a4a 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 14px 28px -10px rgba(47, 74, 50, 0.7);
+.ig-page .product-card-v2:hover .pcv2-tap-hint {
+  color: #c9533a;
+  transform: translateX(2px);
 }
-.ig-page .pcv2-cta:hover svg {
-  transform: scale(1.15) rotate(-6deg);
+.ig-page .product-card-v2:hover .pcv2-tap-hint svg {
+  transform: translateX(4px);
 }
-.ig-page .pcv2-cta:active { transform: translateY(0); }
-.ig-page .pcv2-cta:focus-visible {
-  outline: 3px solid var(--moss-2);
-  outline-offset: 3px;
-}
+.ig-page .product-card-v2 { cursor: pointer; }
 
 @media (max-width: 640px) {
   .ig-page .product-card-v2 { padding: 10px; border-radius: 22px; }
   .ig-page .pcv2-art { height: 200px; border-radius: 16px; }
   .ig-page .pcv2-title { font-size: 19px; }
   .ig-page .pcv2-price { font-size: 18px; }
-  .ig-page .pcv2-cta { padding: 10px 14px; font-size: 12px; }
+  .ig-page .pcv2-tap-hint { font-size: 11px; }
 }
 
 /* ============== PRODUCT DETAILS MODAL ============== */
