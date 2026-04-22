@@ -1717,18 +1717,31 @@ body.ig-page-body::before {
 .ig-page .hn-indicator {
   position: absolute; left: 0; top: 50%; transform: translateY(-50%);
   height: 32px; border-radius: 999px; pointer-events: none;
-  background: linear-gradient(135deg, #cfe9b8, #8dc660);
+  background: rgba(207, 233, 184, 0.10);
+  border: 1px solid rgba(207, 233, 184, 0.45);
   box-shadow:
-    0 4px 14px rgba(141, 198, 96, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 0 18px rgba(141, 198, 96, 0.25);
   transition:
     transform .5s cubic-bezier(.22, 1, .36, 1),
     width .5s cubic-bezier(.22, 1, .36, 1),
     opacity .3s ease;
   will-change: transform, width;
 }
+.ig-page .hn-indicator::after {
+  content: ""; position: absolute; left: 22%; right: 22%; bottom: -5px; height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, #cfe9b8, transparent);
+  box-shadow: 0 0 8px rgba(207, 233, 184, 0.9);
+  animation: hn-underline-glow 2.4s ease-in-out infinite;
+}
+@keyframes hn-underline-glow {
+  0%, 100% { opacity: 0.55; transform: scaleX(0.85); }
+  50% { opacity: 1; transform: scaleX(1); }
+}
 @media (prefers-reduced-motion: reduce) {
   .ig-page .hn-indicator { transition: opacity .2s ease; }
+  .ig-page .hn-indicator::after { animation: none; }
 }
 .ig-page .hn-link {
   position: relative;
@@ -1742,7 +1755,7 @@ body.ig-page-body::before {
 .ig-page .hn-link .hn-label { position: relative; z-index: 2; }
 .ig-page .hn-dot { display: none; }
 .ig-page .hn-link:hover { color: #ffffff; }
-.ig-page .hn-link.is-active { color: #14321a; }
+.ig-page .hn-link.is-active { color: #cfe9b8; }
 @media (max-width: 640px) {
   .ig-page .hero-nav { top: 10px; padding: 6px 8px; gap: 4px; max-width: calc(100% - 16px); }
   .ig-page .hero-nav.is-scrolled { top: 8px; padding: 5px 8px; }
