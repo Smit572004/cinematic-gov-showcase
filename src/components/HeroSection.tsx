@@ -44,36 +44,42 @@ const HeroSection = () => {
       className="relative h-screen min-h-[640px] overflow-hidden"
       aria-label="Hero"
     >
-      {/* Parallax background layer (video + image fallback) */}
+      {/* Parallax background layer (video + image fallback) with slow Ken Burns zoom */}
       <motion.div
         className="absolute inset-0"
         style={prefersReducedMotion ? undefined : { y: bgY, scale: bgScale }}
       >
-        {/* Image fallback — always rendered behind the video so the hero never looks blank */}
-        <div
-          className="absolute inset-0 bg-center bg-cover"
-          style={{ backgroundImage: `url(${heroBg})` }}
-          aria-hidden="true"
-        />
-        {!prefersReducedMotion && (
-          <video
-            ref={videoRef}
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
-              videoReady ? "opacity-100" : "opacity-0"
-            }`}
-            src={heroVideo}
-            poster={heroBg}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            disablePictureInPicture
+        <motion.div
+          className="absolute inset-0"
+          animate={prefersReducedMotion ? undefined : { scale: [1, 1.08, 1] }}
+          transition={{ duration: 24, repeat: Infinity, ease: "easeInOut" }}
+        >
+          {/* Image fallback — always rendered behind the video so the hero never looks blank */}
+          <div
+            className="absolute inset-0 bg-center bg-cover"
+            style={{ backgroundImage: `url(${heroBg})` }}
             aria-hidden="true"
-            onLoadedData={() => setVideoReady(true)}
-            onCanPlay={() => setVideoReady(true)}
           />
-        )}
+          {!prefersReducedMotion && (
+            <video
+              ref={videoRef}
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
+                videoReady ? "opacity-100" : "opacity-0"
+              }`}
+              src={heroVideo}
+              poster={heroBg}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              disablePictureInPicture
+              aria-hidden="true"
+              onLoadedData={() => setVideoReady(true)}
+              onCanPlay={() => setVideoReady(true)}
+            />
+          )}
+        </motion.div>
       </motion.div>
 
       {/* Cinematic gradient stack — top→bottom + left vignette for headline contrast */}
