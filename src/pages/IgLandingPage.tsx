@@ -153,7 +153,7 @@ const GallerySlideshow = ({
   return (
     <div className="gallery-slideshow">
       <div
-        className="gallery"
+        className="gallery gallery-mosaic"
         style={{
           gridTemplateColumns: `repeat(${visibleCount}, minmax(0, 1fr))`,
         }}
@@ -161,16 +161,28 @@ const GallerySlideshow = ({
         {visible.map((g, slot) => {
           const alt = lang === "de" ? g.title_de : g.title_en || g.title_de;
           const realIdx = indices[slot];
+          // Vary tile heights for a mosaic feel: tall on even slots, normal on odd.
+          const tall = visibleCount > 1 && slot % 2 === 0;
           return (
             <button
               type="button"
               key={`${realIdx}-${slot}`}
               onClick={() => setLightboxIdx(realIdx)}
-              className="tile tile-button animate-fade-in"
-              style={{ animationDuration: "600ms" }}
+              className={`tile tile-button gallery-tile animate-fade-in ${tall ? "is-tall" : ""}`}
+              style={{ animationDuration: "700ms", animationDelay: `${slot * 80}ms` }}
               aria-label={alt || "Open image"}
             >
               <img loading="lazy" src={g.image_url!} alt={alt} />
+              <span className="tile-shade" aria-hidden="true" />
+              <span className="tile-zoom" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="7" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  <line x1="11" y1="8" x2="11" y2="14" />
+                  <line x1="8" y1="11" x2="14" y2="11" />
+                </svg>
+              </span>
+              {alt && <span className="tile-caption">{alt}</span>}
             </button>
           );
         })}
