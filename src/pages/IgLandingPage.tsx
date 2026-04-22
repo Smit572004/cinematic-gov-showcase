@@ -28,6 +28,24 @@ const pick = (
   return (lang === "de" ? row.value_de : row.value_en) || row.value_de || fallback;
 };
 
+/**
+ * Always render prices in Euro. If the admin already typed €/EUR/eur,
+ * we keep it; otherwise we prepend €. Empty/undefined → "".
+ */
+const formatEuro = (value?: string | null): string => {
+  const raw = (value ?? "").trim();
+  if (!raw) return "";
+  // Already contains a currency marker
+  if (/€|\beur\b/i.test(raw)) {
+    // Normalize "EUR 12" / "12 EUR" → "€12"
+    return raw.replace(/\beur\b/gi, "€").replace(/€\s+/g, "€").trim();
+  }
+  // Bare number (e.g. "12", "12.50", "12,50") → prepend €
+  if (/^[\d.,]+$/.test(raw)) return `€${raw}`;
+  // Anything else (e.g. "from 12") → still prepend €
+  return `€${raw}`;
+};
+
 const pad = (s: string) => s.padStart(5, "0");
 
 const minutesFromHHMM = (s: string): number => {
@@ -684,7 +702,7 @@ const ProductsMarquee = ({
                       {(o.price_text || o.unit_text) && (
                         <div className="pcv2-foot">
                           <span className="pcv2-price-wrap">
-                            {o.price_text && <span className="pcv2-price">{o.price_text}</span>}
+                            {o.price_text && <span className="pcv2-price">{formatEuro(o.price_text)}</span>}
                             {o.unit_text && <span className="pcv2-unit">{o.unit_text}</span>}
                           </span>
                           <span className="pcv2-tap-hint" aria-hidden="true">
@@ -1547,7 +1565,7 @@ const IgLandingPage = () => {
                   <div className="ig-modal-price">
                     <span className="ig-modal-price-key">{priceLabel}</span>
                     <span className="ig-modal-price-val">
-                      {o.price_text}
+                      {formatEuro(o.price_text)}
                       {o.unit_text && <span className="ig-modal-price-unit"> {o.unit_text}</span>}
                     </span>
                   </div>
