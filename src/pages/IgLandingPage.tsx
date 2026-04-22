@@ -359,18 +359,6 @@ const IgLandingPage = () => {
           />
           <div className="hero-photo-tint" aria-hidden="true" />
 
-          <svg className="leaf leaf-1" viewBox="0 0 64 64" aria-hidden="true">
-            <path d="M8 56 C 18 28, 40 18, 60 6 C 56 30, 38 50, 12 60 Z" fill="currentColor" opacity=".55" />
-            <path d="M14 54 C 28 38, 44 26, 58 12" stroke="rgba(0,0,0,.15)" strokeWidth="1.4" fill="none" />
-          </svg>
-          <svg className="leaf leaf-2" viewBox="0 0 64 64" aria-hidden="true">
-            <path d="M8 56 C 18 28, 40 18, 60 6 C 56 30, 38 50, 12 60 Z" fill="currentColor" opacity=".45" />
-          </svg>
-          <svg className="leaf leaf-3" viewBox="0 0 64 64" aria-hidden="true">
-            <path d="M8 56 C 18 28, 40 18, 60 6 C 56 30, 38 50, 12 60 Z" fill="currentColor" opacity=".35" />
-          </svg>
-
-
           <div className="hero-content reveal">
             <span className="eyebrow">
               <span className="eb-dot" /> {heroEyebrow}
@@ -378,18 +366,19 @@ const IgLandingPage = () => {
             <h1>
               {heroTitleA}
               <br />
-              <span className="hand-underline">
-                {heroTitleB}
-                <svg viewBox="0 0 300 12" preserveAspectRatio="none" aria-hidden="true">
-                  <path
-                    d="M2 8 C 60 2, 130 12, 200 6 C 240 2, 280 8, 298 4"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </span>
+              {(() => {
+                const m = heroTitleB.match(/^(.*?)\{\{(.+?)\}\}(.*)$/);
+                if (m) {
+                  return (
+                    <>
+                      {m[1]}
+                      <span className="title-accent">{m[2]}</span>
+                      {m[3]}
+                    </>
+                  );
+                }
+                return heroTitleB;
+              })()}
             </h1>
             <p className="lead">{heroLead}</p>
             <div className="cta-row">
@@ -401,12 +390,9 @@ const IgLandingPage = () => {
             </div>
           </div>
 
-          <a href="#offers" className="scroll-hint" aria-label="Weiter scrollen">
-            <span>{lang === "de" ? "weiterlesen" : "scroll"}</span>
-            <svg width="22" height="34" viewBox="0 0 22 34" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M11 2 C 14 12, 8 22, 11 32" />
-              <path d="M5 26 L 11 32 L 17 26" />
-            </svg>
+          <a href="#offers" className="scroll-hint" aria-label={lang === "de" ? "Weiter scrollen" : "Scroll down"}>
+            <span className="scroll-line" aria-hidden="true" />
+            <span className="scroll-text">{lang === "de" ? "SCROLL" : "SCROLL"}</span>
           </a>
 
           <svg className="divider-bottom" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
