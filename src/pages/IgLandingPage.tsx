@@ -198,6 +198,124 @@ const StickyIgNav = ({
   );
 };
 
+/* ---------------- Products auto-scrolling marquee ---------------- */
+
+const ProductsMarquee = ({
+  offers,
+  lang,
+  onSelect,
+  ariaLabel,
+}: {
+  offers: IgOffer[];
+  lang: LangKey;
+  onSelect: (o: IgOffer) => void;
+  ariaLabel: string;
+}) => {
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+  const [paused, setPaused] = useState(false);
+  const [showArrows, setShowArrows] = useState(false);
+  const detailsLabel = lang === "de" ? "Details ansehen" : "View details";
+
+  // Manual scroll via arrows (also pauses the marquee while interacting).
+  const scrollByCards = (dir: 1 | -1) => {
+    const vp = viewportRef.current;
+    if (!vp) return;
+    const card = vp.querySelector<HTMLElement>(".product-card-v2");
+    const step = card ? card.getBoundingClientRect().width + 22 : 320;
+    setPaused(true);
+    vp.scrollBy({ left: dir * step * 2, behavior: "smooth" });
+    // resume auto-scroll shortly after
+    window.setTimeout(() => setPaused(false), 1400);
+  };
+
+  return (
+    <div
+      className={`products-marquee reveal ${paused ? "is-paused" : ""} ${showArrows ? "show-arrows" : ""}`}
+      role="region"
+      aria-label={ariaLabel}
+      onMouseEnter={() => setShowArrows(true)}
+      onMouseLeave={() => {
+        setShowArrows(false);
+        setPaused(false);
+      }}
+      onFocus={() => setShowArrows(true)}
+      onBlur={() => setShowArrows(false)}
+    >
+      <div className="products-viewport" ref={viewportRef}>
+        <div className="products-track" ref={trackRef}>
+          {[0, 1].map((dup) => (
+            <div className="products-row" aria-hidden={dup === 1} key={dup}>
+              {offers.map((o) => {
+                const title = lang === "de" ? o.title_de : o.title_en || o.title_de;
+                const desc = lang === "de" ? o.description_de : o.description_en || o.description_de;
+                const badge = lang === "de" ? o.badge_de : o.badge_en || o.badge_de;
+                return (
+                  <button
+                    key={`${dup}-${o.id}`}
+                    type="button"
+                    className="product-card-v2"
+                    onClick={() => dup === 0 && onSelect(o)}
+                    onMouseEnter={() => setPaused(true)}
+                    onMouseLeave={() => setPaused(false)}
+                    tabIndex={dup === 1 ? -1 : 0}
+                    aria-label={`${title} — ${detailsLabel}`}
+                  >
+                    <div className="pcv2-art" data-color={o.color_tag}>
+                      <span className="pcv2-emoji" aria-hidden="true">{o.emoji}</span>
+                      <span className="pcv2-shine" aria-hidden="true" />
+                    </div>
+                    <div className="pcv2-body">
+                      {badge && <span className="pcv2-cat">{badge}</span>}
+                      <h3 className="pcv2-title">{title}</h3>
+                      {desc && <p className="pcv2-desc">{desc}</p>}
+                      <div className="pcv2-foot">
+                        {(o.price_text || o.unit_text) ? (
+                          <span className="pcv2-price-wrap">
+                            {o.price_text && <span className="pcv2-price">{o.price_text}</span>}
+                            {o.unit_text && <span className="pcv2-unit">{o.unit_text}</span>}
+                          </span>
+                        ) : <span />}
+                        <span className="pcv2-arrow" aria-hidden="true">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
+                        </span>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="products-fade products-fade-l" aria-hidden="true" />
+      <div className="products-fade products-fade-r" aria-hidden="true" />
+
+      <button
+        type="button"
+        className="pm-arrow pm-arrow-l"
+        aria-label={lang === "de" ? "Vorheriges" : "Previous"}
+        onClick={() => scrollByCards(-1)}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+      </button>
+      <button
+        type="button"
+        className="pm-arrow pm-arrow-r"
+        aria-label={lang === "de" ? "Nächstes" : "Next"}
+        onClick={() => scrollByCards(1)}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M9 6l6 6-6 6" />
+        </svg>
+      </button>
+    </div>
+  );
+};
+
 /* ---------------- Page ---------------- */
 
 const IgLandingPage = () => {
