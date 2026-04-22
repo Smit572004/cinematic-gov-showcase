@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import logoWhite from "@/assets/tinplant-logo-white.png";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -520,11 +520,68 @@ const ProductsMarquee = ({
   const [paused, setPaused] = useState(false);
   const [showArrows, setShowArrows] = useState(false);
   const detailsLabel = lang === "de" ? "Details ansehen" : "View details";
+  const ctaLabel = lang === "de" ? "Ansehen" : "View";
 
-  // Manual nudge via arrows: temporarily shift the track and pause the
-  // animation. After the user stops interacting, the marquee resumes
-  // from its current position.
-  const nudgeRef = useRef(0);
+  // ----- Drag-to-scroll support (desktop pointer + touch) ---------------
+  // We translate the track inline while dragging, then resume the CSS
+  // marquee animation from a small leftover offset. This keeps the loop
+  // seamless while letting users nudge through products manually.
+  const dragRef = useRef({
+    active: false,
+    startX: 0,
+    startOffset: 0,
+    pointerId: 0 as number,
+  });
+  const offsetRef = useRef(0); // accumulated user offset (px)
+
+  const applyOffset = (px: number) => {
+    const track = trackRef.current;
+    if (!track) return;
+    track.style.transform = px === 0 ? "" : `translate3d(${px}px, 0, 0)`;
+  };
+
+  const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    // Only react to primary mouse button or touch/pen
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    const track = trackRef.current;
+    if (!track) return;
+    dragRef.current = {
+      active: true,
+      startX: e.clientX,
+      startOffset: offsetRef.current,
+      pointerId: e.pointerId,
+    };
+    setPaused(true);
+    // Disable transition while dragging for 1:1 finger tracking
+    track.style.transition = "none";
+    (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+  };
+
+  const onPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (!dragRef.current.active) return;
+    const dx = e.clientX - dragRef.current.startX;
+    offsetRef.current = dragRef.current.startOffset + dx;
+    applyOffset(offsetRef.current);
+  };
+
+  const endDrag = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (!dragRef.current.active) return;
+    dragRef.current.active = false;
+    const track = trackRef.current;
+    if (track) {
+      // Smoothly settle back to 0 — the CSS animation continues from here.
+      track.style.transition = "transform .8s cubic-bezier(.2,.8,.2,1)";
+      offsetRef.current = 0;
+      track.style.transform = "";
+    }
+    (e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId);
+    window.setTimeout(() => {
+      if (track) track.style.transition = "";
+      setPaused(false);
+    }, 850);
+  };
+
+  // ----- Arrow nudge ---------------------------------------------------
   const scrollByCards = (dir: 1 | -1) => {
     const track = trackRef.current;
     const vp = viewportRef.current;
@@ -532,16 +589,19 @@ const ProductsMarquee = ({
     const card = vp.querySelector<HTMLElement>(".product-card-v2");
     const step = card ? card.getBoundingClientRect().width + 22 : 320;
     setPaused(true);
-    nudgeRef.current -= dir * step * 2;
-    track.style.transition = "transform .5s cubic-bezier(.2,.8,.2,1)";
-    track.style.transform = `translate3d(${nudgeRef.current}px, 0, 0)`;
+    offsetRef.current -= dir * step * 1.5;
+    track.style.transition = "transform .6s cubic-bezier(.2,.8,.2,1)";
+    applyOffset(offsetRef.current);
     window.setTimeout(() => {
       if (!track) return;
-      track.style.transition = "";
+      track.style.transition = "transform .6s cubic-bezier(.2,.8,.2,1)";
+      offsetRef.current = 0;
       track.style.transform = "";
-      nudgeRef.current = 0;
-      setPaused(false);
-    }, 1400);
+      window.setTimeout(() => {
+        if (track) track.style.transition = "";
+        setPaused(false);
+      }, 650);
+    }, 900);
   };
 
   return (
@@ -549,15 +609,25 @@ const ProductsMarquee = ({
       className={`products-marquee reveal ${paused ? "is-paused" : ""} ${showArrows ? "show-arrows" : ""}`}
       role="region"
       aria-label={ariaLabel}
-      onMouseEnter={() => setShowArrows(true)}
+      onMouseEnter={() => {
+        setShowArrows(true);
+        setPaused(true);
+      }}
       onMouseLeave={() => {
         setShowArrows(false);
-        setPaused(false);
+        if (!dragRef.current.active) setPaused(false);
       }}
       onFocus={() => setShowArrows(true)}
       onBlur={() => setShowArrows(false)}
     >
-      <div className="products-viewport" ref={viewportRef}>
+      <div
+        className="products-viewport"
+        ref={viewportRef}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+      >
         <div className="products-track" ref={trackRef}>
           {[0, 1].map((dup) => (
             <div className="products-row" aria-hidden={dup === 1} key={dup}>
@@ -566,15 +636,10 @@ const ProductsMarquee = ({
                 const desc = lang === "de" ? o.description_de : o.description_en || o.description_de;
                 const badge = lang === "de" ? o.badge_de : o.badge_en || o.badge_de;
                 return (
-                  <button
+                  <article
                     key={`${dup}-${o.id}`}
-                    type="button"
                     className="product-card-v2"
                     data-color={o.color_tag}
-                    onClick={() => dup === 0 && onSelect(o)}
-                    onMouseEnter={() => setPaused(true)}
-                    onMouseLeave={() => setPaused(false)}
-                    tabIndex={dup === 1 ? -1 : 0}
                     aria-label={`${title} — ${detailsLabel}`}
                   >
                     <div className="pcv2-art" data-color={o.color_tag}>
@@ -590,9 +655,9 @@ const ProductsMarquee = ({
                         <span className="pcv2-emoji" aria-hidden="true">{o.emoji}</span>
                       )}
                       <span className="pcv2-shine" aria-hidden="true" />
+                      {badge && <span className="pcv2-cat-float">{badge}</span>}
                     </div>
                     <div className="pcv2-body">
-                      {badge && <span className="pcv2-cat">{badge}</span>}
                       <h3 className="pcv2-title">{title}</h3>
                       {desc && <p className="pcv2-desc">{desc}</p>}
                       <div className="pcv2-foot">
@@ -602,12 +667,24 @@ const ProductsMarquee = ({
                             {o.unit_text && <span className="pcv2-unit">{o.unit_text}</span>}
                           </span>
                         ) : <span />}
-                        <span className="pcv2-arrow" aria-hidden="true">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
-                        </span>
+                        <button
+                          type="button"
+                          className="pcv2-cta"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (dup === 0) onSelect(o);
+                          }}
+                          tabIndex={dup === 1 ? -1 : 0}
+                          aria-label={`${title} — ${detailsLabel}`}
+                        >
+                          <span>{ctaLabel}</span>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M5 12h14M13 5l7 7-7 7" />
+                          </svg>
+                        </button>
                       </div>
                     </div>
-                  </button>
+                  </article>
                 );
               })}
             </div>
@@ -1739,9 +1816,12 @@ body.ig-page-body::before {
 .ig-page .products-viewport {
   width: 100%;
   overflow: hidden;
+  cursor: grab;
+  touch-action: pan-y;
   -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 80px, #000 calc(100% - 80px), transparent 100%);
           mask-image: linear-gradient(90deg, transparent 0, #000 80px, #000 calc(100% - 80px), transparent 100%);
 }
+.ig-page .products-viewport:active { cursor: grabbing; }
 
 .ig-page .products-track {
   display: flex;
@@ -2118,32 +2198,55 @@ body.ig-page-body::before {
   .ig-page .hand-underline svg { stroke-dashoffset: 0 !important; opacity: 1 !important; }
 }
 
-/* ============== PRODUCT CARD V2 (refined design) ============== */
+/* ============== PRODUCT CARD V2 (premium redesign) ============== */
 .ig-page .product-card-v2 {
   appearance: none;
   text-align: left;
-  cursor: pointer;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, #ffffff 0%, #fffaf0 100%);
-  border: 1px solid var(--line);
-  border-radius: 22px;
+  background: linear-gradient(180deg, #ffffff 0%, #fdf8ec 100%);
+  border: 1px solid rgba(138, 168, 107, 0.18);
+  border-radius: 26px;
   padding: 0;
   overflow: hidden;
-  box-shadow: 0 10px 28px -18px rgba(31, 41, 31, 0.22);
-  transition: transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .45s ease, border-color .3s ease;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 14px 34px -22px rgba(31, 41, 31, 0.28);
+  transition:
+    transform .55s cubic-bezier(.2,.8,.2,1),
+    box-shadow .55s ease,
+    border-color .35s ease;
   font: inherit;
   color: inherit;
   position: relative;
+  /* Prevent the card from being grabbed during marquee drag */
+  user-select: none;
 }
-/* Vibrant top accent bar — colored per product tag */
+
+/* Soft colored glow underneath each card — picked up on hover */
+.ig-page .product-card-v2::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(120% 80% at 50% 0%,
+    rgba(138, 168, 107, 0.0) 0%,
+    rgba(138, 168, 107, 0.0) 60%,
+    rgba(138, 168, 107, 0.18) 100%);
+  opacity: 0;
+  transition: opacity .5s ease;
+  z-index: 0;
+}
+
+/* Vibrant top accent ribbon — colored per product tag */
 .ig-page .product-card-v2::after {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0;
-  height: 4px;
+  height: 5px;
   background: linear-gradient(90deg, #8aa86b, #d99a4e, #c96a5a);
-  z-index: 3;
+  z-index: 4;
   opacity: 0.95;
 }
 .ig-page .product-card-v2[data-color="tomato"]::after   { background: linear-gradient(90deg, #e07a5f, #f2a07b, #c96a5a); }
@@ -2151,30 +2254,27 @@ body.ig-page-body::before {
 .ig-page .product-card-v2[data-color="zucchini"]::after { background: linear-gradient(90deg, #8aa86b, #b8d098, #5e8a3f); }
 .ig-page .product-card-v2[data-color="herb"]::after     { background: linear-gradient(90deg, #6fa07a, #a8caa3, #3f7a52); }
 .ig-page .product-card-v2[data-color="berry"]::after    { background: linear-gradient(90deg, #d27a90, #efb0bd, #a64a64); }
-.ig-page .product-card-v2::before {
-  content: "";
-  position: absolute; inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  box-shadow: inset 0 0 0 0 rgba(138, 168, 107, 0);
-  transition: box-shadow .35s ease;
-}
+
 .ig-page .product-card-v2:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 32px 64px -28px rgba(47, 74, 50, 0.45);
+  transform: translateY(-10px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 38px 70px -28px rgba(47, 74, 50, 0.45),
+    0 0 0 1px rgba(138, 168, 107, 0.45);
   border-color: rgba(138, 168, 107, 0.55);
 }
 .ig-page .product-card-v2:hover::before {
-  box-shadow: inset 0 0 0 1.5px rgba(138, 168, 107, 0.7);
+  opacity: 1;
 }
-.ig-page .product-card-v2:focus-visible {
+.ig-page .product-card-v2:focus-within {
   outline: 3px solid var(--moss-2);
   outline-offset: 4px;
 }
 
+/* ----- IMAGE / ART AREA ----- */
 .ig-page .pcv2-art {
   position: relative;
-  height: 240px;
+  height: 260px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2186,27 +2286,39 @@ body.ig-page-body::before {
 .ig-page .pcv2-art[data-color="zucchini"] { background: linear-gradient(135deg, #d9efb8, #9bd16a 55%, #4f8a2c); }
 .ig-page .pcv2-art[data-color="herb"]     { background: linear-gradient(135deg, #c8eccd, #7dc28a 55%, #2f7a4a); }
 .ig-page .pcv2-art[data-color="berry"]    { background: linear-gradient(135deg, #ffd1de, #ff8aab 55%, #c93a6a); }
-/* Colorful glow behind the product image */
+
+/* Organic light flares behind the product image */
 .ig-page .pcv2-art::before {
   content: "";
   position: absolute;
   inset: -10%;
   background:
-    radial-gradient(circle at 25% 25%, rgba(255,255,255,0.55), transparent 45%),
-    radial-gradient(circle at 75% 80%, rgba(255,255,255,0.25), transparent 55%);
+    radial-gradient(circle at 22% 22%, rgba(255,255,255,0.55), transparent 45%),
+    radial-gradient(circle at 78% 82%, rgba(255,255,255,0.22), transparent 55%);
   pointer-events: none;
   z-index: 0;
 }
+/* Subtle bottom vignette so text below feels grounded */
+.ig-page .pcv2-art::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 38%;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.18));
+  pointer-events: none;
+  z-index: 2;
+}
+
 .ig-page .pcv2-emoji {
-  font-size: 100px;
+  font-size: 110px;
   line-height: 1;
-  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.18));
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.22));
   transition: transform .5s cubic-bezier(.2,.8,.2,1);
   position: relative;
   z-index: 1;
 }
 .ig-page .product-card-v2:hover .pcv2-emoji {
-  transform: scale(1.12) rotate(-6deg);
+  transform: scale(1.14) rotate(-6deg);
 }
 .ig-page .pcv2-img {
   position: absolute;
@@ -2215,12 +2327,12 @@ body.ig-page-body::before {
   height: 100%;
   object-fit: cover;
   z-index: 1;
-  transition: transform .6s cubic-bezier(.2,.8,.2,1);
+  transition: transform .9s cubic-bezier(.2,.8,.2,1);
   user-select: none;
   -webkit-user-drag: none;
 }
 .ig-page .product-card-v2:hover .pcv2-img {
-  transform: scale(1.06);
+  transform: scale(1.10);
 }
 .ig-page .ig-modal-img {
   position: absolute;
@@ -2230,49 +2342,67 @@ body.ig-page-body::before {
   object-fit: cover;
   z-index: 1;
 }
+
+/* Diagonal sheen swept across the image on hover */
 .ig-page .pcv2-shine {
   position: absolute;
   top: -40%;
   left: -60%;
   width: 60%;
   height: 200%;
-  background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.4) 50%, transparent 65%);
+  background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.5) 50%, transparent 65%);
   transform: translateX(-20%);
-  transition: transform .9s ease;
+  transition: transform 1.1s ease;
   pointer-events: none;
+  z-index: 3;
 }
 .ig-page .product-card-v2:hover .pcv2-shine {
-  transform: translateX(280%);
+  transform: translateX(320%);
 }
 
+/* Floating category badge over the image */
+.ig-page .pcv2-cat-float {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 3;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 800;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--moss-1);
+  box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: transform .45s cubic-bezier(.2,.8,.2,1);
+}
+.ig-page .product-card-v2[data-color="tomato"]   .pcv2-cat-float { color: #b8431f; }
+.ig-page .product-card-v2[data-color="pepper"]   .pcv2-cat-float { color: #b25e10; }
+.ig-page .product-card-v2[data-color="zucchini"] .pcv2-cat-float { color: #3f6f24; }
+.ig-page .product-card-v2[data-color="herb"]     .pcv2-cat-float { color: #25623c; }
+.ig-page .product-card-v2[data-color="berry"]    .pcv2-cat-float { color: #a4325a; }
+.ig-page .product-card-v2:hover .pcv2-cat-float {
+  transform: translateY(-2px) scale(1.04);
+}
+
+/* ----- BODY ----- */
 .ig-page .pcv2-body {
-  padding: 22px 22px 20px;
+  padding: 22px 22px 22px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   flex: 1;
+  position: relative;
+  z-index: 1;
 }
-.ig-page .pcv2-cat {
-  display: inline-block;
-  align-self: flex-start;
-  font-size: 10px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  padding: 5px 11px;
-  border-radius: 999px;
-  background: rgba(47, 74, 50, 0.08);
-  color: var(--moss-1);
-  font-weight: 700;
-}
-.ig-page .product-card-v2[data-color="tomato"]   .pcv2-cat { background: rgba(216, 71, 47, 0.14);  color: #b8431f; }
-.ig-page .product-card-v2[data-color="pepper"]   .pcv2-cat { background: rgba(224, 122, 26, 0.16); color: #b25e10; }
-.ig-page .product-card-v2[data-color="zucchini"] .pcv2-cat { background: rgba(79, 138, 44, 0.16);  color: #3f6f24; }
-.ig-page .product-card-v2[data-color="herb"]     .pcv2-cat { background: rgba(47, 122, 74, 0.16);  color: #25623c; }
-.ig-page .product-card-v2[data-color="berry"]    .pcv2-cat { background: rgba(201, 58, 106, 0.16); color: #a4325a; }
 .ig-page .pcv2-title {
   font-family: 'Fraunces', Georgia, serif;
   font-size: 22px;
-  line-height: 1.15;
+  line-height: 1.18;
+  letter-spacing: -0.005em;
   margin: 2px 0 0;
   color: var(--ink);
 }
@@ -2292,25 +2422,66 @@ body.ig-page-body::before {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
   border-top: 1px dashed var(--line-strong);
 }
 .ig-page .pcv2-price-wrap { display: inline-flex; align-items: baseline; gap: 5px; }
-.ig-page .pcv2-price { font-family: 'Fraunces', Georgia, serif; font-size: 24px; font-weight: 700; color: var(--moss-1); }
+.ig-page .pcv2-price {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--moss-1);
+  background: linear-gradient(180deg, var(--moss-1), #4f7a3a);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 .ig-page .pcv2-unit { font-size: 12px; color: var(--ink-mute); }
-.ig-page .pcv2-arrow {
+
+/* Modern CTA pill button */
+.ig-page .pcv2-cta {
+  appearance: none;
+  border: 0;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 34px; height: 34px;
+  gap: 8px;
+  padding: 10px 16px;
   border-radius: 999px;
-  background: var(--moss-1);
+  background: linear-gradient(135deg, var(--moss-1), #4f7a3a);
   color: #fffaf0;
-  transition: transform .35s cubic-bezier(.2,.8,.2,1), background .3s ease;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  box-shadow: 0 12px 26px -14px rgba(47, 74, 50, 0.55);
+  transition:
+    transform .35s cubic-bezier(.2,.8,.2,1),
+    box-shadow .35s ease,
+    background .35s ease,
+    padding .35s cubic-bezier(.2,.8,.2,1);
+  position: relative;
+  overflow: hidden;
 }
-.ig-page .product-card-v2:hover .pcv2-arrow {
+.ig-page .pcv2-cta svg {
+  transition: transform .4s cubic-bezier(.2,.8,.2,1);
+}
+.ig-page .pcv2-cta:hover {
+  background: linear-gradient(135deg, #4f7a3a, var(--moss-1));
+  box-shadow: 0 18px 30px -14px rgba(47, 74, 50, 0.7);
+  transform: translateY(-1px);
+  padding-right: 20px;
+}
+.ig-page .pcv2-cta:hover svg {
   transform: translateX(4px);
-  background: var(--moss-2);
+}
+.ig-page .pcv2-cta:active { transform: translateY(0); }
+.ig-page .pcv2-cta:focus-visible {
+  outline: 3px solid var(--moss-2);
+  outline-offset: 3px;
+}
+.ig-page .product-card-v2:hover .pcv2-cta {
+  transform: translateX(2px);
 }
 
 /* ============== PRODUCT DETAILS MODAL ============== */
