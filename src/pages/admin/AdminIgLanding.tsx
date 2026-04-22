@@ -13,6 +13,7 @@ import {
   EyeOff,
   Languages,
   ExternalLink,
+  FileText,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -39,6 +40,7 @@ const translateTexts = async (texts: string[]): Promise<string[]> => {
 // keys that should NOT be translated (urls, phone numbers, emails, hours, identical labels)
 const noTranslateKeys: Set<string> = new Set([
   "ig_hero_image_url",
+  "ig_products_pdf_url",
   "ig_contact_phone",
   "ig_contact_phone_tel",
   "ig_contact_whatsapp",
@@ -608,6 +610,102 @@ const OFFER_COLORS = [
   { value: "zucchini", label: "Grün (Zucchini)" },
 ];
 
+/* ───────────────── Products PDF panel (admin) ───────────────── */
+
+const ProductsPdfPanel = () => {
+  const { lang } = useLanguage();
+  const de = lang === "de";
+  const queryClient = useQueryClient();
+  const { data: content } = useAdminIgContent();
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const pdfUrl = content?.["ig_products_pdf_url"]?.value_de || "";
+  const fileName = pdfUrl ? pdfUrl.split("/").pop() : "";
+
+  const upload = async (file: File) => {
+    if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
+      toast.error(de ? "Bitte eine PDF-Datei auswählen" : "Please choose a PDF file");
+      return;
+    }
+    setUploading(true);
+    const safeName = `preisliste-${Date.now()}.pdf`;
+    const { error } = await supabase.storage
+      .from("ig-assets")
+      .upload(safeName, file, { contentType: "application/pdf", upsert: false });
+    if (error) {
+      toast.error((de ? "Upload fehlgeschlagen: " : "Upload failed: ") + error.message);
+      setUploading(false);
+      return;
+    }
+    const { data: urlData } = supabase.storage.from("ig-assets").getPublicUrl(safeName);
+    try {
+      await saveContentRow("ig_products_pdf_url", urlData.publicUrl);
+      toast.success(de ? "Preisliste aktualisiert" : "Price list updated");
+      queryClient.invalidateQueries({ queryKey: ["admin-ig-content"] });
+      queryClient.invalidateQueries({ queryKey: ["ig-content"] });
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+    setUploading(false);
+  };
+
+  return (
+    <div className="bg-card border border-border/60 rounded-xl p-5">
+      <div className="flex items-center gap-2 mb-3">
+        <FileText size={16} className="text-primary" />
+        <h2 className="font-display font-bold text-sm">
+          {de ? "Komplette Preisliste (PDF)" : "Full price list (PDF)"}
+        </h2>
+      </div>
+      <p className="text-xs text-muted-foreground font-body mb-4">
+        {de
+          ? 'Diese PDF wird geöffnet, wenn Besucher auf den "Komplette Preisliste ansehen"-Button im Produkte-Bereich klicken.'
+          : 'This PDF opens when visitors click the "View full price list" button in the Products section.'}
+      </p>
+      <div className="flex items-center gap-3 flex-wrap">
+        <input
+          ref={fileRef}
+          type="file"
+          accept="application/pdf,.pdf"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) upload(f);
+            e.target.value = "";
+          }}
+        />
+        <button
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+          className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+        >
+          <Upload size={14} />
+          {uploading ? (de ? "Wird hochgeladen..." : "Uploading...") : (de ? "PDF hochladen" : "Upload PDF")}
+        </button>
+        {pdfUrl && (
+          <a
+            href={pdfUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted/40 text-xs font-semibold hover:bg-muted/70 transition-colors"
+          >
+            <ExternalLink size={13} />
+            {de ? "Aktuelle PDF ansehen" : "View current PDF"}
+          </a>
+        )}
+        {fileName && (
+          <span className="text-xs text-muted-foreground font-body truncate max-w-[260px]" title={fileName}>
+            {fileName}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+};
+
+
+
 const OffersTab = () => {
   const queryClient = useQueryClient();
   const { lang } = useLanguage();
@@ -705,11 +803,13 @@ const OffersTab = () => {
 
   return (
     <div className="space-y-4">
+      <ProductsPdfPanel />
+
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground font-body">
           {de
-            ? "Die Karten im Saisonangebote-Bereich auf /ig."
-            : "The cards in the Seasonal offers section on /ig."}
+            ? "Die Karten im Produkte-Bereich auf /ig (horizontale Animation)."
+            : "The cards in the Products section on /ig (horizontal scrolling animation)."}
         </p>
         <button
           onClick={handleNew}
