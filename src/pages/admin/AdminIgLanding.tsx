@@ -13,6 +13,7 @@ import {
   EyeOff,
   Languages,
   ExternalLink,
+  FileText,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -39,6 +40,7 @@ const translateTexts = async (texts: string[]): Promise<string[]> => {
 // keys that should NOT be translated (urls, phone numbers, emails, hours, identical labels)
 const noTranslateKeys: Set<string> = new Set([
   "ig_hero_image_url",
+  "ig_products_pdf_url",
   "ig_contact_phone",
   "ig_contact_phone_tel",
   "ig_contact_whatsapp",
