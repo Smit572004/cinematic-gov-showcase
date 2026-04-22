@@ -1,4 +1,57 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+
+/** Hours per weekday (0=Sun ... 6=Sat). null = closed. */
+const HOURS: Record<number, { open: number; close: number } | null> = {
+  0: null,
+  1: { open: 9, close: 18 },
+  2: { open: 9, close: 18 },
+  3: { open: 9, close: 18 },
+  4: { open: 9, close: 18 },
+  5: { open: 9, close: 18 },
+  6: { open: 9, close: 18 },
+};
+
+const LiveStatusBadge = () => {
+  const [now, setNow] = useState<Date>(() => new Date());
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 60_000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const day = now.getDay();
+  const hours = HOURS[day];
+  const minsNow = now.getHours() * 60 + now.getMinutes();
+  const isOpen = !!hours && minsNow >= hours.open * 60 && minsNow < hours.close * 60;
+
+  let label = "Geschlossen";
+  if (isOpen && hours) {
+    const closeMins = hours.close * 60 - minsNow;
+    if (closeMins <= 60) label = `Schließt in ${closeMins} Min.`;
+    else label = `Geöffnet · bis ${hours.close}:00`;
+  } else {
+    for (let i = 0; i < 7; i++) {
+      const next = (day + i) % 7;
+      const h = HOURS[next];
+      if (!h) continue;
+      if (i === 0 && minsNow < h.open * 60) {
+        label = `Öffnet heute um ${h.open}:00`;
+        break;
+      }
+      if (i > 0) {
+        const dayNames = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
+        label = `Öffnet ${i === 1 ? "morgen" : dayNames[next]} um ${h.open}:00`;
+        break;
+      }
+    }
+  }
+
+  return (
+    <span className={`live-status ${isOpen ? "is-open" : "is-closed"}`} aria-live="polite">
+      <span className="live-dot" aria-hidden="true" />
+      {label}
+    </span>
+  );
+};
 
 /**
  * Instagram Landing Page — Earthy & Natural redesign.
