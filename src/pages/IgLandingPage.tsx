@@ -58,7 +58,32 @@ type StatusTemplates = {
 const fillTemplate = (tpl: string, vars: Record<string, string | number>) =>
   tpl.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? ""));
 
-/* ---------------- Gallery slideshow (3–4 photos, rotates every 3s) ---------------- */
+/* ---------------- Gallery slideshow (random rotation + lightbox) ---------------- */
+
+const pickRandomIndices = (total: number, count: number, exclude: number[]): number[] => {
+  const take = Math.min(count, total);
+  if (take >= total) {
+    // Not enough pool to exclude — return a shuffled full list.
+    const all = Array.from({ length: total }, (_, i) => i);
+    for (let i = all.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [all[i], all[j]] = [all[j], all[i]];
+    }
+    return all.slice(0, take);
+  }
+  const pool = Array.from({ length: total }, (_, i) => i).filter((i) => !exclude.includes(i));
+  // If exclusion left us short, top up from excluded ones.
+  const extras = exclude.slice();
+  while (pool.length < take && extras.length) {
+    pool.push(extras.shift()!);
+  }
+  // Fisher-Yates
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool.slice(0, take);
+};
 
 const GallerySlideshow = ({
   items,
@@ -69,7 +94,8 @@ const GallerySlideshow = ({
 }) => {
   const prefersReducedMotion = useReducedMotion();
   const [visibleCount, setVisibleCount] = useState(4);
-  const [page, setPage] = useState(0);
+  const [indices, setIndices] = useState<number[]>([]);
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
 
   // Responsive: 4 on >=1024px, 3 on >=640px, 2 on small phones, 1 on tiny.
   useEffect(() => {
@@ -85,25 +111,44 @@ const GallerySlideshow = ({
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  const pageCount = Math.max(1, Math.ceil(items.length / visibleCount));
-  const safePage = page % pageCount;
-
-  // Reset to first page if visibleCount changes and current page is out of range.
+  // Initialize / re-pick when the visible count or items list changes.
   useEffect(() => {
-    if (page >= pageCount) setPage(0);
-  }, [pageCount, page]);
+    setIndices(pickRandomIndices(items.length, visibleCount, []));
+  }, [items.length, visibleCount]);
 
-  // Auto-advance every 3 seconds. Pause when only one page or reduced motion.
+  // Auto-advance every 3 seconds with random selection (excluding current).
   useEffect(() => {
-    if (prefersReducedMotion || pageCount <= 1) return;
+    if (prefersReducedMotion) return;
+    if (items.length <= visibleCount) return; // nothing to rotate
+    if (lightboxIdx !== null) return; // pause while viewing big image
     const id = window.setInterval(() => {
-      setPage((p) => (p + 1) % pageCount);
+      setIndices((prev) => pickRandomIndices(items.length, visibleCount, prev));
     }, 3000);
     return () => window.clearInterval(id);
-  }, [pageCount, prefersReducedMotion]);
+  }, [items.length, visibleCount, prefersReducedMotion, lightboxIdx]);
 
-  const start = safePage * visibleCount;
-  const visible = items.slice(start, start + visibleCount);
+  // Esc to close lightbox + lock body scroll.
+  useEffect(() => {
+    if (lightboxIdx === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightboxIdx(null);
+      if (e.key === "ArrowRight") setLightboxIdx((i) => (i === null ? null : (i + 1) % items.length));
+      if (e.key === "ArrowLeft") setLightboxIdx((i) => (i === null ? null : (i - 1 + items.length) % items.length));
+    };
+    window.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [lightboxIdx, items.length]);
+
+  const visible = indices.map((i) => items[i]).filter(Boolean);
+  const lightboxItem = lightboxIdx !== null ? items[lightboxIdx] : null;
+  const lightboxAlt = lightboxItem
+    ? (lang === "de" ? lightboxItem.title_de : lightboxItem.title_en || lightboxItem.title_de)
+    : "";
 
   return (
     <div className="gallery-slideshow">
@@ -113,32 +158,75 @@ const GallerySlideshow = ({
           gridTemplateColumns: `repeat(${visibleCount}, minmax(0, 1fr))`,
         }}
       >
-        {visible.map((g) => {
+        {visible.map((g, slot) => {
           const alt = lang === "de" ? g.title_de : g.title_en || g.title_de;
+          const realIdx = indices[slot];
           return (
-            <figure
-              key={`${safePage}-${g.id}`}
-              className="tile animate-fade-in"
+            <button
+              type="button"
+              key={`${realIdx}-${slot}`}
+              onClick={() => setLightboxIdx(realIdx)}
+              className="tile tile-button animate-fade-in"
               style={{ animationDuration: "600ms" }}
+              aria-label={alt || "Open image"}
             >
               <img loading="lazy" src={g.image_url!} alt={alt} />
-            </figure>
+            </button>
           );
         })}
       </div>
-      {pageCount > 1 && (
-        <div className="gallery-dots" role="tablist" aria-label="Gallery pages">
-          {Array.from({ length: pageCount }).map((_, i) => (
+
+      {lightboxItem && (
+        <div
+          className="gallery-lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label={lightboxAlt}
+          onClick={() => setLightboxIdx(null)}
+        >
+          <button
+            type="button"
+            className="gallery-lightbox-close"
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightboxIdx(null);
+            }}
+            aria-label="Close"
+          >
+            ×
+          </button>
+          {items.length > 1 && (
             <button
-              key={i}
               type="button"
-              role="tab"
-              aria-selected={i === safePage}
-              aria-label={`Go to gallery page ${i + 1}`}
-              onClick={() => setPage(i)}
-              className={`gallery-dot ${i === safePage ? "active" : ""}`}
-            />
-          ))}
+              className="gallery-lightbox-nav prev"
+              onClick={(e) => {
+                e.stopPropagation();
+                setLightboxIdx((i) => (i === null ? null : (i - 1 + items.length) % items.length));
+              }}
+              aria-label="Previous image"
+            >
+              ‹
+            </button>
+          )}
+          <img
+            src={lightboxItem.image_url!}
+            alt={lightboxAlt}
+            className="gallery-lightbox-img animate-scale-in"
+            onClick={(e) => e.stopPropagation()}
+          />
+          {items.length > 1 && (
+            <button
+              type="button"
+              className="gallery-lightbox-nav next"
+              onClick={(e) => {
+                e.stopPropagation();
+                setLightboxIdx((i) => (i === null ? null : (i + 1) % items.length));
+              }}
+              aria-label="Next image"
+            >
+              ›
+            </button>
+          )}
         </div>
       )}
     </div>
@@ -1891,6 +1979,21 @@ body.ig-page-body::before {
 .ig-page .gallery-dot { width: 8px; height: 8px; border-radius: 999px; border: 0; padding: 0; background: rgba(255,255,255,0.35); cursor: pointer; transition: background .25s ease, transform .25s ease; }
 .ig-page .gallery-dot:hover { background: rgba(255,255,255,0.6); }
 .ig-page .gallery-dot.active { background: #fff; transform: scale(1.25); }
+.ig-page .tile-button { display: block; width: 100%; padding: 0; border: 0; background: var(--moss-1); cursor: pointer; font: inherit; color: inherit; }
+.ig-page .tile-button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.ig-page .gallery-lightbox { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.88); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 4vw; animation: fade-in .25s ease-out; }
+.ig-page .gallery-lightbox-img { max-width: min(92vw, 1400px); max-height: 88vh; width: auto; height: auto; border-radius: 14px; box-shadow: 0 30px 80px -20px rgba(0,0,0,0.6); cursor: default; }
+.ig-page .gallery-lightbox-close { position: absolute; top: 18px; right: 22px; width: 44px; height: 44px; border-radius: 999px; border: 0; background: rgba(255,255,255,0.12); color: #fff; font-size: 28px; line-height: 1; cursor: pointer; transition: background .2s ease, transform .2s ease; }
+.ig-page .gallery-lightbox-close:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
+.ig-page .gallery-lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 48px; height: 48px; border-radius: 999px; border: 0; background: rgba(255,255,255,0.12); color: #fff; font-size: 32px; line-height: 1; cursor: pointer; transition: background .2s ease, transform .2s ease; display: flex; align-items: center; justify-content: center; }
+.ig-page .gallery-lightbox-nav:hover { background: rgba(255,255,255,0.25); }
+.ig-page .gallery-lightbox-nav.prev { left: 18px; }
+.ig-page .gallery-lightbox-nav.next { right: 18px; }
+@media (max-width: 640px) {
+  .ig-page .gallery-lightbox-nav { width: 40px; height: 40px; font-size: 26px; }
+  .ig-page .gallery-lightbox-nav.prev { left: 8px; }
+  .ig-page .gallery-lightbox-nav.next { right: 8px; }
+}
 
 /* HOURS + LOCATION */
 .ig-page .split { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
