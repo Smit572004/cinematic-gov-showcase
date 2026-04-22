@@ -570,6 +570,7 @@ const ProductsMarquee = ({
                     key={`${dup}-${o.id}`}
                     type="button"
                     className="product-card-v2"
+                    data-color={o.color_tag}
                     onClick={() => dup === 0 && onSelect(o)}
                     onMouseEnter={() => setPaused(true)}
                     onMouseLeave={() => setPaused(false)}
