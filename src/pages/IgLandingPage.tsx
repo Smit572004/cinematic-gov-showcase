@@ -1046,12 +1046,14 @@ body.ig-page-body::before {
   gap: 32px;
   align-items: center;
 }
-.ig-page .footer-brand .logo {
-  font-family: 'Fraunces', Georgia, serif;
-  font-size: 28px;
-  font-weight: 700;
-  color: #fffaf0;
-  margin-bottom: 6px;
+.ig-page .footer-brand .footer-logo {
+  display: inline-block;
+  margin-bottom: 12px;
+}
+.ig-page .footer-brand .footer-logo img {
+  height: 44px;
+  width: auto;
+  display: block;
 }
 .ig-page .footer-brand .tagline {
   font-style: italic;
