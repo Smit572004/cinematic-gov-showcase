@@ -863,18 +863,63 @@ body.ig-page-body::before {
   padding: 36px 32px;
   box-shadow: var(--shadow-soft);
 }
+.ig-page .panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
 .ig-page .panel h3 {
   font-size: 24px;
-  margin-bottom: 22px;
+  margin: 0;
   color: var(--moss-1);
 }
+
+/* Live status badge */
+.ig-page .live-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.ig-page .live-status.is-open {
+  background: rgba(78, 197, 122, 0.15);
+  border-color: rgba(78, 197, 122, 0.45);
+  color: #2a6f3f;
+}
+.ig-page .live-status.is-closed {
+  background: rgba(201, 83, 58, 0.12);
+  border-color: rgba(201, 83, 58, 0.35);
+  color: #8a3a26;
+}
+.ig-page .live-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 0 currentColor;
+  animation: igLivePulse 1.8s ease-in-out infinite;
+}
+@keyframes igLivePulse {
+  0%, 100% { box-shadow: 0 0 0 0 currentColor; opacity: 1; }
+  50%      { box-shadow: 0 0 0 6px rgba(0,0,0,0); opacity: .55; }
+}
+
 .ig-page .hours-list li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
+  padding: 12px 10px;
   border-bottom: 1px dashed var(--line);
   font-size: 15px;
+  border-radius: 8px;
+  transition: background .2s ease;
 }
 .ig-page .hours-list li:last-child { border-bottom: none; }
 .ig-page .hours-list .day { font-weight: 600; color: var(--ink); }
@@ -883,6 +928,55 @@ body.ig-page-body::before {
   color: var(--tomato);
   font-weight: 600;
 }
+.ig-page .hours-list li.is-today {
+  background: rgba(138, 168, 107, 0.18);
+  padding-left: 14px;
+  padding-right: 14px;
+}
+.ig-page .hours-list li.is-today .day::before {
+  content: "›";
+  display: inline-block;
+  margin-right: 6px;
+  color: var(--moss-1);
+  font-weight: 800;
+}
+
+/* Quick action buttons */
+.ig-page .quick-actions,
+.ig-page .route-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+.ig-page .qa-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 600;
+  background: rgba(47, 74, 50, 0.06);
+  color: var(--moss-1);
+  border: 1px solid rgba(47, 74, 50, 0.18);
+  transition: transform .2s ease, background .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+  cursor: pointer;
+}
+.ig-page .qa-btn:hover {
+  transform: translateY(-2px);
+  background: var(--moss-1);
+  color: #fffaf0;
+  border-color: var(--moss-1);
+  box-shadow: 0 12px 24px -12px rgba(47, 74, 50, 0.6);
+}
+.ig-page .qa-btn svg { flex-shrink: 0; }
+.ig-page .qa-wa:hover { background: #25d366; border-color: #25d366; }
+.ig-page .qa-call:hover { background: var(--moss-2); border-color: var(--moss-2); }
+.ig-page .qa-mail:hover { background: var(--bark); border-color: var(--bark); }
+.ig-page .qa-route:hover { background: #1a73e8; border-color: #1a73e8; }
+.ig-page .qa-apple:hover { background: #111; border-color: #111; }
+
 .ig-page .address {
   color: var(--ink-soft);
   font-size: 15px;
@@ -898,6 +992,7 @@ body.ig-page-body::before {
   font-weight: 700;
 }
 .ig-page .map-wrap {
+  position: relative;
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid var(--line);
