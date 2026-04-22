@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export type IgOffer = {
@@ -144,8 +145,27 @@ export const useIgOffers = () =>
     staleTime: 30_000,
   });
 
-export const useIgGallery = () =>
-  useQuery({
+export const useIgGallery = () => {
+  const queryClient = useQueryClient();
+
+  // Live-refresh whenever an admin adds, removes or edits a gallery photo.
+  useEffect(() => {
+    const channel = supabase
+      .channel("ig-gallery-public-changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "ig_gallery" },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["ig-gallery-public"] });
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
+  return useQuery({
     queryKey: ["ig-gallery-public"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -155,8 +175,11 @@ export const useIgGallery = () =>
       if (error) throw error;
       return (data ?? []) as IgGalleryItem[];
     },
-    staleTime: 30_000,
+    // Short stale window so new uploads show up quickly even without realtime.
+    staleTime: 5_000,
+    refetchOnWindowFocus: true,
   });
+};
 
 /** Parse a hours value like "09:00|18:00" or "closed". Returns null if closed. */
 export const parseHours = (
