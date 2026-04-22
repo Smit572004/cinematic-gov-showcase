@@ -847,7 +847,7 @@ const IgLandingPage = () => {
     () => [
       { id: "ig-main", label: pick(content, "ig_nav_home", lang, "Start") },
       { id: "offers", label: pick(content, "ig_nav_products", lang, pick(content, "ig_nav_offers", lang, lang === "de" ? "Produkte" : "Products")) },
-      { id: "location", label: pick(content, "ig_nav_location", lang, "Standort") },
+      { id: "gallery", label: pick(content, "ig_nav_gallery", lang, lang === "de" ? "Galerie" : "Gallery") },
       { id: "contact", label: pick(content, "ig_nav_contact", lang, "Kontakt") },
     ],
     [content, lang],
@@ -857,7 +857,7 @@ const IgLandingPage = () => {
   const [activeSection, setActiveSection] = useState<string>("ig-main");
   const [navScrolled, setNavScrolled] = useState(false);
   useEffect(() => {
-    const ids = ["ig-main", "offers", "location", "contact"];
+    const ids = ["ig-main", "offers", "gallery", "contact"];
     const onScroll = () => {
       setNavScrolled(window.scrollY > 40);
       const probe = window.innerHeight * 0.35;
@@ -1292,7 +1292,7 @@ const IgLandingPage = () => {
 
         {/* ============== GALLERY ============== */}
         {activeGallery.length > 0 && (
-          <section className="snap-section section section-moss gallery-section">
+          <section id="gallery" className="snap-section section section-moss gallery-section">
             <span className="gallery-deco gallery-deco-1" aria-hidden="true" />
             <span className="gallery-deco gallery-deco-2" aria-hidden="true" />
             <div className="container">
@@ -1407,7 +1407,7 @@ const IgLandingPage = () => {
         </section>
 
         {/* ============== FOOTER ============== */}
-        <footer className="ig-footer">
+        <footer id="contact" className="ig-footer">
           <div className="container footer-grid">
             <div className="footer-brand">
               <a href="/" className="footer-logo" aria-label="TinPlant">
