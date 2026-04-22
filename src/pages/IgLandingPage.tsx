@@ -654,7 +654,7 @@ const ProductsMarquee = ({
 const IgLandingPage = () => {
   const { lang } = useLanguage();
   const heroRef = useRef<HTMLElement | null>(null);
-  const productsSectionRef = useRef<HTMLElement | null>(null);
+  
 
   const prefersReducedMotion = useReducedMotion();
 
@@ -1144,7 +1144,7 @@ const IgLandingPage = () => {
         {activeOffers.length > 0 && (
           <motion.section
             id="offers"
-            ref={productsSectionRef}
+            
             className="snap-section section section-cream products-section"
             initial="hidden"
             whileInView="show"
@@ -1158,9 +1158,6 @@ const IgLandingPage = () => {
               },
             }}
           >
-            {/* Cinematic parallax backdrop — sits behind everything */}
-            <ProductsParallaxBackdrop sectionRef={productsSectionRef} />
-
             {/* 1. HEADING */}
             <div className="container">
               <motion.header
