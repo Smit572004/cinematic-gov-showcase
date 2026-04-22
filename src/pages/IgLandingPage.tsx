@@ -509,13 +509,11 @@ const ProductsMarquee = ({
   offers,
   lang,
   onSelect,
-  onBuy,
   ariaLabel,
 }: {
   offers: IgOffer[];
   lang: LangKey;
   onSelect: (o: IgOffer) => void;
-  onBuy: (o: IgOffer) => void;
   ariaLabel: string;
 }) => {
   const trackRef = useRef<HTMLDivElement | null>(null);
@@ -640,11 +638,11 @@ const ProductsMarquee = ({
                     role={dup === 0 ? "button" : undefined}
                     tabIndex={dup === 0 ? 0 : -1}
                     aria-label={`${title} — ${ctaLabel}`}
-                    onClick={() => { if (dup === 0) onBuy(o); }}
+                    onClick={() => { if (dup === 0) onSelect(o); }}
                     onKeyDown={(e) => {
                       if (dup === 0 && (e.key === "Enter" || e.key === " ")) {
                         e.preventDefault();
-                        onBuy(o);
+                        onSelect(o);
                       }
                     }}
                     onMouseMove={(e) => {
