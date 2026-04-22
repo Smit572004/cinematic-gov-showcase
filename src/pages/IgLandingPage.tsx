@@ -1907,6 +1907,28 @@ body.ig-page-body::before {
 .ig-page .product-card-v2:hover .pcv2-emoji {
   transform: scale(1.12) rotate(-6deg);
 }
+.ig-page .pcv2-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+  transition: transform .6s cubic-bezier(.2,.8,.2,1);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.ig-page .product-card-v2:hover .pcv2-img {
+  transform: scale(1.06);
+}
+.ig-page .ig-modal-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
 .ig-page .pcv2-shine {
   position: absolute;
   top: -40%;
