@@ -96,6 +96,12 @@ const IgLandingPage = () => {
       heroRef.current.classList.add("hero-anim");
     }
 
+    // Mark "today" in hours list
+    const today = new Date().getDay();
+    document.querySelectorAll<HTMLElement>(".ig-page .hours-list li").forEach((li) => {
+      if (Number(li.dataset.day) === today) li.classList.add("is-today");
+    });
+
     return () => io.disconnect();
   }, []);
 
