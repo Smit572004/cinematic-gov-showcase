@@ -1754,8 +1754,8 @@ body.ig-page-body::before {
 .ig-page .hn-link:hover { color: #ffffff; }
 .ig-page .hn-link.is-active { color: #cfe9b8; }
 @media (max-width: 640px) {
-  .ig-page .hero-nav { top: 10px; padding: 6px 8px; gap: 4px; max-width: calc(100% - 16px); }
-  .ig-page .hero-nav.is-scrolled { top: 8px; padding: 5px 8px; }
+  .ig-page .hero-nav { padding: 8px 12px; gap: 4px; }
+  .ig-page .hero-nav.is-scrolled { padding: 6px 12px; }
   .ig-page .hn-link { padding: 6px 10px; font-size: 11.5px; }
   .ig-page .hn-logo img { height: 22px; }
   .ig-page .hn-divider { display: none; }
