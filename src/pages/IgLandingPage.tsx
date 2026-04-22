@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import logoWhite from "@/assets/tinplant-logo-white.png";
+import locationBg from "@/assets/ig-location-bg.jpeg";
 import { useLanguage } from "@/i18n/LanguageContext";
 import {
   HOUR_KEYS,
@@ -1352,7 +1353,13 @@ const IgLandingPage = () => {
         )}
 
         {/* ============== HOURS + LOCATION ============== */}
-        <section id="location" className="snap-section section section-sand">
+        <section id="location" className="snap-section section section-sand has-floral-bg">
+          <div
+            className="floral-bg"
+            aria-hidden="true"
+            style={{ backgroundImage: `url(${locationBg})` }}
+          />
+          <div className="floral-bg-tint" aria-hidden="true" />
           <div className="container">
             <div className="section-head reveal">
               <span className="section-tag">
@@ -1862,6 +1869,36 @@ body.ig-page-body::before {
 .ig-page .section-cream { background: var(--cream); }
 .ig-page .section-sand  { background: var(--sand); }
 .ig-page .section-moss  { background: linear-gradient(180deg, var(--moss-2) 0%, var(--moss-1) 100%); color: #fffaf0; }
+
+/* Floral photo background for the Hours/Location section */
+.ig-page .has-floral-bg { position: relative; overflow: hidden; isolation: isolate; }
+.ig-page .has-floral-bg .container { position: relative; z-index: 2; }
+.ig-page .floral-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  transform: scale(1.04);
+  filter: saturate(1.05);
+}
+.ig-page .floral-bg-tint {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(247, 241, 226, 0.78) 0%, rgba(247, 241, 226, 0.62) 50%, rgba(247, 241, 226, 0.85) 100%),
+    radial-gradient(900px 500px at 50% 0%, rgba(255, 255, 255, 0.25), transparent 70%);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+@media (max-width: 640px) {
+  .ig-page .floral-bg-tint {
+    background:
+      linear-gradient(180deg, rgba(247, 241, 226, 0.9) 0%, rgba(247, 241, 226, 0.78) 50%, rgba(247, 241, 226, 0.92) 100%);
+  }
+}
 .ig-page .section-head { text-align: center; max-width: 720px; margin: 0 auto 56px; }
 .ig-page .section-tag { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--moss-1); background: rgba(138, 168, 107, 0.18); border: 1px solid rgba(138, 168, 107, 0.35); padding: 7px 14px; border-radius: 999px; margin-bottom: 18px; }
 .ig-page .section-tag.light { color: #f5e7b8; background: rgba(255, 250, 240, 0.1); border-color: rgba(255, 250, 240, 0.25); }
