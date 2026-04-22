@@ -130,6 +130,32 @@ const HeroSection = () => {
         style={{ boxShadow: "inset 0 0 220px 60px hsl(var(--background))" }}
       />
 
+      {/* Floating ambient particles */}
+      {!prefersReducedMotion && (
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {[...Array(8)].map((_, i) => (
+            <motion.span
+              key={i}
+              className="absolute block w-1.5 h-1.5 rounded-full bg-primary/40 blur-[1px]"
+              style={{
+                left: `${(i * 13 + 8) % 100}%`,
+                top: `${(i * 23 + 15) % 100}%`,
+              }}
+              animate={{
+                y: [0, -40, 0],
+                opacity: [0, 0.8, 0],
+              }}
+              transition={{
+                duration: 6 + (i % 4),
+                repeat: Infinity,
+                delay: i * 0.7,
+                ease: "easeInOut",
+              }}
+            />
+          ))}
+        </div>
+      )}
+
       {/* Content */}
       <motion.div
         style={prefersReducedMotion ? undefined : { y: contentY, opacity: contentOpacity }}
