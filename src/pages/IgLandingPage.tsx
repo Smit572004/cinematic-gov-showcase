@@ -7,6 +7,7 @@ import {
   useIgContent,
   useIgGallery,
   useIgOffers,
+  type IgOffer,
 } from "@/hooks/useIgContent";
 
 type LangKey = "de" | "en";
