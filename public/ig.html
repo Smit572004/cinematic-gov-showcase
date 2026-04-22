@@ -326,14 +326,61 @@
   footer .copy { font-size: 12px; color: var(--ink-mute); margin-top: 14px; }
 
   /* ---- Cinematic reveals ---- */
-  .reveal { opacity: 0; transform: translate3d(0, 36px, 0); transition: opacity 1s cubic-bezier(.2,.8,.2,1), transform 1.05s cubic-bezier(.2,.8,.2,1); will-change: transform, opacity; }
+  .reveal { opacity: 0; transform: translate3d(0, 44px, 0); transition: opacity 1.1s cubic-bezier(.16,.84,.24,1), transform 1.2s cubic-bezier(.16,.84,.24,1); will-change: transform, opacity; }
   .reveal.in { opacity: 1; transform: translate3d(0, 0, 0); }
-  .reveal-left { transform: translate3d(-44px, 0, 0); }
-  .reveal-right { transform: translate3d(44px, 0, 0); }
-  .reveal-zoom { transform: scale(.92); }
+  .reveal-left { transform: translate3d(-56px, 0, 0); }
+  .reveal-right { transform: translate3d(56px, 0, 0); }
+  .reveal-zoom { transform: scale(.9); }
   .reveal-zoom.in { transform: scale(1); }
-  .reveal-blur { filter: blur(14px); transition: opacity 1s cubic-bezier(.2,.8,.2,1), transform 1.05s cubic-bezier(.2,.8,.2,1), filter 1.1s ease-out; }
+  .reveal-blur { filter: blur(16px); transition: opacity 1.1s cubic-bezier(.16,.84,.24,1), transform 1.2s cubic-bezier(.16,.84,.24,1), filter 1.3s ease-out; }
   .reveal-blur.in { filter: blur(0); }
+
+  /* Word-by-word headline reveal */
+  .word-reveal { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .12em; }
+  .word-reveal .w { display: inline-block; transform: translate3d(0, 110%, 0) rotate(6deg); opacity: 0; transition: transform 1.05s cubic-bezier(.16,.84,.24,1), opacity .9s ease-out; transition-delay: var(--wd, 0ms); will-change: transform, opacity; }
+  .word-reveal.in .w { transform: translate3d(0, 0, 0) rotate(0); opacity: 1; }
+
+  /* Cinematic section transitions: soft gradient bleed between sections */
+  section + section { position: relative; }
+  section + section::before {
+    content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 120px;
+    background: linear-gradient(180deg, rgba(255,253,248,0) 0%, rgba(255,253,248,.6) 60%, rgba(255,253,248,0) 100%);
+    pointer-events: none; z-index: 1;
+  }
+  section { isolation: isolate; }
+
+  /* Aurora light sweep — drifts behind content like a moving film light */
+  body::before {
+    content: ""; position: fixed; inset: -20vh -20vw; z-index: -1; pointer-events: none;
+    background:
+      radial-gradient(ellipse 50% 35% at var(--aur-x, 30%) var(--aur-y, 20%), rgba(255,210,51,.18), transparent 60%),
+      radial-gradient(ellipse 45% 35% at calc(100% - var(--aur-x, 30%)) calc(100% - var(--aur-y, 20%)), rgba(255,111,174,.16), transparent 60%);
+    transition: background 2s linear;
+    animation: auroraDrift 22s ease-in-out infinite alternate;
+  }
+  @keyframes auroraDrift {
+    0%   { transform: translate3d(0, 0, 0) scale(1); }
+    50%  { transform: translate3d(2vw, 3vh, 0) scale(1.05); }
+    100% { transform: translate3d(-2vw, -2vh, 0) scale(1.02); }
+  }
+
+  /* Film grain overlay for cinematic texture */
+  body::after {
+    content: ""; position: fixed; inset: 0; z-index: 9998; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    opacity: .055; mix-blend-mode: multiply;
+    animation: grainShift 1.2s steps(3) infinite;
+  }
+  @keyframes grainShift {
+    0% { transform: translate(0, 0); }
+    33% { transform: translate(-4px, 3px); }
+    66% { transform: translate(3px, -2px); }
+    100% { transform: translate(0, 0); }
+  }
+
+  /* Section reveal scale — sections breathe in slightly as they enter */
+  .section-zoom { transform: scale(.985); transition: transform 1.4s cubic-bezier(.16,.84,.24,1); transform-origin: 50% 30%; }
+  .section-zoom.in { transform: scale(1); }
 
   /* Stagger via inline --d (set by JS) */
   .reveal { transition-delay: var(--d, 0ms); }
@@ -391,10 +438,12 @@
   footer > * { position: relative; z-index: 1; }
 
   @media (prefers-reduced-motion: reduce) {
-    .reveal, .reveal-left, .reveal-right, .reveal-zoom, .reveal-blur { opacity: 1 !important; transform: none !important; filter: none !important; transition: none !important; }
+    .reveal, .reveal-left, .reveal-right, .reveal-zoom, .reveal-blur, .section-zoom { opacity: 1 !important; transform: none !important; filter: none !important; transition: none !important; }
+    .word-reveal .w { opacity: 1 !important; transform: none !important; transition: none !important; }
     .hero::before { transform: none !important; }
     .hero .orb { display: none; }
     .card, .gallery .tile { transform: none !important; transition: none !important; }
+    body::before, body::after { animation: none !important; }
   }
 </style>
 </head>
@@ -417,9 +466,8 @@
   <span class="orb o3" data-depth="0.07"></span>
   <div class="hero-inner">
     <span class="eyebrow reveal reveal-blur" data-layer="0.4"><span class="dot"></span> Direkt vom Erzeuger · Magdeburg</span>
-    <h1 class="reveal reveal-blur" data-layer="0.8">
-      Frische Pflanzen<br/>
-      direkt vom Erzeuger – <span class="accent">nur 15 Minuten</span> von Magdeburg
+    <h1 class="reveal reveal-blur" data-layer="0.8" data-words>
+      Frische Pflanzen direkt vom Erzeuger – <span class="accent">nur 15 Minuten</span> von Magdeburg
     </h1>
     <p class="lead reveal" data-layer="0.5">Bessere Qualität. Bessere Preise. Direkt aus dem Gewächshaus.</p>
     <div class="cta-row reveal reveal-zoom" data-layer="0.3">
@@ -431,7 +479,7 @@
 </section>
 
 <!-- OFFERS -->
-<section id="offers" class="offers-bg">
+<section id="offers" class="offers-bg section-zoom reveal">
   <div class="container">
     <div class="section-head reveal">
       <span class="section-tag">Angebote</span>
@@ -466,7 +514,7 @@
 </section>
 
 <!-- GALLERY -->
-<section>
+<section class="section-zoom reveal">
   <div class="container">
     <div class="section-head reveal">
       <span class="section-tag">Einblicke</span>
@@ -481,7 +529,7 @@
 </section>
 
 <!-- HOURS + LOCATION -->
-<section id="location" class="offers-bg">
+<section id="location" class="offers-bg section-zoom reveal">
   <div class="container">
     <div class="section-head reveal">
       <span class="section-tag">Besuch uns</span>
@@ -575,6 +623,59 @@
     });
   }, { threshold: 0.14, rootMargin: "0px 0px -8% 0px" });
   document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+  // ---- Split [data-words] headings into per-word reveal spans ----
+  document.querySelectorAll("[data-words]").forEach((h) => {
+    // Wrap each top-level text node's words; preserve inner element nodes (e.g. .accent)
+    const wrap = document.createElement("span");
+    wrap.className = "word-reveal";
+    const frag = document.createDocumentFragment();
+    let wi = 0;
+    const stagger = 70;
+    h.childNodes.forEach((node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        node.textContent.split(/(\s+)/).forEach((part) => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+          const s = document.createElement("span");
+          s.className = "w";
+          s.style.setProperty("--wd", (wi * stagger) + "ms");
+          s.textContent = part;
+          frag.appendChild(s);
+          wi++;
+        });
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        // Wrap whole inline element as one "word" so gradient stays intact
+        const s = document.createElement("span");
+        s.className = "w";
+        s.style.setProperty("--wd", (wi * stagger) + "ms");
+        s.appendChild(node.cloneNode(true));
+        frag.appendChild(s);
+        wi++;
+      }
+    });
+    wrap.appendChild(frag);
+    h.innerHTML = "";
+    h.appendChild(wrap);
+    // Trigger word reveal in sync with the heading's reveal
+    const wordIO = new IntersectionObserver((es) => {
+      es.forEach((e) => { if (e.isIntersecting) { wrap.classList.add("in"); wordIO.unobserve(h); } });
+    }, { threshold: 0.2 });
+    wordIO.observe(h);
+  });
+
+  // ---- Aurora light follows scroll position ----
+  if (!reduce) {
+    let aurRaf = 0;
+    window.addEventListener("scroll", () => {
+      cancelAnimationFrame(aurRaf);
+      aurRaf = requestAnimationFrame(() => {
+        const p = Math.min(1, window.scrollY / (document.body.scrollHeight - window.innerHeight));
+        document.body.style.setProperty("--aur-x", (20 + p * 60) + "%");
+        document.body.style.setProperty("--aur-y", (15 + p * 70) + "%");
+      });
+    }, { passive: true });
+  }
 
   // ---- Cinematic hero parallax (bg + orbs + content layers) ----
   const hero = document.querySelector(".hero");
