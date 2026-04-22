@@ -521,16 +521,27 @@ const ProductsMarquee = ({
   const [showArrows, setShowArrows] = useState(false);
   const detailsLabel = lang === "de" ? "Details ansehen" : "View details";
 
-  // Manual scroll via arrows (also pauses the marquee while interacting).
+  // Manual nudge via arrows: temporarily shift the track and pause the
+  // animation. After the user stops interacting, the marquee resumes
+  // from its current position.
+  const nudgeRef = useRef(0);
   const scrollByCards = (dir: 1 | -1) => {
+    const track = trackRef.current;
     const vp = viewportRef.current;
-    if (!vp) return;
+    if (!track || !vp) return;
     const card = vp.querySelector<HTMLElement>(".product-card-v2");
     const step = card ? card.getBoundingClientRect().width + 22 : 320;
     setPaused(true);
-    vp.scrollBy({ left: dir * step * 2, behavior: "smooth" });
-    // resume auto-scroll shortly after
-    window.setTimeout(() => setPaused(false), 1400);
+    nudgeRef.current -= dir * step * 2;
+    track.style.transition = "transform .5s cubic-bezier(.2,.8,.2,1)";
+    track.style.transform = `translate3d(${nudgeRef.current}px, 0, 0)`;
+    window.setTimeout(() => {
+      if (!track) return;
+      track.style.transition = "";
+      track.style.transform = "";
+      nudgeRef.current = 0;
+      setPaused(false);
+    }, 1400);
   };
 
   return (
