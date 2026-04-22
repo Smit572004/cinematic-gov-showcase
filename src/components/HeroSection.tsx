@@ -2,7 +2,9 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
 import { ChevronDown, ShieldCheck, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import heroBg from "@/assets/hero-bg.jpg";
-import heroVideo from "@/assets/hero-video.mp4";
+import heroVideoMeta from "@/assets/hero-video.mp4.asset.json";
+
+const heroVideo = (heroVideoMeta as { url: string }).url;
 import { useEffect, useRef, useState } from "react";
 
 const HeroSection = () => {
