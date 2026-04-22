@@ -7,6 +7,7 @@ import {
   useIgContent,
   useIgGallery,
   useIgOffers,
+  type IgOffer,
 } from "@/hooks/useIgContent";
 
 type LangKey = "de" | "en";
@@ -216,6 +217,24 @@ const IgLandingPage = () => {
   // Active offers and gallery (admin already controls is_active server-side, but be safe)
   const activeOffers = useMemo(() => offers.filter((o) => o.is_active), [offers]);
   const activeGallery = useMemo(() => gallery.filter((g) => g.is_active && g.image_url), [gallery]);
+
+  // Selected product for details modal
+  const [selectedProduct, setSelectedProduct] = useState<IgOffer | null>(null);
+
+  // Lock body scroll when modal is open + close on Escape
+  useEffect(() => {
+    if (!selectedProduct) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedProduct(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [selectedProduct]);
 
   // ---- Page meta ----
   useEffect(() => {
@@ -511,21 +530,37 @@ const IgLandingPage = () => {
                       const title = lang === "de" ? o.title_de : o.title_en || o.title_de;
                       const desc = lang === "de" ? o.description_de : o.description_en || o.description_de;
                       const badge = lang === "de" ? o.badge_de : o.badge_en || o.badge_de;
+                      const detailsLabel = lang === "de" ? "Details ansehen" : "View details";
                       return (
-                        <article key={`${dup}-${o.id}`} className="card product-card">
-                          <div className="card-illust" data-color={o.color_tag}>
-                            <span className="illust-emoji" aria-hidden="true">{o.emoji}</span>
+                        <button
+                          key={`${dup}-${o.id}`}
+                          type="button"
+                          className="product-card-v2"
+                          onClick={() => dup === 0 && setSelectedProduct(o)}
+                          tabIndex={dup === 1 ? -1 : 0}
+                          aria-label={`${title} — ${detailsLabel}`}
+                        >
+                          <div className="pcv2-art" data-color={o.color_tag}>
+                            <span className="pcv2-emoji" aria-hidden="true">{o.emoji}</span>
+                            <span className="pcv2-shine" aria-hidden="true" />
                           </div>
-                          {badge && <span className="badge">{badge}</span>}
-                          <h3>{title}</h3>
-                          {desc && <p className="desc">{desc}</p>}
-                          {(o.price_text || o.unit_text) && (
-                            <div className="price-row">
-                              {o.price_text && <span className="price">{o.price_text}</span>}
-                              {o.unit_text && <span className="price-unit">{o.unit_text}</span>}
+                          <div className="pcv2-body">
+                            {badge && <span className="pcv2-cat">{badge}</span>}
+                            <h3 className="pcv2-title">{title}</h3>
+                            {desc && <p className="pcv2-desc">{desc}</p>}
+                            <div className="pcv2-foot">
+                              {(o.price_text || o.unit_text) ? (
+                                <span className="pcv2-price-wrap">
+                                  {o.price_text && <span className="pcv2-price">{o.price_text}</span>}
+                                  {o.unit_text && <span className="pcv2-unit">{o.unit_text}</span>}
+                                </span>
+                              ) : <span />}
+                              <span className="pcv2-arrow" aria-hidden="true">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
+                              </span>
                             </div>
-                          )}
-                        </article>
+                          </div>
+                        </button>
                       );
                     })}
                   </div>
@@ -736,6 +771,88 @@ const IgLandingPage = () => {
           </div>
         </footer>
       </main>
+
+      {/* ============== PRODUCT DETAILS MODAL ============== */}
+      {selectedProduct && (() => {
+        const o = selectedProduct;
+        const title = lang === "de" ? o.title_de : o.title_en || o.title_de;
+        const desc = lang === "de" ? o.description_de : o.description_en || o.description_de;
+        const badge = lang === "de" ? o.badge_de : o.badge_en || o.badge_de;
+        const closeLabel = lang === "de" ? "Schließen" : "Close";
+        const specsLabel = lang === "de" ? "Eckdaten" : "Key specs";
+        const priceLabel = lang === "de" ? "Preis" : "Price";
+        const categoryLabel = lang === "de" ? "Kategorie" : "Category";
+        // Derive simple key specs from description bullet-style splits
+        const specs = (desc || "")
+          .split(/[•\n;]+/)
+          .map((s) => s.trim())
+          .filter(Boolean);
+        const ctaLabel = lang === "de" ? "Vor Ort kaufen" : "Buy on site";
+        return (
+          <div
+            className="ig-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label={title}
+            onClick={() => setSelectedProduct(null)}
+          >
+            <div className="ig-modal-card" onClick={(e) => e.stopPropagation()}>
+              <button
+                type="button"
+                className="ig-modal-close"
+                onClick={() => setSelectedProduct(null)}
+                aria-label={closeLabel}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
+              </button>
+              <div className="ig-modal-art" data-color={o.color_tag}>
+                <span className="ig-modal-emoji" aria-hidden="true">{o.emoji}</span>
+                {badge && <span className="ig-modal-cat">{badge}</span>}
+              </div>
+              <div className="ig-modal-body">
+                <h3 className="ig-modal-title">{title}</h3>
+                {badge && (
+                  <p className="ig-modal-meta">
+                    <span className="ig-modal-meta-key">{categoryLabel}</span>
+                    <span className="ig-modal-meta-val">{badge}</span>
+                  </p>
+                )}
+                {specs.length > 0 && (
+                  <div className="ig-modal-specs">
+                    <p className="ig-modal-specs-head">{specsLabel}</p>
+                    <ul>
+                      {specs.map((s, i) => (
+                        <li key={i}>
+                          <span className="ig-modal-bullet" aria-hidden="true" />
+                          <span>{s}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {(o.price_text || o.unit_text) && (
+                  <div className="ig-modal-price">
+                    <span className="ig-modal-price-key">{priceLabel}</span>
+                    <span className="ig-modal-price-val">
+                      {o.price_text}
+                      {o.unit_text && <span className="ig-modal-price-unit"> {o.unit_text}</span>}
+                    </span>
+                  </div>
+                )}
+                <div className="ig-modal-actions">
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-on-light"
+                    onClick={() => setSelectedProduct(null)}
+                  >
+                    {ctaLabel}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </>
   );
 };
@@ -1110,9 +1227,10 @@ body.ig-page-body::before {
   gap: 22px;
   padding: 0 11px;
 }
-.ig-page .product-card {
+.ig-page .product-card,
+.ig-page .product-card-v2 {
   flex: 0 0 auto;
-  width: clamp(240px, 26vw, 300px);
+  width: clamp(260px, 28vw, 320px);
   margin: 0;
 }
 @keyframes igProductsScroll {
@@ -1204,5 +1322,310 @@ body.ig-page-body::before {
   .ig-page .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
   .ig-page .leaf, .ig-page .scroll-hint svg, .ig-page .hand-underline svg { animation: none !important; }
   .ig-page .hand-underline svg { stroke-dashoffset: 0 !important; opacity: 1 !important; }
+}
+
+/* ============== PRODUCT CARD V2 (refined design) ============== */
+.ig-page .product-card-v2 {
+  appearance: none;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  background: #fffaf0;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 8px 24px -16px rgba(31, 41, 31, 0.18);
+  transition: transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .45s ease, border-color .3s ease;
+  font: inherit;
+  color: inherit;
+  position: relative;
+}
+.ig-page .product-card-v2::before {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 0 rgba(138, 168, 107, 0);
+  transition: box-shadow .35s ease;
+}
+.ig-page .product-card-v2:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 30px 60px -28px rgba(47, 74, 50, 0.4);
+  border-color: rgba(138, 168, 107, 0.55);
+}
+.ig-page .product-card-v2:hover::before {
+  box-shadow: inset 0 0 0 1.5px rgba(138, 168, 107, 0.7);
+}
+.ig-page .product-card-v2:focus-visible {
+  outline: 3px solid var(--moss-2);
+  outline-offset: 4px;
+}
+
+.ig-page .pcv2-art {
+  position: relative;
+  height: 168px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f1ead8, #e6dcc1);
+}
+.ig-page .pcv2-art[data-color="tomato"]   { background: linear-gradient(135deg, #f6dcd2, #ecb8a6); }
+.ig-page .pcv2-art[data-color="pepper"]   { background: linear-gradient(135deg, #f5e0c4, #e9c191); }
+.ig-page .pcv2-art[data-color="zucchini"] { background: linear-gradient(135deg, #d8e6c4, #b8d098); }
+.ig-page .pcv2-art[data-color="herb"]     { background: linear-gradient(135deg, #d4e7d2, #a8caa3); }
+.ig-page .pcv2-art[data-color="berry"]    { background: linear-gradient(135deg, #efd0d6, #d99aa6); }
+.ig-page .pcv2-emoji {
+  font-size: 76px;
+  line-height: 1;
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.18));
+  transition: transform .5s cubic-bezier(.2,.8,.2,1);
+  position: relative;
+  z-index: 1;
+}
+.ig-page .product-card-v2:hover .pcv2-emoji {
+  transform: scale(1.12) rotate(-6deg);
+}
+.ig-page .pcv2-shine {
+  position: absolute;
+  top: -40%;
+  left: -60%;
+  width: 60%;
+  height: 200%;
+  background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.4) 50%, transparent 65%);
+  transform: translateX(-20%);
+  transition: transform .9s ease;
+  pointer-events: none;
+}
+.ig-page .product-card-v2:hover .pcv2-shine {
+  transform: translateX(280%);
+}
+
+.ig-page .pcv2-body {
+  padding: 22px 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+.ig-page .pcv2-cat {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgba(47, 74, 50, 0.08);
+  color: var(--moss-1);
+  font-weight: 700;
+}
+.ig-page .pcv2-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 22px;
+  line-height: 1.15;
+  margin: 2px 0 0;
+  color: var(--ink);
+}
+.ig-page .pcv2-desc {
+  color: var(--ink-soft);
+  font-size: 13.5px;
+  line-height: 1.55;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ig-page .pcv2-foot {
+  margin-top: auto;
+  padding-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-top: 1px dashed var(--line-strong);
+}
+.ig-page .pcv2-price-wrap { display: inline-flex; align-items: baseline; gap: 5px; }
+.ig-page .pcv2-price { font-family: 'Fraunces', Georgia, serif; font-size: 24px; font-weight: 700; color: var(--moss-1); }
+.ig-page .pcv2-unit { font-size: 12px; color: var(--ink-mute); }
+.ig-page .pcv2-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px; height: 34px;
+  border-radius: 999px;
+  background: var(--moss-1);
+  color: #fffaf0;
+  transition: transform .35s cubic-bezier(.2,.8,.2,1), background .3s ease;
+}
+.ig-page .product-card-v2:hover .pcv2-arrow {
+  transform: translateX(4px);
+  background: var(--moss-2);
+}
+
+/* ============== PRODUCT DETAILS MODAL ============== */
+.ig-page + .ig-modal,
+.ig-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(20, 28, 22, 0.62);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: igModalFade .25s ease;
+}
+@keyframes igModalFade { from { opacity: 0; } to { opacity: 1; } }
+.ig-modal-card {
+  position: relative;
+  width: min(560px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  background: #fffaf0;
+  border-radius: 24px;
+  box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.55);
+  animation: igModalRise .35s cubic-bezier(.2,.8,.2,1);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+@keyframes igModalRise {
+  from { opacity: 0; transform: translateY(24px) scale(.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.ig-modal-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 38px; height: 38px;
+  border-radius: 999px;
+  background: rgba(255, 250, 240, 0.92);
+  border: 1px solid rgba(47, 74, 50, 0.18);
+  color: #2f4a32;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease, transform .2s ease;
+  z-index: 2;
+}
+.ig-modal-close:hover { background: #2f4a32; color: #fffaf0; transform: rotate(90deg); }
+.ig-modal-art {
+  position: relative;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  background: linear-gradient(135deg, #f1ead8, #e6dcc1);
+}
+.ig-modal-art[data-color="tomato"]   { background: linear-gradient(135deg, #f6dcd2, #ecb8a6); }
+.ig-modal-art[data-color="pepper"]   { background: linear-gradient(135deg, #f5e0c4, #e9c191); }
+.ig-modal-art[data-color="zucchini"] { background: linear-gradient(135deg, #d8e6c4, #b8d098); }
+.ig-modal-art[data-color="herb"]     { background: linear-gradient(135deg, #d4e7d2, #a8caa3); }
+.ig-modal-art[data-color="berry"]    { background: linear-gradient(135deg, #efd0d6, #d99aa6); }
+.ig-modal-emoji {
+  font-size: 110px;
+  line-height: 1;
+  filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.22));
+}
+.ig-modal-cat {
+  position: absolute;
+  top: 16px; left: 16px;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 250, 240, 0.92);
+  color: #2f4a32;
+  font-weight: 700;
+}
+.ig-modal-body { padding: 28px 28px 28px; color: #1f291f; }
+.ig-modal-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 0 0 14px;
+  color: #1f291f;
+}
+.ig-modal-meta {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+  margin: 0 0 18px;
+  color: #4b5b4b;
+}
+.ig-modal-meta-key {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  color: #6b7a68;
+  font-size: 11px;
+  align-self: center;
+}
+.ig-modal-meta-val { font-weight: 600; }
+.ig-modal-specs { margin: 4px 0 18px; }
+.ig-modal-specs-head {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #6b7a68;
+  margin: 0 0 10px;
+}
+.ig-modal-specs ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.ig-modal-specs li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14.5px;
+  color: #2c382c;
+  line-height: 1.5;
+}
+.ig-modal-bullet {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #2f4a32;
+  margin-top: 8px;
+  flex-shrink: 0;
+}
+.ig-modal-price {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: rgba(47, 74, 50, 0.06);
+  border: 1px dashed rgba(47, 74, 50, 0.25);
+  margin-bottom: 22px;
+}
+.ig-modal-price-key {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #6b7a68;
+}
+.ig-modal-price-val {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #2f4a32;
+}
+.ig-modal-price-unit { font-size: 13px; color: #6b7a68; font-family: 'Inter', system-ui, sans-serif; font-weight: 500; }
+.ig-modal-actions { display: flex; justify-content: flex-end; }
+@media (max-width: 540px) {
+  .ig-modal { padding: 12px; }
+  .ig-modal-art { height: 180px; }
+  .ig-modal-emoji { font-size: 84px; }
+  .ig-modal-title { font-size: 24px; }
+  .ig-modal-body { padding: 22px 20px; }
 }
 `;
