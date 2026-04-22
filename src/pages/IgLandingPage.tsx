@@ -223,6 +223,14 @@ const IgLandingPage = () => {
         <main className="ig-page" id="ig-main">
           {/* HERO */}
           <section className="hero" data-parallax ref={heroRef}>
+            {/* Cinematic letterbox bars */}
+            <div className="cine-bar cine-bar-top" aria-hidden="true"></div>
+            <div className="cine-bar cine-bar-bottom" aria-hidden="true"></div>
+            {/* Film grain overlay */}
+            <div className="film-grain" aria-hidden="true"></div>
+            {/* Subtle vignette */}
+            <div className="hero-vignette" aria-hidden="true"></div>
+
             <span className="orb o1" data-depth="0.05"></span>
             <span className="orb o2" data-depth="0.09"></span>
             <span className="orb o3" data-depth="0.07"></span>
@@ -246,9 +254,13 @@ const IgLandingPage = () => {
                 </a>
               </div>
             </div>
-            <div className="scroll-hint">
-              <span></span>scroll
-            </div>
+            <a href="#offers" className="scroll-hint" aria-label="Nach unten scrollen">
+              <span className="mouse" aria-hidden="true">
+                <span className="wheel"></span>
+              </span>
+              <span className="scroll-label">scroll</span>
+              <svg className="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </a>
           </section>
 
           {/* OFFERS */}
