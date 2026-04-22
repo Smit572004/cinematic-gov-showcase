@@ -25,6 +25,7 @@ const AdminTeam = lazy(() => import("./pages/admin/AdminTeam.tsx"));
 const AdminContent = lazy(() => import("./pages/admin/AdminContent.tsx"));
 const AdminOffers = lazy(() => import("./pages/admin/AdminOffers.tsx"));
 const AdminGallery = lazy(() => import("./pages/admin/AdminGallery.tsx"));
+const IgLandingPage = lazy(() => import("./pages/IgLandingPage.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 
 const queryClient = new QueryClient();
@@ -49,6 +50,8 @@ const App = () => (
                   <Route path="/products" element={<ProductsPage />} />
                   <Route path="/contact" element={<ContactPage />} />
                   <Route path="/garden-shop" element={<GardenShopPage />} />
+                  <Route path="/ig" element={<IgLandingPage />} />
+                  <Route path="/ig.html" element={<IgLandingPage />} />
                   <Route path="/admin/login" element={<AdminLogin />} />
                   <Route path="/admin" element={<AdminDashboard />} />
                   <Route path="/admin/products" element={<AdminProducts />} />
