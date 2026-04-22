@@ -2676,45 +2676,37 @@ body.ig-page-body::before {
   outline-offset: 4px;
 }
 
-/* ----- IMAGE / ART AREA — soft tinted block, photo floats large ----- */
+/* ----- IMAGE / ART AREA — photo fills the entire frame edge-to-edge ----- */
 .ig-page .pcv2-art {
   position: relative;
   height: 240px;
   border-radius: 20px;
+  display: block;
+  overflow: hidden;
+  background: #ffffff;
+}
+/* No tinted backgrounds — keep the frame clean so the photo dominates */
+.ig-page .pcv2-art[data-color="tomato"],
+.ig-page .pcv2-art[data-color="pepper"],
+.ig-page .pcv2-art[data-color="zucchini"],
+.ig-page .pcv2-art[data-color="herb"],
+.ig-page .pcv2-art[data-color="berry"] {
+  background: #ffffff;
+}
+
+/* Remove the soft glow blob — it would peek around a cover-fit image */
+.ig-page .pcv2-art::before { content: none; }
+
+.ig-page .pcv2-emoji {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  background: linear-gradient(135deg, #f7f4ed 0%, #ede5d2 100%);
-}
-.ig-page .pcv2-art[data-color="tomato"]   { background: linear-gradient(135deg, #ffe9e1 0%, #ffd0c0 100%); }
-.ig-page .pcv2-art[data-color="pepper"]   { background: linear-gradient(135deg, #fff1d6 0%, #ffd9a3 100%); }
-.ig-page .pcv2-art[data-color="zucchini"] { background: linear-gradient(135deg, #ecf6dc 0%, #cfe6a8 100%); }
-.ig-page .pcv2-art[data-color="herb"]     { background: linear-gradient(135deg, #e0f2e3 0%, #b6dec0 100%); }
-.ig-page .pcv2-art[data-color="berry"]    { background: linear-gradient(135deg, #ffe0eb 0%, #ffbcd2 100%); }
-
-/* Soft glow blob behind product to add depth */
-.ig-page .pcv2-art::before {
-  content: "";
-  position: absolute;
-  width: 70%;
-  height: 70%;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.7) 0%, transparent 70%);
-  filter: blur(8px);
-  z-index: 0;
-  transition: transform .8s cubic-bezier(.2,.8,.2,1);
-}
-.ig-page .product-card-v2:hover .pcv2-art::before {
-  transform: scale(1.15);
-}
-
-.ig-page .pcv2-emoji {
   font-size: 110px;
   line-height: 1;
   filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.18));
   transition: transform .55s cubic-bezier(.2,.8,.2,1);
-  position: relative;
   z-index: 1;
 }
 .ig-page .product-card-v2:hover .pcv2-emoji {
@@ -2725,16 +2717,17 @@ body.ig-page-body::before {
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  padding: 14px;
+  object-fit: cover;
+  object-position: center;
+  padding: 0;
   z-index: 1;
   transition: transform .8s cubic-bezier(.2,.8,.2,1);
-  filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.18));
   user-select: none;
   -webkit-user-drag: none;
+  display: block;
 }
 .ig-page .product-card-v2:hover .pcv2-img {
-  transform: scale(1.08) rotate(-1deg);
+  transform: scale(1.06);
 }
 .ig-page .ig-modal-img {
   position: absolute;
