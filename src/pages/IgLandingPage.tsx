@@ -229,11 +229,55 @@ const IgLandingPage = () => {
 
   const closedLabel = lang === "de" ? "Geschlossen" : "Closed";
 
+  // ---- Scroll spy for sticky nav ----
+  const [activeSection, setActiveSection] = useState<string>("ig-main");
+  const [navScrolled, setNavScrolled] = useState(false);
+  useEffect(() => {
+    const ids = ["ig-main", "offers", "location", "contact"];
+    const onScroll = () => {
+      setNavScrolled(window.scrollY > 40);
+      const probe = window.innerHeight * 0.35;
+      let current = "ig-main";
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= probe) current = id;
+      }
+      setActiveSection(current);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [content]);
+
   return (
     <>
       <style>{IG_STYLES}</style>
 
       <main className="ig-page" id="ig-main">
+        {/* ============== STICKY NAV ============== */}
+        <nav
+          className={`hero-nav sticky-nav ${navScrolled ? "is-scrolled" : ""}`}
+          aria-label={lang === "de" ? "Seitennavigation" : "Page navigation"}
+        >
+          {[
+            { id: "ig-main", de: "Start", en: "Home" },
+            { id: "offers", de: "Angebote", en: "Offers" },
+            { id: "location", de: "Standort", en: "Location" },
+            { id: "contact", de: "Kontakt", en: "Contact" },
+          ].map((it) => (
+            <a
+              key={it.id}
+              href={`#${it.id}`}
+              className={`hn-link ${activeSection === it.id ? "is-active" : ""}`}
+            >
+              <span className="hn-dot" aria-hidden="true" />
+              <span className="hn-label">{lang === "de" ? it.de : it.en}</span>
+            </a>
+          ))}
+        </nav>
+
         {/* ============== HERO ============== */}
         <section className="snap-section hero" ref={heroRef}>
           <div
