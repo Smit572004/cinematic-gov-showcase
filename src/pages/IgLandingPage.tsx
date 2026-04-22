@@ -1194,6 +1194,41 @@ const IgLandingPage = () => {
                     en: "Easy to reach — just stop by, pick your favourites and take them home.",
                   },
                 },
+                {
+                  color: "coin",
+                  icon: (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <circle cx="12" cy="12" r="9" />
+                      <path d="M15 9.5c-.7-1-1.9-1.5-3-1.5-1.7 0-3 1-3 2.3 0 3 6 1.7 6 4.7 0 1.3-1.3 2.5-3 2.5-1.4 0-2.6-.7-3.2-1.7" />
+                      <path d="M12 6.5v1.5M12 16v1.5" />
+                    </svg>
+                  ),
+                  titleKey: "ig_why_card5_title",
+                  descKey: "ig_why_card5_desc",
+                  titleFallback: { de: "Faire Preise", en: "Affordable prices" },
+                  descFallback: {
+                    de: "Direkt vom Gärtner – ehrliche Preise ohne Zwischenhändler.",
+                    en: "Straight from the grower — honest prices with no middleman markup.",
+                  },
+                },
+                {
+                  color: "smile",
+                  icon: (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <circle cx="12" cy="12" r="9" />
+                      <path d="M8.5 14.5c1 1.2 2.2 1.8 3.5 1.8s2.5-.6 3.5-1.8" />
+                      <circle cx="9" cy="10" r="0.8" fill="currentColor" />
+                      <circle cx="15" cy="10" r="0.8" fill="currentColor" />
+                    </svg>
+                  ),
+                  titleKey: "ig_why_card6_title",
+                  descKey: "ig_why_card6_desc",
+                  titleFallback: { de: "Freundlicher Service", en: "Friendly service" },
+                  descFallback: {
+                    de: "Persönliche Beratung mit einem Lächeln – wir helfen dir, die richtige Pflanze zu finden.",
+                    en: "Personal advice with a smile — we help you find the perfect plant.",
+                  },
+                },
               ].map((card) => (
                 <motion.article
                   key={card.titleKey}
