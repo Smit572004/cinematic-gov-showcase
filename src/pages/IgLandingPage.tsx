@@ -364,7 +364,7 @@ const IgLandingPage = () => {
   const navItems: NavItem[] = useMemo(
     () => [
       { id: "ig-main", label: pick(content, "ig_nav_home", lang, "Start") },
-      { id: "offers", label: pick(content, "ig_nav_offers", lang, "Angebote") },
+      { id: "offers", label: pick(content, "ig_nav_products", lang, pick(content, "ig_nav_offers", lang, lang === "de" ? "Produkte" : "Products")) },
       { id: "location", label: pick(content, "ig_nav_location", lang, "Standort") },
       { id: "contact", label: pick(content, "ig_nav_contact", lang, "Kontakt") },
     ],
