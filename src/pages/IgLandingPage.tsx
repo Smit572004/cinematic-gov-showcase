@@ -1095,7 +1095,11 @@ const IgLandingPage = () => {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
               </button>
               <div className="ig-modal-art" data-color={o.color_tag}>
-                <span className="ig-modal-emoji" aria-hidden="true">{o.emoji}</span>
+                {o.image_url ? (
+                  <img src={o.image_url} alt={title} className="ig-modal-img" />
+                ) : (
+                  <span className="ig-modal-emoji" aria-hidden="true">{o.emoji}</span>
+                )}
                 {badge && <span className="ig-modal-cat">{badge}</span>}
               </div>
               <div className="ig-modal-body">
