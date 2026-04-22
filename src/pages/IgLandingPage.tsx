@@ -219,34 +219,6 @@ const IgLandingPage = () => {
     <>
       <style>{IG_STYLES}</style>
 
-      {/* Access gate */}
-      {gateOpen && (
-        <div id="ig-gate" className="ig-gate show" role="dialog" aria-modal="true">
-          <div className="box">
-            <h1>Willkommen 👋</h1>
-            <p>
-              Diese Seite ist eigentlich für unsere Instagram-Besucher gedacht. Du kannst sie
-              trotzdem ansehen — viel Spaß beim Stöbern!
-            </p>
-            <button
-              type="button"
-              className="gate-btn"
-              onClick={() => {
-                try {
-                  localStorage.setItem("ig_ok", "1");
-                } catch {
-                  /* ignore */
-                }
-                setGateOpen(false);
-                setMainVisible(true);
-              }}
-            >
-              Seite ansehen →
-            </button>
-          </div>
-        </div>
-      )}
-
       {mainVisible && (
         <main className="ig-page" id="ig-main">
           {/* HERO */}
