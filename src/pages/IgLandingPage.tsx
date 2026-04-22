@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import logoWhite from "@/assets/tinplant-logo-white.png";
+import logoColour from "@/assets/tinplant-logo-colour.png";
 
 /** Hours per weekday (0=Sun ... 6=Sat). null = closed. */
 const HOURS: Record<number, { open: number; close: number } | null> = {
@@ -130,6 +132,9 @@ const IgLandingPage = () => {
           </svg>
 
           <div className="hero-content reveal">
+            <a href="/" className="hero-logo" aria-label="TinPlant Startseite">
+              <img src={logoWhite} alt="TinPlant" />
+            </a>
             <span className="eyebrow">
               <span className="eb-dot" /> Direkt vom Erzeuger · Magdeburg
             </span>
@@ -284,19 +289,19 @@ const IgLandingPage = () => {
                 </ul>
 
                 <div className="quick-actions">
-                  <a className="qa-btn qa-call" href="tel:+4900000000000" aria-label="Anrufen">
+                  <a className="qa-btn qa-call" href="tel:+493920969690" aria-label="Anrufen">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z"/>
                     </svg>
                     Anrufen
                   </a>
-                  <a className="qa-btn qa-wa" href="https://wa.me/4900000000000?text=Hallo%20TinPlant%2C%20ich%20habe%20eine%20Frage%20zu%20euren%20Pflanzen." target="_blank" rel="noopener noreferrer" aria-label="WhatsApp schreiben">
+                  <a className="qa-btn qa-wa" href="https://wa.me/493920969690?text=Hallo%20TinPlant%2C%20ich%20habe%20eine%20Frage%20zu%20euren%20Pflanzen." target="_blank" rel="noopener noreferrer" aria-label="WhatsApp schreiben">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                       <path d="M20.5 3.5A11.4 11.4 0 0 0 12 0C5.6 0 .4 5.2.4 11.6c0 2 .5 3.9 1.5 5.6L.3 24l7-1.8a11.6 11.6 0 0 0 4.7 1c6.4 0 11.6-5.2 11.6-11.6 0-3.1-1.2-6-3.1-8.1zM12 21.4a9.7 9.7 0 0 1-4.9-1.3l-.4-.2-4.1 1.1 1.1-4-.3-.4a9.6 9.6 0 0 1-1.5-5.1c0-5.3 4.3-9.6 9.6-9.6 2.6 0 5 1 6.8 2.8a9.6 9.6 0 0 1 2.8 6.8c0 5.3-4.3 9.6-9.6 9.6zm5.5-7.2c-.3-.2-1.8-.9-2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7 0c-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.7-1.7-2-.2-.3 0-.5.1-.6.1-.1.3-.4.4-.5l.3-.5c.1-.2 0-.4 0-.5l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.5.1-.7.4-.3.4-1 1-1 2.4s1 2.8 1.2 3c.2.2 2 3 4.8 4.2 1.7.7 2.4.7 3.2.6.5-.1 1.6-.6 1.9-1.3.2-.6.2-1.2.2-1.3-.1-.2-.3-.2-.6-.4z"/>
                     </svg>
                     WhatsApp
                   </a>
-                  <a className="qa-btn qa-mail" href="mailto:hallo@tinplant.de?subject=Anfrage%20Pflanzen" aria-label="E-Mail schreiben">
+                  <a className="qa-btn qa-mail" href="mailto:info@tinplant-gmbh.de?subject=Anfrage%20Pflanzen" aria-label="E-Mail schreiben">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <rect x="2" y="4" width="20" height="16" rx="2"/>
                       <polyline points="2,7 12,13 22,7"/>
@@ -390,12 +395,14 @@ const IgLandingPage = () => {
         <footer className="ig-footer">
           <div className="container footer-grid">
             <div className="footer-brand">
-              <div className="logo">TinPlant <span aria-hidden="true">🌱</span></div>
+              <a href="/" className="footer-logo" aria-label="TinPlant Startseite">
+                <img src={logoWhite} alt="TinPlant" />
+              </a>
               <p className="tagline">Direkt vom Erzeuger — gewachsen mit Sorgfalt.</p>
             </div>
             <div className="footer-contact">
               <p>Magdeburger Landstraße 33<br />39164 Wanzleben-Börde</p>
-              <a href="tel:+4900000000000">+49 (0) 0000 000 000</a>
+              <a href="tel:+493920969690">+49 39209 69 69 0</a>
             </div>
             <div className="footer-copy">© {year} TinPlant</div>
           </div>
@@ -528,6 +535,21 @@ body.ig-page-body::before {
   text-align: center;
   margin: 0 auto;
   padding: 0 12px;
+}
+.ig-page .hero-logo {
+  display: inline-block;
+  margin-bottom: 22px;
+}
+.ig-page .hero-logo img {
+  height: 60px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 6px 22px rgba(0, 0, 0, 0.45));
+  transition: transform .3s ease;
+}
+.ig-page .hero-logo:hover img { transform: scale(1.04); }
+@media (max-width: 640px) {
+  .ig-page .hero-logo img { height: 48px; }
 }
 .ig-page .eyebrow {
   display: inline-flex;
@@ -1039,12 +1061,14 @@ body.ig-page-body::before {
   gap: 32px;
   align-items: center;
 }
-.ig-page .footer-brand .logo {
-  font-family: 'Fraunces', Georgia, serif;
-  font-size: 28px;
-  font-weight: 700;
-  color: #fffaf0;
-  margin-bottom: 6px;
+.ig-page .footer-brand .footer-logo {
+  display: inline-block;
+  margin-bottom: 12px;
+}
+.ig-page .footer-brand .footer-logo img {
+  height: 44px;
+  width: auto;
+  display: block;
 }
 .ig-page .footer-brand .tagline {
   font-style: italic;
