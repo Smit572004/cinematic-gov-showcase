@@ -1002,6 +1002,30 @@ body.ig-page-body::before {
   width: 100%; height: 100%; border: 0;
   filter: saturate(.85) hue-rotate(-10deg);
 }
+.ig-page .map-overlay-btn {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #fffaf0;
+  color: var(--moss-1);
+  font-size: 13.5px;
+  font-weight: 700;
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 14px 30px -12px rgba(0, 0, 0, 0.5);
+  transition: transform .2s ease, background .2s ease, color .2s ease;
+  white-space: nowrap;
+}
+.ig-page .map-overlay-btn:hover {
+  transform: translate(-50%, -3px);
+  background: var(--moss-1);
+  color: #fffaf0;
+}
 
 /* ============== FOOTER ============== */
 .ig-page .ig-footer {
