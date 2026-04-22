@@ -254,10 +254,26 @@ const IgLandingPage = () => {
             <path d="M8 56 C 18 28, 40 18, 60 6 C 56 30, 38 50, 12 60 Z" fill="currentColor" opacity=".35" />
           </svg>
 
-          <div className="hero-content reveal">
-            <a href="/" className="hero-logo" aria-label="TinPlant">
-              <img src={logoWhite} alt="TinPlant" />
+          <nav className="hero-nav" aria-label={lang === "de" ? "Seitennavigation" : "Page navigation"}>
+            <a href="#ig-main" className="hn-link is-active">
+              <span className="hn-dot" aria-hidden="true" />
+              <span className="hn-label">{lang === "de" ? "Start" : "Home"}</span>
             </a>
+            <a href="#offers" className="hn-link">
+              <span className="hn-dot" aria-hidden="true" />
+              <span className="hn-label">{lang === "de" ? "Angebote" : "Offers"}</span>
+            </a>
+            <a href="#location" className="hn-link">
+              <span className="hn-dot" aria-hidden="true" />
+              <span className="hn-label">{lang === "de" ? "Standort" : "Location"}</span>
+            </a>
+            <a href="#contact" className="hn-link">
+              <span className="hn-dot" aria-hidden="true" />
+              <span className="hn-label">{lang === "de" ? "Kontakt" : "Contact"}</span>
+            </a>
+          </nav>
+
+          <div className="hero-content reveal">
             <span className="eyebrow">
               <span className="eb-dot" /> {heroEyebrow}
             </span>
@@ -624,10 +640,41 @@ body.ig-page-body::before {
     linear-gradient(180deg, rgba(47, 74, 50, 0.55) 0%, rgba(47, 74, 50, 0.85) 100%);
 }
 .ig-page .hero-content { position: relative; z-index: 3; max-width: 820px; text-align: center; margin: 0 auto; padding: 0 12px; }
-.ig-page .hero-logo { display: inline-block; margin-bottom: 22px; }
-.ig-page .hero-logo img { height: 60px; width: auto; display: block; filter: drop-shadow(0 6px 22px rgba(0, 0, 0, 0.45)); transition: transform .3s ease; }
-.ig-page .hero-logo:hover img { transform: scale(1.04); }
-@media (max-width: 640px) { .ig-page .hero-logo img { height: 48px; } }
+.ig-page .hero-nav {
+  position: absolute; top: 50%; left: 28px; transform: translateY(-50%);
+  z-index: 4; display: flex; flex-direction: column; gap: 14px;
+  padding: 18px 14px; border-radius: 999px;
+  background: rgba(20, 32, 22, 0.32);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+.ig-page .hn-link {
+  display: flex; align-items: center; gap: 10px;
+  color: rgba(255, 255, 255, 0.78);
+  text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: 0.04em;
+  padding: 6px 10px; border-radius: 999px;
+  transition: color .25s ease, background .25s ease, transform .25s ease;
+}
+.ig-page .hn-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+  transition: background .25s ease, box-shadow .25s ease, transform .25s ease;
+}
+.ig-page .hn-link:hover { color: #fff; background: rgba(255, 255, 255, 0.08); transform: translateX(2px); }
+.ig-page .hn-link:hover .hn-dot { background: #cfe9b8; transform: scale(1.25); }
+.ig-page .hn-link.is-active { color: #fff; background: rgba(255, 255, 255, 0.12); }
+.ig-page .hn-link.is-active .hn-dot { background: #cfe9b8; box-shadow: 0 0 0 4px rgba(207, 233, 184, 0.18); }
+@media (max-width: 768px) {
+  .ig-page .hero-nav {
+    top: 14px; left: 50%; transform: translateX(-50%);
+    flex-direction: row; gap: 4px; padding: 8px 10px;
+  }
+  .ig-page .hn-label { display: none; }
+  .ig-page .hn-link { padding: 8px; }
+}
 .ig-page .eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
   font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
