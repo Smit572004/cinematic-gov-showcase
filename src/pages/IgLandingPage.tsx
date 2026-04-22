@@ -622,14 +622,14 @@ const IgLandingPage = () => {
         {activeOffers.length > 0 && (
           <section id="offers" className="snap-section section section-cream">
             <div className="container">
-              {/* 1. HEADER */}
-              <div className="section-head reveal">
+              {/* 1. HEADER — always visible */}
+              <header className="section-head products-head">
                 <span className="section-tag">
                   <span className="tag-leaf" aria-hidden="true">🌱</span> {offersEyebrow}
                 </span>
                 <h2>{offersTitle}</h2>
                 {offersSubtitle && <p>{offersSubtitle}</p>}
-              </div>
+              </header>
             </div>
 
             {/* 2. PRODUCT CARDS — auto-scrolling marquee with hover arrows */}
@@ -640,22 +640,23 @@ const IgLandingPage = () => {
               ariaLabel={offersTitle}
             />
 
-            {/* 3. DOWNLOAD / VIEW MORE BUTTON */}
+            {/* 3. DOWNLOAD / VIEW MORE BUTTON — always visible */}
             <div className="container">
               {productsPdfUrl && (
-                <div className="products-cta reveal">
+                <div className="products-cta">
                   <a
                     href={productsPdfUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn btn-primary btn-on-light"
+                    className="btn btn-primary btn-on-light products-download-btn"
+                    download
                   >
-                    {productsViewMore}
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                       <polyline points="7 10 12 15 17 10" />
                       <line x1="12" y1="15" x2="12" y2="3" />
                     </svg>
+                    {productsViewMore}
                   </a>
                 </div>
               )}
