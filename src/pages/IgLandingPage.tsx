@@ -1931,6 +1931,173 @@ body.ig-page-body::before {
 .ig-page .section-head p { font-size: clamp(15px, 1.4vw, 17px); color: var(--ink-soft); max-width: 560px; margin: 0 auto; }
 .ig-page .section-head p.on-dark-soft { color: rgba(255, 250, 240, 0.82); }
 
+/* ============== WHY CHOOSE US ============== */
+.ig-page .why-section {
+  position: relative;
+  padding: clamp(72px, 9vw, 120px) 24px;
+  background:
+    radial-gradient(1200px 600px at 10% 0%, rgba(247, 215, 110, 0.18), transparent 60%),
+    radial-gradient(1100px 700px at 95% 100%, rgba(213, 128, 168, 0.16), transparent 60%),
+    linear-gradient(180deg, #fffefa 0%, #f8f4ea 100%);
+  overflow: hidden;
+}
+.ig-page .why-section .container { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; }
+.ig-page .why-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 1;
+}
+.ig-page .why-orb-a {
+  width: 380px; height: 380px;
+  top: -120px; left: -120px;
+  background: radial-gradient(circle, rgba(138, 168, 107, 0.55), transparent 70%);
+  animation: whyOrbDrift 14s ease-in-out infinite alternate;
+}
+.ig-page .why-orb-b {
+  width: 460px; height: 460px;
+  bottom: -160px; right: -140px;
+  background: radial-gradient(circle, rgba(247, 196, 107, 0.45), transparent 70%);
+  animation: whyOrbDrift 18s ease-in-out infinite alternate-reverse;
+}
+@keyframes whyOrbDrift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(40px, 30px, 0) scale(1.08); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ig-page .why-orb { animation: none; }
+}
+
+.ig-page .why-grid {
+  display: grid;
+  gap: 22px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  margin-top: 8px;
+}
+
+.ig-page .why-card {
+  position: relative;
+  padding: 32px 26px 30px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #ffffff 0%, #fffaf0 100%);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 18px 40px -22px rgba(60, 70, 50, 0.22);
+  overflow: hidden;
+  transition: transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .45s ease, border-color .35s ease;
+  isolation: isolate;
+}
+.ig-page .why-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  border-radius: 22px 22px 0 0;
+  z-index: 1;
+}
+.ig-page .why-card[data-color="leaf"]::before  { background: linear-gradient(90deg, #6fa07a, #b8d098, #3f7a52); }
+.ig-page .why-card[data-color="sun"]::before   { background: linear-gradient(90deg, #f2c46b, #f7d76e, #e8a04a); }
+.ig-page .why-card[data-color="berry"]::before { background: linear-gradient(90deg, #d27a90, #efb0bd, #a64a64); }
+.ig-page .why-card[data-color="sky"]::before   { background: linear-gradient(90deg, #7ab0c9, #b6dceb, #4d8aa6); }
+
+.ig-page .why-card-glow {
+  position: absolute;
+  inset: -1px;
+  border-radius: 22px;
+  opacity: 0;
+  transition: opacity .45s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+.ig-page .why-card[data-color="leaf"]  .why-card-glow { background: radial-gradient(180px 140px at 80% 0%, rgba(138, 168, 107, 0.30), transparent 70%); }
+.ig-page .why-card[data-color="sun"]   .why-card-glow { background: radial-gradient(180px 140px at 80% 0%, rgba(247, 196, 107, 0.32), transparent 70%); }
+.ig-page .why-card[data-color="berry"] .why-card-glow { background: radial-gradient(180px 140px at 80% 0%, rgba(210, 122, 144, 0.30), transparent 70%); }
+.ig-page .why-card[data-color="sky"]   .why-card-glow { background: radial-gradient(180px 140px at 80% 0%, rgba(122, 176, 201, 0.32), transparent 70%); }
+
+.ig-page .why-card:hover {
+  transform: translateY(-8px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 30px 60px -28px rgba(60, 70, 50, 0.32);
+  border-color: rgba(138, 168, 107, 0.35);
+}
+.ig-page .why-card:hover .why-card-glow { opacity: 1; }
+
+.ig-page .why-icon-wrap {
+  position: relative;
+  width: 64px; height: 64px;
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-bottom: 18px;
+  z-index: 2;
+}
+.ig-page .why-icon-bg {
+  position: absolute; inset: 0;
+  border-radius: 18px;
+  transform: rotate(-6deg);
+  transition: transform .5s cubic-bezier(.2,.8,.2,1);
+}
+.ig-page .why-card[data-color="leaf"]  .why-icon-bg { background: linear-gradient(135deg, #b8d098, #6fa07a); }
+.ig-page .why-card[data-color="sun"]   .why-icon-bg { background: linear-gradient(135deg, #f7d76e, #e8a04a); }
+.ig-page .why-card[data-color="berry"] .why-icon-bg { background: linear-gradient(135deg, #efb0bd, #d27a90); }
+.ig-page .why-card[data-color="sky"]   .why-icon-bg { background: linear-gradient(135deg, #b6dceb, #7ab0c9); }
+.ig-page .why-card:hover .why-icon-bg { transform: rotate(6deg) scale(1.06); }
+
+.ig-page .why-icon {
+  position: relative;
+  width: 30px; height: 30px;
+  color: #fffefa;
+  z-index: 2;
+}
+.ig-page .why-icon svg { width: 100%; height: 100%; }
+
+.ig-page .why-card h3 {
+  position: relative;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 20px;
+  line-height: 1.25;
+  margin: 0 0 10px;
+  color: var(--ink, #2b2b1f);
+  z-index: 2;
+}
+.ig-page .why-card p {
+  position: relative;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink-soft, #5a5a4a);
+  margin: 0;
+  z-index: 2;
+}
+
+.ig-page .why-card-stem {
+  position: absolute;
+  bottom: -30px; right: -20px;
+  width: 110px; height: 110px;
+  border-radius: 50%;
+  opacity: 0.10;
+  transition: transform .6s cubic-bezier(.2,.8,.2,1), opacity .4s ease;
+  z-index: 1;
+}
+.ig-page .why-card[data-color="leaf"]  .why-card-stem { background: radial-gradient(circle, #6fa07a, transparent 70%); }
+.ig-page .why-card[data-color="sun"]   .why-card-stem { background: radial-gradient(circle, #e8a04a, transparent 70%); }
+.ig-page .why-card[data-color="berry"] .why-card-stem { background: radial-gradient(circle, #d27a90, transparent 70%); }
+.ig-page .why-card[data-color="sky"]   .why-card-stem { background: radial-gradient(circle, #7ab0c9, transparent 70%); }
+.ig-page .why-card:hover .why-card-stem {
+  transform: scale(1.4);
+  opacity: 0.18;
+}
+
+@media (max-width: 640px) {
+  .ig-page .why-grid { gap: 16px; }
+  .ig-page .why-card { padding: 26px 22px 24px; border-radius: 20px; }
+  .ig-page .why-icon-wrap { width: 56px; height: 56px; margin-bottom: 14px; }
+  .ig-page .why-card h3 { font-size: 18px; }
+  .ig-page .why-card p { font-size: 14px; }
+}
+
+
 /* OFFERS */
 .ig-page .grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
 .ig-page .card { background: #fffaf0; border: 1px solid var(--line); border-radius: var(--radius); padding: 0 28px 28px; position: relative; box-shadow: var(--shadow-soft); transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease; overflow: hidden; }
