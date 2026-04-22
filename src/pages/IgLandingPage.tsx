@@ -2744,30 +2744,6 @@ body.ig-page-body::before {
   text-shadow: 0 1px 1px rgba(10, 40, 28, 0.4);
 }
 
-
-/* Tap hint replaces the old Buy button — minimal, on-brand */
-.ig-page .pcv2-tap-hint {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #1f6b4a;
-  padding: 6px 4px;
-  transition: transform .35s cubic-bezier(.2,.8,.2,1), color .25s ease;
-}
-.ig-page .pcv2-tap-hint svg {
-  transition: transform .35s cubic-bezier(.2,.8,.2,1);
-}
-.ig-page .product-card-v2:hover .pcv2-tap-hint {
-  color: #c9533a;
-  transform: translateX(2px);
-}
-.ig-page .product-card-v2:hover .pcv2-tap-hint svg {
-  transform: translateX(4px);
-}
 .ig-page .product-card-v2 { cursor: pointer; }
 
 @media (max-width: 640px) {
@@ -2775,7 +2751,7 @@ body.ig-page-body::before {
   .ig-page .pcv2-art { border-radius: 16px; }
   .ig-page .pcv2-title { font-size: 19px; }
   .ig-page .pcv2-price { font-size: 18px; }
-  .ig-page .pcv2-tap-hint { font-size: 11px; }
+  
 }
 
 /* ============== PRODUCT DETAILS MODAL ============== */
