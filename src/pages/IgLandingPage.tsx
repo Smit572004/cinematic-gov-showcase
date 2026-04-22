@@ -88,9 +88,11 @@ const pickRandomIndices = (total: number, count: number, exclude: number[]): num
 const GallerySlideshow = ({
   items,
   lang,
+  rotateMs,
 }: {
   items: IgGalleryItem[];
   lang: LangKey;
+  rotateMs: number;
 }) => {
   const prefersReducedMotion = useReducedMotion();
   const [visibleCount, setVisibleCount] = useState(4);
@@ -116,16 +118,17 @@ const GallerySlideshow = ({
     setIndices(pickRandomIndices(items.length, visibleCount, []));
   }, [items.length, visibleCount]);
 
-  // Auto-advance every 3 seconds with random selection (excluding current).
+  // Auto-advance with admin-configurable interval and random selection (excluding current).
   useEffect(() => {
     if (prefersReducedMotion) return;
     if (items.length <= visibleCount) return; // nothing to rotate
     if (lightboxIdx !== null) return; // pause while viewing big image
     const id = window.setInterval(() => {
       setIndices((prev) => pickRandomIndices(items.length, visibleCount, prev));
-    }, 3000);
+    }, rotateMs);
     return () => window.clearInterval(id);
-  }, [items.length, visibleCount, prefersReducedMotion, lightboxIdx]);
+  }, [items.length, visibleCount, prefersReducedMotion, lightboxIdx, rotateMs]);
+
 
   // Esc to close lightbox + lock body scroll.
   useEffect(() => {
@@ -738,6 +741,9 @@ const IgLandingPage = () => {
   const galleryEyebrow = pick(content, "ig_gallery_eyebrow", lang, "Einblicke");
   const galleryTitle = pick(content, "ig_gallery_title", lang, "Aus dem Gewächshaus");
   const gallerySubtitle = pick(content, "ig_gallery_subtitle", lang, "");
+  const galleryRotateRaw = pick(content, "ig_gallery_rotate_seconds", "en", "3");
+  const galleryRotateSec = Math.min(8, Math.max(2, Number(galleryRotateRaw) || 3));
+  const galleryRotateMs = galleryRotateSec * 1000;
 
   const locEyebrow = pick(content, "ig_location_eyebrow", lang, "Besuch uns");
   const locTitle = pick(content, "ig_location_title", lang, "Öffnungszeiten & Standort");
@@ -1121,7 +1127,7 @@ const IgLandingPage = () => {
                 </span>
                 {gallerySubtitle && <p className="on-dark-soft">{gallerySubtitle}</p>}
               </div>
-              <GallerySlideshow items={activeGallery} lang={lang} />
+              <GallerySlideshow items={activeGallery} lang={lang} rotateMs={galleryRotateMs} />
             </div>
           </section>
         )}

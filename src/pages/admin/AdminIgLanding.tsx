@@ -1133,6 +1133,102 @@ const Field = ({ label, children }: { label: string; children: React.ReactNode }
 
 /* ─────────────────────────── GALLERY TAB ─────────────────────────── */
 
+const RotateSpeedPanel = () => {
+  const queryClient = useQueryClient();
+  const { lang } = useLanguage();
+  const de = lang === "de";
+  const [seconds, setSeconds] = useState<number>(3);
+  const [loaded, setLoaded] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("site_content")
+        .select("value_en")
+        .eq("content_key", "ig_gallery_rotate_seconds")
+        .maybeSingle();
+      if (cancelled) return;
+      const n = Number(data?.value_en);
+      setSeconds(Number.isFinite(n) && n >= 2 && n <= 8 ? n : 3);
+      setLoaded(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const save = async () => {
+    const clamped = Math.min(8, Math.max(2, Math.round(seconds)));
+    setSeconds(clamped);
+    setSaving(true);
+    const value = String(clamped);
+    const { error } = await supabase
+      .from("site_content")
+      .upsert(
+        { content_key: "ig_gallery_rotate_seconds", value_de: value, value_en: value },
+        { onConflict: "content_key" },
+      );
+    setSaving(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    queryClient.invalidateQueries({ queryKey: ["ig-content"] });
+    toast.success(de ? "Geschwindigkeit gespeichert" : "Speed saved");
+  };
+
+  return (
+    <div className="bg-card border border-border rounded-xl p-5 space-y-3">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h3 className="font-display font-bold text-sm">
+            {de ? "Auto-Rotation der Galerie" : "Gallery auto-rotation"}
+          </h3>
+          <p className="text-xs text-muted-foreground font-body mt-1">
+            {de
+              ? "Wie schnell die Fotos auf der Webseite wechseln (2 – 8 Sekunden)."
+              : "How fast photos rotate on the public page (2 – 8 seconds)."}
+          </p>
+        </div>
+        <button
+          onClick={save}
+          disabled={!loaded || saving}
+          className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity"
+        >
+          <Save size={14} /> {saving ? (de ? "Speichern..." : "Saving...") : de ? "Speichern" : "Save"}
+        </button>
+      </div>
+      <div className="flex items-center gap-4">
+        <input
+          type="range"
+          min={2}
+          max={8}
+          step={1}
+          value={seconds}
+          onChange={(e) => setSeconds(Number(e.target.value))}
+          disabled={!loaded}
+          className="flex-1 accent-primary"
+          aria-label={de ? "Sekunden pro Bild" : "Seconds per slide"}
+        />
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            min={2}
+            max={8}
+            value={seconds}
+            onChange={(e) => setSeconds(Number(e.target.value) || 3)}
+            disabled={!loaded}
+            className="ig-admin-input w-20 text-center"
+          />
+          <span className="text-sm font-body text-muted-foreground">{de ? "Sek." : "sec"}</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const GalleryTab = () => {
   const queryClient = useQueryClient();
   const { lang } = useLanguage();
@@ -1222,6 +1318,8 @@ const GalleryTab = () => {
 
   return (
     <div className="space-y-4">
+      <RotateSpeedPanel />
+
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground font-body">
           {de
