@@ -257,30 +257,12 @@ const IgLandingPage = () => {
 
       <main className="ig-page" id="ig-main">
         {/* ============== STICKY NAV ============== */}
-        <nav
-          className={`hero-nav sticky-nav ${navScrolled ? "is-scrolled" : ""}`}
-          aria-label={lang === "de" ? "Seitennavigation" : "Page navigation"}
-        >
-          <a href="#ig-main" className="hn-logo" aria-label="TinPlant">
-            <img src={logoWhite} alt="TinPlant" />
-          </a>
-          <span className="hn-divider" aria-hidden="true" />
-          {[
-            { id: "ig-main", de: "Start", en: "Home" },
-            { id: "offers", de: "Angebote", en: "Offers" },
-            { id: "location", de: "Standort", en: "Location" },
-            { id: "contact", de: "Kontakt", en: "Contact" },
-          ].map((it) => (
-            <a
-              key={it.id}
-              href={`#${it.id}`}
-              className={`hn-link ${activeSection === it.id ? "is-active" : ""}`}
-            >
-              <span className="hn-dot" aria-hidden="true" />
-              <span className="hn-label">{lang === "de" ? it.de : it.en}</span>
-            </a>
-          ))}
-        </nav>
+        <StickyIgNav
+          lang={lang as LangKey}
+          activeSection={activeSection}
+          navScrolled={navScrolled}
+          logo={logoWhite}
+        />
 
         {/* ============== HERO ============== */}
         <section className="snap-section hero" ref={heroRef}>
