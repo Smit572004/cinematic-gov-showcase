@@ -1,4 +1,57 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+
+/** Hours per weekday (0=Sun ... 6=Sat). null = closed. */
+const HOURS: Record<number, { open: number; close: number } | null> = {
+  0: null,
+  1: { open: 9, close: 18 },
+  2: { open: 9, close: 18 },
+  3: { open: 9, close: 18 },
+  4: { open: 9, close: 18 },
+  5: { open: 9, close: 18 },
+  6: { open: 9, close: 18 },
+};
+
+const LiveStatusBadge = () => {
+  const [now, setNow] = useState<Date>(() => new Date());
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 60_000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const day = now.getDay();
+  const hours = HOURS[day];
+  const minsNow = now.getHours() * 60 + now.getMinutes();
+  const isOpen = !!hours && minsNow >= hours.open * 60 && minsNow < hours.close * 60;
+
+  let label = "Geschlossen";
+  if (isOpen && hours) {
+    const closeMins = hours.close * 60 - minsNow;
+    if (closeMins <= 60) label = `Schließt in ${closeMins} Min.`;
+    else label = `Geöffnet · bis ${hours.close}:00`;
+  } else {
+    for (let i = 0; i < 7; i++) {
+      const next = (day + i) % 7;
+      const h = HOURS[next];
+      if (!h) continue;
+      if (i === 0 && minsNow < h.open * 60) {
+        label = `Öffnet heute um ${h.open}:00`;
+        break;
+      }
+      if (i > 0) {
+        const dayNames = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
+        label = `Öffnet ${i === 1 ? "morgen" : dayNames[next]} um ${h.open}:00`;
+        break;
+      }
+    }
+  }
+
+  return (
+    <span className={`live-status ${isOpen ? "is-open" : "is-closed"}`} aria-live="polite">
+      <span className="live-dot" aria-hidden="true" />
+      {label}
+    </span>
+  );
+};
 
 /**
  * Instagram Landing Page — Earthy & Natural redesign.
@@ -42,6 +95,12 @@ const IgLandingPage = () => {
     if (!reduce && heroRef.current) {
       heroRef.current.classList.add("hero-anim");
     }
+
+    // Mark "today" in hours list
+    const today = new Date().getDay();
+    document.querySelectorAll<HTMLElement>(".ig-page .hours-list li").forEach((li) => {
+      if (Number(li.dataset.day) === today) li.classList.add("is-today");
+    });
 
     return () => io.disconnect();
   }, []);
@@ -210,17 +269,43 @@ const IgLandingPage = () => {
             </div>
             <div className="split">
               <div className="panel hours-panel reveal">
-                <h3>Öffnungszeiten</h3>
+                <div className="panel-head">
+                  <h3>Öffnungszeiten</h3>
+                  <LiveStatusBadge />
+                </div>
                 <ul className="hours-list">
-                  <li><span className="day">Montag</span><span className="time">9:00 – 18:00</span></li>
-                  <li><span className="day">Dienstag</span><span className="time">9:00 – 18:00</span></li>
-                  <li><span className="day">Mittwoch</span><span className="time">9:00 – 18:00</span></li>
-                  <li><span className="day">Donnerstag</span><span className="time">9:00 – 18:00</span></li>
-                  <li><span className="day">Freitag</span><span className="time">9:00 – 18:00</span></li>
-                  <li><span className="day">Samstag</span><span className="time">9:00 – 18:00</span></li>
-                  <li className="closed"><span className="day">Sonntag</span><span className="time">Geschlossen</span></li>
+                  <li data-day="1"><span className="day">Montag</span><span className="time">9:00 – 18:00</span></li>
+                  <li data-day="2"><span className="day">Dienstag</span><span className="time">9:00 – 18:00</span></li>
+                  <li data-day="3"><span className="day">Mittwoch</span><span className="time">9:00 – 18:00</span></li>
+                  <li data-day="4"><span className="day">Donnerstag</span><span className="time">9:00 – 18:00</span></li>
+                  <li data-day="5"><span className="day">Freitag</span><span className="time">9:00 – 18:00</span></li>
+                  <li data-day="6"><span className="day">Samstag</span><span className="time">9:00 – 18:00</span></li>
+                  <li className="closed" data-day="0"><span className="day">Sonntag</span><span className="time">Geschlossen</span></li>
                 </ul>
+
+                <div className="quick-actions">
+                  <a className="qa-btn qa-call" href="tel:+4900000000000" aria-label="Anrufen">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                    Anrufen
+                  </a>
+                  <a className="qa-btn qa-wa" href="https://wa.me/4900000000000?text=Hallo%20TinPlant%2C%20ich%20habe%20eine%20Frage%20zu%20euren%20Pflanzen." target="_blank" rel="noopener noreferrer" aria-label="WhatsApp schreiben">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d="M20.5 3.5A11.4 11.4 0 0 0 12 0C5.6 0 .4 5.2.4 11.6c0 2 .5 3.9 1.5 5.6L.3 24l7-1.8a11.6 11.6 0 0 0 4.7 1c6.4 0 11.6-5.2 11.6-11.6 0-3.1-1.2-6-3.1-8.1zM12 21.4a9.7 9.7 0 0 1-4.9-1.3l-.4-.2-4.1 1.1 1.1-4-.3-.4a9.6 9.6 0 0 1-1.5-5.1c0-5.3 4.3-9.6 9.6-9.6 2.6 0 5 1 6.8 2.8a9.6 9.6 0 0 1 2.8 6.8c0 5.3-4.3 9.6-9.6 9.6zm5.5-7.2c-.3-.2-1.8-.9-2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7 0c-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.7-1.7-2-.2-.3 0-.5.1-.6.1-.1.3-.4.4-.5l.3-.5c.1-.2 0-.4 0-.5l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.5.1-.7.4-.3.4-1 1-1 2.4s1 2.8 1.2 3c.2.2 2 3 4.8 4.2 1.7.7 2.4.7 3.2.6.5-.1 1.6-.6 1.9-1.3.2-.6.2-1.2.2-1.3-.1-.2-.3-.2-.6-.4z"/>
+                    </svg>
+                    WhatsApp
+                  </a>
+                  <a className="qa-btn qa-mail" href="mailto:hallo@tinplant.de?subject=Anfrage%20Pflanzen" aria-label="E-Mail schreiben">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <rect x="2" y="4" width="20" height="16" rx="2"/>
+                      <polyline points="2,7 12,13 22,7"/>
+                    </svg>
+                    E-Mail
+                  </a>
+                </div>
               </div>
+
               <div className="panel address-panel reveal">
                 <h3>So findest du uns</h3>
                 <p className="address">
@@ -228,6 +313,7 @@ const IgLandingPage = () => {
                   Magdeburger Landstraße 33<br />
                   39164 Wanzleben-Börde
                 </p>
+
                 <div className="map-wrap">
                   <iframe
                     loading="lazy"
@@ -235,6 +321,65 @@ const IgLandingPage = () => {
                     src="https://www.google.com/maps?q=Magdeburger+Landstra%C3%9Fe+33,+39164+Wanzleben-B%C3%B6rde&output=embed"
                     title="Standort auf Google Maps"
                   />
+                  <a
+                    className="map-overlay-btn"
+                    href="https://www.google.com/maps/dir/?api=1&destination=Magdeburger+Landstra%C3%9Fe+33%2C+39164+Wanzleben-B%C3%B6rde"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="In Google Maps öffnen"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    In Google Maps öffnen
+                  </a>
+                </div>
+
+                <div className="route-actions">
+                  <a
+                    className="qa-btn qa-route"
+                    href="https://www.google.com/maps/dir/?api=1&destination=Magdeburger+Landstra%C3%9Fe+33%2C+39164+Wanzleben-B%C3%B6rde&travelmode=driving"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <circle cx="12" cy="12" r="10"/>
+                      <polygon points="16.24,7.76 14.12,14.12 7.76,16.24 9.88,9.88" fill="currentColor"/>
+                    </svg>
+                    Route
+                  </a>
+                  <a
+                    className="qa-btn qa-apple"
+                    href="https://maps.apple.com/?daddr=Magdeburger+Landstra%C3%9Fe+33,+39164+Wanzleben-B%C3%B6rde"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d="M16.4 12.7c0-2.7 2.2-4 2.3-4-1.3-1.8-3.2-2.1-3.9-2.1-1.7-.2-3.3 1-4.1 1-.9 0-2.1-1-3.6-.9-1.8 0-3.5 1.1-4.5 2.7-1.9 3.3-.5 8.2 1.4 10.9.9 1.3 2 2.8 3.5 2.7 1.4-.1 1.9-.9 3.6-.9 1.7 0 2.2.9 3.6.9 1.5 0 2.5-1.3 3.4-2.7.7-1 1-1.5 1.6-2.7-.1 0-3.3-1.3-3.3-4.9zM13.7 4.6c.7-.9 1.3-2.2 1.1-3.5-1.1.1-2.5.8-3.3 1.7-.7.8-1.4 2.1-1.2 3.4 1.2.1 2.6-.7 3.4-1.6z"/>
+                    </svg>
+                    Apple Maps
+                  </a>
+                  <a
+                    className="qa-btn qa-share"
+                    href="https://www.google.com/maps?q=Magdeburger+Landstra%C3%9Fe+33,+39164+Wanzleben-B%C3%B6rde"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => {
+                      const url = "https://www.google.com/maps?q=Magdeburger+Landstra%C3%9Fe+33,+39164+Wanzleben-B%C3%B6rde";
+                      const nav = navigator as Navigator & { share?: (data: ShareData) => Promise<void> };
+                      if (typeof nav.share === "function") {
+                        e.preventDefault();
+                        nav.share({ title: "TinPlant Gewächshaus", text: "Magdeburger Landstraße 33, 39164 Wanzleben-Börde", url }).catch(() => {});
+                      }
+                    }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                      <line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/>
+                    </svg>
+                    Teilen
+                  </a>
                 </div>
               </div>
             </div>
@@ -718,18 +863,63 @@ body.ig-page-body::before {
   padding: 36px 32px;
   box-shadow: var(--shadow-soft);
 }
+.ig-page .panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
 .ig-page .panel h3 {
   font-size: 24px;
-  margin-bottom: 22px;
+  margin: 0;
   color: var(--moss-1);
 }
+
+/* Live status badge */
+.ig-page .live-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.ig-page .live-status.is-open {
+  background: rgba(78, 197, 122, 0.15);
+  border-color: rgba(78, 197, 122, 0.45);
+  color: #2a6f3f;
+}
+.ig-page .live-status.is-closed {
+  background: rgba(201, 83, 58, 0.12);
+  border-color: rgba(201, 83, 58, 0.35);
+  color: #8a3a26;
+}
+.ig-page .live-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 0 currentColor;
+  animation: igLivePulse 1.8s ease-in-out infinite;
+}
+@keyframes igLivePulse {
+  0%, 100% { box-shadow: 0 0 0 0 currentColor; opacity: 1; }
+  50%      { box-shadow: 0 0 0 6px rgba(0,0,0,0); opacity: .55; }
+}
+
 .ig-page .hours-list li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
+  padding: 12px 10px;
   border-bottom: 1px dashed var(--line);
   font-size: 15px;
+  border-radius: 8px;
+  transition: background .2s ease;
 }
 .ig-page .hours-list li:last-child { border-bottom: none; }
 .ig-page .hours-list .day { font-weight: 600; color: var(--ink); }
@@ -738,6 +928,55 @@ body.ig-page-body::before {
   color: var(--tomato);
   font-weight: 600;
 }
+.ig-page .hours-list li.is-today {
+  background: rgba(138, 168, 107, 0.18);
+  padding-left: 14px;
+  padding-right: 14px;
+}
+.ig-page .hours-list li.is-today .day::before {
+  content: "›";
+  display: inline-block;
+  margin-right: 6px;
+  color: var(--moss-1);
+  font-weight: 800;
+}
+
+/* Quick action buttons */
+.ig-page .quick-actions,
+.ig-page .route-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+.ig-page .qa-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 600;
+  background: rgba(47, 74, 50, 0.06);
+  color: var(--moss-1);
+  border: 1px solid rgba(47, 74, 50, 0.18);
+  transition: transform .2s ease, background .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+  cursor: pointer;
+}
+.ig-page .qa-btn:hover {
+  transform: translateY(-2px);
+  background: var(--moss-1);
+  color: #fffaf0;
+  border-color: var(--moss-1);
+  box-shadow: 0 12px 24px -12px rgba(47, 74, 50, 0.6);
+}
+.ig-page .qa-btn svg { flex-shrink: 0; }
+.ig-page .qa-wa:hover { background: #25d366; border-color: #25d366; }
+.ig-page .qa-call:hover { background: var(--moss-2); border-color: var(--moss-2); }
+.ig-page .qa-mail:hover { background: var(--bark); border-color: var(--bark); }
+.ig-page .qa-route:hover { background: #1a73e8; border-color: #1a73e8; }
+.ig-page .qa-apple:hover { background: #111; border-color: #111; }
+
 .ig-page .address {
   color: var(--ink-soft);
   font-size: 15px;
@@ -753,6 +992,7 @@ body.ig-page-body::before {
   font-weight: 700;
 }
 .ig-page .map-wrap {
+  position: relative;
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid var(--line);
@@ -761,6 +1001,30 @@ body.ig-page-body::before {
 .ig-page .map-wrap iframe {
   width: 100%; height: 100%; border: 0;
   filter: saturate(.85) hue-rotate(-10deg);
+}
+.ig-page .map-overlay-btn {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #fffaf0;
+  color: var(--moss-1);
+  font-size: 13.5px;
+  font-weight: 700;
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 14px 30px -12px rgba(0, 0, 0, 0.5);
+  transition: transform .2s ease, background .2s ease, color .2s ease;
+  white-space: nowrap;
+}
+.ig-page .map-overlay-btn:hover {
+  transform: translate(-50%, -3px);
+  background: var(--moss-1);
+  color: #fffaf0;
 }
 
 /* ============== FOOTER ============== */
