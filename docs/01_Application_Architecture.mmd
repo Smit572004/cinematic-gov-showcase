@@ -1,0 +1,55 @@
+graph TD
+    subgraph Providers["App Providers (Root)"]
+        QC[QueryClientProvider]
+        AP[AuthProvider]
+        TP[ThemeProvider]
+        LP[LanguageProvider]
+        TTP[TooltipProvider]
+    end
+
+    QC --> AP --> TP --> LP --> TTP
+
+    subgraph Router["React Router"]
+        direction TB
+        PUB["Public Pages"]
+        ADM["Admin Pages"]
+    end
+
+    TTP --> Router
+
+    subgraph PublicPages["Public Pages"]
+        IDX["/ Home"]
+        ABT["/about"]
+        TECH["/technology"]
+        SVC["/services"]
+        RES["/research"]
+        GAL["/gallery"]
+        PRD["/products"]
+        CON["/contact"]
+        GS["/garden-shop"]
+    end
+
+    subgraph AdminPages["Admin Panel (Auth Required)"]
+        ALOG["/admin/login"]
+        ADASH["/admin Dashboard"]
+        APROD["/admin/products"]
+        ATEAM["/admin/team"]
+        ACONT["/admin/content"]
+        AOFF["/admin/offers"]
+        AGAL["/admin/gallery"]
+    end
+
+    PUB --> PublicPages
+    ADM --> AdminPages
+
+    subgraph SharedUI["Shared Components"]
+        NAV[Navbar]
+        FTR[Footer]
+        PH[PageHero]
+        PL[PageLayout]
+        LS[LanguageSwitcher]
+        TT[ThemeToggle]
+    end
+
+    PublicPages --> SharedUI
+    AdminPages --> AL[AdminLayout]

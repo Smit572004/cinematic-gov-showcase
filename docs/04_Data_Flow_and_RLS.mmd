@@ -1,0 +1,46 @@
+graph TD
+    subgraph Users["User Types"]
+        ANON[Anonymous Visitor]
+        AUTH[Authenticated User]
+        ADMIN[Admin User]
+    end
+
+    subgraph PublicRead["Public Read Access"]
+        P1[products - SELECT all]
+        P2[site_content - SELECT all]
+        P3[team_members - SELECT all]
+        P4[gallery_images - SELECT active only]
+        P5[garden_offers - SELECT active only]
+    end
+
+    subgraph PublicWrite["Public Write Access"]
+        CW[contact_submissions - INSERT only]
+    end
+
+    subgraph AdminOnly["Admin CRUD"]
+        A1[products - INSERT UPDATE DELETE]
+        A2[gallery_images - INSERT UPDATE DELETE]
+        A3[garden_offers - INSERT UPDATE DELETE]
+        A4[team_members - INSERT UPDATE DELETE]
+        A5[site_content - INSERT UPDATE]
+        A6[user_roles - INSERT DELETE SELECT]
+    end
+
+    subgraph OwnerOnly["Owner Access"]
+        O1[profiles - SELECT UPDATE INSERT own]
+    end
+
+    ANON --> PublicRead
+    ANON --> PublicWrite
+    AUTH --> PublicRead
+    AUTH --> PublicWrite
+    AUTH --> OwnerOnly
+    ADMIN --> PublicRead
+    ADMIN --> AdminOnly
+
+    subgraph Storage["Storage Buckets (Public)"]
+        S1[product-images]
+        S2[gallery-images]
+    end
+
+    ADMIN --> Storage

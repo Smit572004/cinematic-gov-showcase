@@ -1,0 +1,89 @@
+erDiagram
+    auth_users {
+        uuid id PK
+        text email
+        jsonb raw_user_meta_data
+    }
+
+    profiles {
+        uuid id PK
+        uuid user_id FK
+        text display_name
+        text avatar_url
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    user_roles {
+        uuid id PK
+        uuid user_id FK
+        app_role role
+    }
+
+    products {
+        uuid id PK
+        text name_de
+        text name_en
+        text species
+        text category
+        text container_size
+        numeric price
+        text availability
+        text image_url
+        text description_de
+        text description_en
+    }
+
+    gallery_images {
+        uuid id PK
+        text title_de
+        text title_en
+        text category
+        text image_url
+        boolean is_active
+        integer sort_order
+    }
+
+    garden_offers {
+        uuid id PK
+        text title_de
+        text title_en
+        text description_de
+        text description_en
+        text badge_de
+        text badge_en
+        text icon
+        boolean is_active
+        integer sort_order
+    }
+
+    site_content {
+        uuid id PK
+        text content_key
+        text value_de
+        text value_en
+    }
+
+    team_members {
+        uuid id PK
+        text name
+        text role_de
+        text role_en
+        text email
+        text phone
+        integer sort_order
+    }
+
+    contact_submissions {
+        uuid id PK
+        text full_name
+        text email
+        text phone
+        text organization
+        text subject
+        text message
+        timestamp created_at
+    }
+
+    auth_users ||--o| profiles : "trigger creates"
+    auth_users ||--o{ user_roles : "has roles"

@@ -1,0 +1,170 @@
+/* Fonts loaded via <link> in index.html for faster FCP */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 140 18% 95%;
+    --foreground: 150 30% 12%;
+
+    --card: 140 15% 97%;
+    --card-foreground: 150 30% 12%;
+
+    --popover: 140 15% 97%;
+    --popover-foreground: 150 30% 12%;
+
+    --primary: 145 45% 28%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 140 20% 90%;
+    --secondary-foreground: 150 30% 12%;
+
+    --muted: 140 12% 88%;
+    --muted-foreground: 150 10% 38%;
+
+    --accent: 145 45% 28%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 140 14% 82%;
+    --input: 140 14% 82%;
+    --ring: 145 45% 28%;
+
+    --radius: 0.5rem;
+
+    --hero-gradient: linear-gradient(180deg, hsla(140, 18%, 95%, 0) 0%, hsla(140, 18%, 95%, 0.5) 50%, hsl(140, 18%, 95%) 100%);
+    --glow-green: 0 0 40px hsla(145, 45%, 28%, 0.25);
+    --text-shadow-hero: 0 2px 40px hsla(0, 0%, 0%, 0.3);
+
+    --sidebar-background: 140 15% 97%;
+    --sidebar-foreground: 150 30% 12%;
+    --sidebar-primary: 145 45% 28%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 140 20% 90%;
+    --sidebar-accent-foreground: 150 30% 12%;
+    --sidebar-border: 140 14% 82%;
+    --sidebar-ring: 145 45% 28%;
+  }
+
+  .dark {
+    --background: 150 10% 7%;
+    --foreground: 60 20% 95%;
+
+    --card: 150 12% 10%;
+    --card-foreground: 60 20% 95%;
+
+    --popover: 150 12% 10%;
+    --popover-foreground: 60 20% 95%;
+
+    --primary: 72 61% 45%;
+    --primary-foreground: 150 10% 5%;
+
+    --secondary: 150 15% 16%;
+    --secondary-foreground: 60 20% 95%;
+
+    --muted: 150 10% 14%;
+    --muted-foreground: 150 10% 56%;
+
+    --accent: 72 61% 45%;
+    --accent-foreground: 150 10% 5%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 150 10% 20%;
+    --input: 150 10% 20%;
+    --ring: 72 61% 45%;
+
+    --hero-gradient: linear-gradient(180deg, hsla(150, 10%, 7%, 0) 0%, hsla(150, 10%, 7%, 0.6) 50%, hsl(150, 10%, 7%) 100%);
+    --glow-green: 0 0 60px hsla(72, 61%, 45%, 0.3);
+    --text-shadow-hero: 0 2px 40px hsla(150, 10%, 7%, 0.8);
+
+    --sidebar-background: 150 12% 10%;
+    --sidebar-foreground: 60 20% 95%;
+    --sidebar-primary: 72 61% 45%;
+    --sidebar-primary-foreground: 150 10% 5%;
+    --sidebar-accent: 150 15% 16%;
+    --sidebar-accent-foreground: 60 20% 95%;
+    --sidebar-border: 150 10% 20%;
+    --sidebar-ring: 72 61% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(120, 40%, 40%));
+  }
+
+  .section-padding {
+    @apply py-24 md:py-32 px-6 md:px-12 lg:px-20;
+  }
+
+  .glass {
+    @apply bg-background/80 backdrop-blur-xl border border-border/60 shadow-sm;
+  }
+
+  .glow-line {
+    @apply h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent;
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Infinite hero pan animation — no visible restart */
+@keyframes heroPan {
+  0%   { background-position: 0% 0%; transform: scale(1); }
+  25%  { background-position: 100% 30%; transform: scale(1.08); }
+  50%  { background-position: 60% 100%; transform: scale(1.04); }
+  75%  { background-position: 0% 70%; transform: scale(1.1); }
+  100% { background-position: 0% 0%; transform: scale(1); }
+}
+
+.hero-infinite-pan {
+  animation: heroPan 30s ease-in-out infinite;
+  will-change: background-position, transform;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary));
+  border-radius: 3px;
+}
+
+/* Particle canvas */
+.particles-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}

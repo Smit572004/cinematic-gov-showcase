@@ -1,0 +1,26 @@
+flowchart TD
+    START[Admin logs in at /admin/login] --> CHECK{Is admin?}
+    CHECK -->|No, first user| SETUP[Call setup-admin Edge Fn]
+    SETUP --> DASH
+    CHECK -->|Yes| DASH[Admin Dashboard]
+    CHECK -->|No, admin exists| DENIED[Access Denied]
+
+    DASH --> PROD[Manage Products]
+    DASH --> TEAM[Manage Team]
+    DASH --> CONT[Manage Site Content]
+    DASH --> OFFER[Manage Garden Offers]
+    DASH --> GALL[Manage Gallery]
+
+    PROD --> |Add/Edit product in DE| TRANS[Translate Edge Fn]
+    TEAM --> |Add/Edit member in DE| TRANS
+    CONT --> |Add/Edit content in DE| TRANS
+    OFFER --> |Add/Edit offer in DE| TRANS
+
+    TRANS --> |Dictionary-based DE to EN| AUTO[Auto-fill English fields]
+    AUTO --> SAVE[Save to Database via Supabase Client]
+
+    PROD --> |Upload image| STORE[Upload to Storage Bucket]
+    GALL --> |Upload image| STORE
+    STORE --> SAVE
+
+    SAVE --> PUBLIC[Visible on Public Pages]

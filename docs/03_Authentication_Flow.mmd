@@ -1,0 +1,31 @@
+sequenceDiagram
+    participant U as User
+    participant UI as Admin Login Page
+    participant SA as Supabase Auth
+    participant RPC as has_role RPC
+    participant DB as Database
+    participant EF as setup-admin Edge Fn
+
+    U->>UI: Enter email and password
+    UI->>SA: signInWithPassword()
+    SA-->>UI: Session + User
+
+    UI->>RPC: has_role(user_id, admin)
+    RPC->>DB: SELECT from user_roles
+    DB-->>RPC: true / false
+    RPC-->>UI: isAdmin boolean
+
+    alt First user, no admin exists
+        UI->>EF: POST /setup-admin (JWT)
+        EF->>SA: Verify JWT token
+        EF->>DB: Count admins in user_roles
+        DB-->>EF: count = 0
+        EF->>DB: INSERT admin role
+        EF-->>UI: success
+    end
+
+    alt isAdmin = true
+        UI->>UI: Redirect to /admin
+    else isAdmin = false
+        UI->>UI: Show access denied
+    end

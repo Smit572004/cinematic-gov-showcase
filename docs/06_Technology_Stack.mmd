@@ -1,0 +1,35 @@
+graph LR
+    subgraph Frontend["Frontend"]
+        REACT[React 18]
+        VITE[Vite 5]
+        TS[TypeScript 5]
+        TW[Tailwind CSS v3]
+        RR[React Router DOM]
+        RQ[TanStack React Query]
+        FM[Framer Motion]
+        SHAD[shadcn/ui Components]
+    end
+
+    subgraph Backend["Lovable Cloud Backend"]
+        SB_AUTH[Authentication]
+        SB_DB[PostgreSQL Database]
+        SB_RLS[Row Level Security]
+        SB_STORE[File Storage]
+        SB_EDGE[Edge Functions - Deno]
+    end
+
+    subgraph EdgeFunctions["Edge Functions"]
+        EF1[setup-admin - First admin setup]
+        EF2[translate - DE to EN dictionary]
+    end
+
+    subgraph Features["Key Features"]
+        I18N[Bilingual - DE / EN]
+        THEME[Dark / Light Theme]
+        LAZY[Lazy Route Loading]
+        ANIM[Scroll Animations]
+    end
+
+    Frontend -->|Supabase JS Client| Backend
+    Backend --> EdgeFunctions
+    Frontend --> Features
