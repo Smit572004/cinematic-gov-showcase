@@ -707,11 +707,13 @@ const OffersTab = () => {
 
   return (
     <div className="space-y-4">
+      <ProductsPdfPanel />
+
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground font-body">
           {de
-            ? "Die Karten im Saisonangebote-Bereich auf /ig."
-            : "The cards in the Seasonal offers section on /ig."}
+            ? "Die Karten im Produkte-Bereich auf /ig (horizontale Animation)."
+            : "The cards in the Products section on /ig (horizontal scrolling animation)."}
         </p>
         <button
           onClick={handleNew}
