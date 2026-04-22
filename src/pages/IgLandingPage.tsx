@@ -2124,17 +2124,32 @@ body.ig-page-body::before {
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  background: #fffaf0;
+  background: linear-gradient(180deg, #ffffff 0%, #fffaf0 100%);
   border: 1px solid var(--line);
   border-radius: 22px;
   padding: 0;
   overflow: hidden;
-  box-shadow: 0 8px 24px -16px rgba(31, 41, 31, 0.18);
+  box-shadow: 0 10px 28px -18px rgba(31, 41, 31, 0.22);
   transition: transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .45s ease, border-color .3s ease;
   font: inherit;
   color: inherit;
   position: relative;
 }
+/* Vibrant top accent bar — colored per product tag */
+.ig-page .product-card-v2::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #8aa86b, #d99a4e, #c96a5a);
+  z-index: 3;
+  opacity: 0.95;
+}
+.ig-page .product-card-v2[data-color="tomato"]::after   { background: linear-gradient(90deg, #e07a5f, #f2a07b, #c96a5a); }
+.ig-page .product-card-v2[data-color="pepper"]::after   { background: linear-gradient(90deg, #e8a04a, #f2c46b, #c97a2a); }
+.ig-page .product-card-v2[data-color="zucchini"]::after { background: linear-gradient(90deg, #8aa86b, #b8d098, #5e8a3f); }
+.ig-page .product-card-v2[data-color="herb"]::after     { background: linear-gradient(90deg, #6fa07a, #a8caa3, #3f7a52); }
+.ig-page .product-card-v2[data-color="berry"]::after    { background: linear-gradient(90deg, #d27a90, #efb0bd, #a64a64); }
 .ig-page .product-card-v2::before {
   content: "";
   position: absolute; inset: 0;
@@ -2145,7 +2160,7 @@ body.ig-page-body::before {
 }
 .ig-page .product-card-v2:hover {
   transform: translateY(-8px);
-  box-shadow: 0 30px 60px -28px rgba(47, 74, 50, 0.4);
+  box-shadow: 0 32px 64px -28px rgba(47, 74, 50, 0.45);
   border-color: rgba(138, 168, 107, 0.55);
 }
 .ig-page .product-card-v2:hover::before {
@@ -2163,13 +2178,24 @@ body.ig-page-body::before {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: linear-gradient(135deg, #f1ead8, #e6dcc1);
+  background: linear-gradient(135deg, #ffe9b8, #ffc97a 55%, #f59e3a);
 }
-.ig-page .pcv2-art[data-color="tomato"]   { background: linear-gradient(135deg, #f6dcd2, #ecb8a6); }
-.ig-page .pcv2-art[data-color="pepper"]   { background: linear-gradient(135deg, #f5e0c4, #e9c191); }
-.ig-page .pcv2-art[data-color="zucchini"] { background: linear-gradient(135deg, #d8e6c4, #b8d098); }
-.ig-page .pcv2-art[data-color="herb"]     { background: linear-gradient(135deg, #d4e7d2, #a8caa3); }
-.ig-page .pcv2-art[data-color="berry"]    { background: linear-gradient(135deg, #efd0d6, #d99aa6); }
+.ig-page .pcv2-art[data-color="tomato"]   { background: linear-gradient(135deg, #ffd1c2, #ff8a6b 55%, #d8472f); }
+.ig-page .pcv2-art[data-color="pepper"]   { background: linear-gradient(135deg, #ffe2b0, #ffb24d 55%, #e07a1a); }
+.ig-page .pcv2-art[data-color="zucchini"] { background: linear-gradient(135deg, #d9efb8, #9bd16a 55%, #4f8a2c); }
+.ig-page .pcv2-art[data-color="herb"]     { background: linear-gradient(135deg, #c8eccd, #7dc28a 55%, #2f7a4a); }
+.ig-page .pcv2-art[data-color="berry"]    { background: linear-gradient(135deg, #ffd1de, #ff8aab 55%, #c93a6a); }
+/* Colorful glow behind the product image */
+.ig-page .pcv2-art::before {
+  content: "";
+  position: absolute;
+  inset: -10%;
+  background:
+    radial-gradient(circle at 25% 25%, rgba(255,255,255,0.55), transparent 45%),
+    radial-gradient(circle at 75% 80%, rgba(255,255,255,0.25), transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}
 .ig-page .pcv2-emoji {
   font-size: 100px;
   line-height: 1;
