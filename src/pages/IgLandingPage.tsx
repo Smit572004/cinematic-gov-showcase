@@ -1086,6 +1086,54 @@ body.ig-page-body::before {
 .ig-page .price-unit { font-size: 13px; color: var(--ink-mute); }
 .ig-page .producer-banner { text-align: center; margin-top: 56px; font-family: 'Fraunces', Georgia, serif; font-style: italic; font-size: 15px; color: var(--bark); letter-spacing: 0.04em; }
 
+/* PRODUCT MARQUEE (horizontal scrolling) */
+.ig-page .products-marquee {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 8px 0 28px;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 64px, #000 calc(100% - 64px), transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 64px, #000 calc(100% - 64px), transparent 100%);
+}
+.ig-page .products-track {
+  display: flex;
+  width: max-content;
+  gap: 0;
+  animation: igProductsScroll 38s linear infinite;
+  will-change: transform;
+}
+.ig-page .products-marquee:hover .products-track,
+.ig-page .products-marquee:focus-within .products-track { animation-play-state: paused; }
+.ig-page .products-row {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 22px;
+  padding: 0 11px;
+}
+.ig-page .product-card {
+  flex: 0 0 auto;
+  width: clamp(240px, 26vw, 300px);
+  margin: 0;
+}
+@keyframes igProductsScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ig-page .products-track { animation: none; transform: translateX(0); }
+  .ig-page .products-marquee { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
+.ig-page .products-fade {
+  position: absolute; top: 0; bottom: 0; width: 80px; pointer-events: none; z-index: 2;
+}
+.ig-page .products-fade-l { left: 0; background: linear-gradient(90deg, var(--cream), transparent); }
+.ig-page .products-fade-r { right: 0; background: linear-gradient(-90deg, var(--cream), transparent); }
+
+.ig-page .products-cta { display: flex; justify-content: center; margin-top: 14px; }
+.ig-page .btn.btn-on-light.btn-primary { color: #fff; }
+.ig-page .btn.btn-on-light.btn-primary:hover { color: #fff; }
+
+
 /* GALLERY */
 .ig-page .gallery { display: grid; gap: 18px; grid-template-columns: repeat(2, 1fr); }
 .ig-page .tile { position: relative; border-radius: var(--radius); overflow: hidden; box-shadow: 0 22px 50px -22px rgba(0, 0, 0, 0.5); margin: 0; background: var(--moss-1); aspect-ratio: 4 / 3; transition: transform .5s cubic-bezier(.2,.8,.2,1); }
