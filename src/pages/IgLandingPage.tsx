@@ -229,11 +229,55 @@ const IgLandingPage = () => {
 
   const closedLabel = lang === "de" ? "Geschlossen" : "Closed";
 
+  // ---- Scroll spy for sticky nav ----
+  const [activeSection, setActiveSection] = useState<string>("ig-main");
+  const [navScrolled, setNavScrolled] = useState(false);
+  useEffect(() => {
+    const ids = ["ig-main", "offers", "location", "contact"];
+    const onScroll = () => {
+      setNavScrolled(window.scrollY > 40);
+      const probe = window.innerHeight * 0.35;
+      let current = "ig-main";
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= probe) current = id;
+      }
+      setActiveSection(current);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [content]);
+
   return (
     <>
       <style>{IG_STYLES}</style>
 
       <main className="ig-page" id="ig-main">
+        {/* ============== STICKY NAV ============== */}
+        <nav
+          className={`hero-nav sticky-nav ${navScrolled ? "is-scrolled" : ""}`}
+          aria-label={lang === "de" ? "Seitennavigation" : "Page navigation"}
+        >
+          {[
+            { id: "ig-main", de: "Start", en: "Home" },
+            { id: "offers", de: "Angebote", en: "Offers" },
+            { id: "location", de: "Standort", en: "Location" },
+            { id: "contact", de: "Kontakt", en: "Contact" },
+          ].map((it) => (
+            <a
+              key={it.id}
+              href={`#${it.id}`}
+              className={`hn-link ${activeSection === it.id ? "is-active" : ""}`}
+            >
+              <span className="hn-dot" aria-hidden="true" />
+              <span className="hn-label">{lang === "de" ? it.de : it.en}</span>
+            </a>
+          ))}
+        </nav>
+
         {/* ============== HERO ============== */}
         <section className="snap-section hero" ref={heroRef}>
           <div
@@ -254,24 +298,6 @@ const IgLandingPage = () => {
             <path d="M8 56 C 18 28, 40 18, 60 6 C 56 30, 38 50, 12 60 Z" fill="currentColor" opacity=".35" />
           </svg>
 
-          <nav className="hero-nav" aria-label={lang === "de" ? "Seitennavigation" : "Page navigation"}>
-            <a href="#ig-main" className="hn-link is-active">
-              <span className="hn-dot" aria-hidden="true" />
-              <span className="hn-label">{lang === "de" ? "Start" : "Home"}</span>
-            </a>
-            <a href="#offers" className="hn-link">
-              <span className="hn-dot" aria-hidden="true" />
-              <span className="hn-label">{lang === "de" ? "Angebote" : "Offers"}</span>
-            </a>
-            <a href="#location" className="hn-link">
-              <span className="hn-dot" aria-hidden="true" />
-              <span className="hn-label">{lang === "de" ? "Standort" : "Location"}</span>
-            </a>
-            <a href="#contact" className="hn-link">
-              <span className="hn-dot" aria-hidden="true" />
-              <span className="hn-label">{lang === "de" ? "Kontakt" : "Contact"}</span>
-            </a>
-          </nav>
 
           <div className="hero-content reveal">
             <span className="eyebrow">
@@ -641,14 +667,20 @@ body.ig-page-body::before {
 }
 .ig-page .hero-content { position: relative; z-index: 3; max-width: 820px; text-align: center; margin: 0 auto; padding: 0 12px; }
 .ig-page .hero-nav {
-  position: absolute; top: 22px; left: 50%; transform: translateX(-50%);
-  z-index: 4; display: flex; flex-direction: row; gap: 6px;
+  position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+  z-index: 50; display: flex; flex-direction: row; gap: 6px;
   padding: 8px 12px; border-radius: 999px;
   background: rgba(20, 32, 22, 0.32);
   backdrop-filter: blur(10px) saturate(140%);
   -webkit-backdrop-filter: blur(10px) saturate(140%);
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  transition: background .3s ease, border-color .3s ease, box-shadow .3s ease, top .3s ease;
+}
+.ig-page .hero-nav.is-scrolled {
+  background: rgba(20, 32, 22, 0.78);
+  border-color: rgba(255, 255, 255, 0.10);
+  box-shadow: 0 14px 48px rgba(0, 0, 0, 0.35);
 }
 .ig-page .hn-link {
   display: flex; align-items: center; gap: 8px;
