@@ -852,6 +852,10 @@ const OffersTab = () => {
               className="ig-admin-input resize-none"
             />
           </Field>
+          <OfferImageField
+            imageUrl={editing.image_url ?? null}
+            onChange={(url) => setEditing({ ...editing, image_url: url })}
+          />
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <Field label={de ? "Preis-Text" : "Price text"}>
               <input
