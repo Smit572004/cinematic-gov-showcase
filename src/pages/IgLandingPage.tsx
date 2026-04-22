@@ -1574,12 +1574,70 @@ body.ig-page-body::before {
 
 /* ============== PRODUCTS SECTION (pro layout) ============== */
 .ig-page .products-section {
+  position: relative;
+  isolation: isolate; /* contain z-index for the backdrop */
+  overflow: hidden;   /* clip drifting particles & glows */
   display: flex;
   flex-direction: column;
   gap: clamp(40px, 5vw, 64px);
   padding-top: clamp(80px, 9vw, 120px);
   padding-bottom: clamp(80px, 9vw, 120px);
 }
+/* Lift all direct content above the backdrop */
+.ig-page .products-section > *:not(.products-backdrop) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Cinematic parallax backdrop ---- */
+.ig-page .products-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.ig-page .products-backdrop-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.55;
+  will-change: transform;
+}
+.ig-page .products-backdrop-glow--a {
+  width: 540px;
+  height: 540px;
+  left: -120px;
+  top: -80px;
+  background: radial-gradient(circle, hsla(145, 45%, 28%, 0.22) 0%, hsla(145, 45%, 28%, 0) 70%);
+}
+.ig-page .products-backdrop-glow--b {
+  width: 620px;
+  height: 620px;
+  right: -160px;
+  bottom: -120px;
+  background: radial-gradient(circle, hsla(72, 50%, 45%, 0.18) 0%, hsla(72, 50%, 45%, 0) 70%);
+}
+.ig-page .products-backdrop-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(145, 45%, 28%, 0.45) 0%, hsla(145, 45%, 28%, 0) 70%);
+  opacity: 0.55;
+  will-change: transform;
+  animation-name: igParticleDrift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+@keyframes igParticleDrift {
+  0%   { transform: translate3d(0, 0, 0); }
+  50%  { transform: translate3d(8px, -10px, 0); }
+  100% { transform: translate3d(-6px, 6px, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ig-page .products-backdrop-particle { animation: none; }
+}
+
 
 /* 1. Heading block — centered, refined, with decorative rule */
 .ig-page .products-header {
