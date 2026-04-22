@@ -624,6 +624,59 @@
   }, { threshold: 0.14, rootMargin: "0px 0px -8% 0px" });
   document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
 
+  // ---- Split [data-words] headings into per-word reveal spans ----
+  document.querySelectorAll("[data-words]").forEach((h) => {
+    // Wrap each top-level text node's words; preserve inner element nodes (e.g. .accent)
+    const wrap = document.createElement("span");
+    wrap.className = "word-reveal";
+    const frag = document.createDocumentFragment();
+    let wi = 0;
+    const stagger = 70;
+    h.childNodes.forEach((node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        node.textContent.split(/(\s+)/).forEach((part) => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+          const s = document.createElement("span");
+          s.className = "w";
+          s.style.setProperty("--wd", (wi * stagger) + "ms");
+          s.textContent = part;
+          frag.appendChild(s);
+          wi++;
+        });
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        // Wrap whole inline element as one "word" so gradient stays intact
+        const s = document.createElement("span");
+        s.className = "w";
+        s.style.setProperty("--wd", (wi * stagger) + "ms");
+        s.appendChild(node.cloneNode(true));
+        frag.appendChild(s);
+        wi++;
+      }
+    });
+    wrap.appendChild(frag);
+    h.innerHTML = "";
+    h.appendChild(wrap);
+    // Trigger word reveal in sync with the heading's reveal
+    const wordIO = new IntersectionObserver((es) => {
+      es.forEach((e) => { if (e.isIntersecting) { wrap.classList.add("in"); wordIO.unobserve(h); } });
+    }, { threshold: 0.2 });
+    wordIO.observe(h);
+  });
+
+  // ---- Aurora light follows scroll position ----
+  if (!reduce) {
+    let aurRaf = 0;
+    window.addEventListener("scroll", () => {
+      cancelAnimationFrame(aurRaf);
+      aurRaf = requestAnimationFrame(() => {
+        const p = Math.min(1, window.scrollY / (document.body.scrollHeight - window.innerHeight));
+        document.body.style.setProperty("--aur-x", (20 + p * 60) + "%");
+        document.body.style.setProperty("--aur-y", (15 + p * 70) + "%");
+      });
+    }, { passive: true });
+  }
+
   // ---- Cinematic hero parallax (bg + orbs + content layers) ----
   const hero = document.querySelector(".hero");
   const heroInner = document.querySelector(".hero-inner");
