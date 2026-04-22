@@ -671,39 +671,44 @@ body.ig-page-body::before {
 }
 .ig-page .hero-content { position: relative; z-index: 3; max-width: 820px; text-align: center; margin: 0 auto; padding: 0 12px; }
 .ig-page .hero-nav {
-  position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
-  z-index: 50; display: flex; flex-direction: row; gap: 6px;
-  padding: 8px 12px; border-radius: 999px;
+  position: fixed; top: 0; left: 0; right: 0; transform: none;
+  z-index: 50; display: flex; flex-direction: row; align-items: center;
+  gap: 6px; padding: 12px 28px; border-radius: 0;
   background: rgba(20, 32, 22, 0.32);
   backdrop-filter: blur(10px) saturate(140%);
   -webkit-backdrop-filter: blur(10px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
-  transition: background .3s ease, border-color .3s ease, box-shadow .3s ease, top .3s ease;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.20);
+  transition: background .3s ease, border-color .3s ease, box-shadow .3s ease, padding .3s ease;
 }
 .ig-page .hero-nav.is-scrolled {
-  background: rgba(20, 32, 22, 0.78);
-  border-color: rgba(255, 255, 255, 0.10);
-  box-shadow: 0 14px 48px rgba(0, 0, 0, 0.35);
+  background: rgba(20, 32, 22, 0.82);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.32);
+  padding: 8px 28px;
 }
 .ig-page .hn-logo {
   display: inline-flex; align-items: center; padding: 2px 6px 2px 4px;
   border-radius: 999px; transition: transform .25s ease;
+  margin-right: 4px;
 }
 .ig-page .hn-logo img {
-  height: 26px; width: auto; display: block;
+  height: 30px; width: auto; display: block;
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
 }
 .ig-page .hn-logo:hover { transform: scale(1.04); }
 .ig-page .hn-divider {
   width: 1px; height: 22px; background: rgba(255, 255, 255, 0.22);
-  margin: 0 4px;
+  margin: 0 8px 0 4px;
 }
+.ig-page .hero-nav .hn-link:first-of-type { margin-left: auto; }
+.ig-page .hero-nav .hn-link:last-of-type { margin-right: auto; }
 .ig-page .hn-link {
   display: flex; align-items: center; gap: 8px;
   color: rgba(255, 255, 255, 0.82);
   text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: 0.04em;
-  padding: 8px 14px; border-radius: 999px;
+  padding: 8px 16px; border-radius: 999px;
   transition: color .25s ease, background .25s ease, transform .25s ease;
 }
 .ig-page .hn-dot {
@@ -717,11 +722,13 @@ body.ig-page-body::before {
 .ig-page .hn-link.is-active { color: #fff; background: rgba(255, 255, 255, 0.14); }
 .ig-page .hn-link.is-active .hn-dot { background: #cfe9b8; box-shadow: 0 0 0 4px rgba(207, 233, 184, 0.18); }
 @media (max-width: 640px) {
-  .ig-page .hero-nav { top: 12px; gap: 2px; padding: 5px 8px; }
+  .ig-page .hero-nav { padding: 8px 12px; gap: 2px; }
+  .ig-page .hero-nav.is-scrolled { padding: 6px 12px; }
   .ig-page .hn-link { padding: 7px 9px; font-size: 12px; }
   .ig-page .hn-dot { display: none; }
-  .ig-page .hn-logo img { height: 22px; }
-  .ig-page .hn-divider { height: 18px; margin: 0 2px; }
+  .ig-page .hn-logo img { height: 24px; }
+  .ig-page .hn-divider { display: none; }
+  .ig-page .hero-nav .hn-link:first-of-type { margin-left: auto; }
 }
 .ig-page .eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
