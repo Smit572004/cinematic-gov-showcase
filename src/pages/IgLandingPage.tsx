@@ -261,6 +261,10 @@ const IgLandingPage = () => {
           className={`hero-nav sticky-nav ${navScrolled ? "is-scrolled" : ""}`}
           aria-label={lang === "de" ? "Seitennavigation" : "Page navigation"}
         >
+          <a href="#ig-main" className="hn-logo" aria-label="TinPlant">
+            <img src={logoWhite} alt="TinPlant" />
+          </a>
+          <span className="hn-divider" aria-hidden="true" />
           {[
             { id: "ig-main", de: "Start", en: "Home" },
             { id: "offers", de: "Angebote", en: "Offers" },
@@ -682,6 +686,19 @@ body.ig-page-body::before {
   border-color: rgba(255, 255, 255, 0.10);
   box-shadow: 0 14px 48px rgba(0, 0, 0, 0.35);
 }
+.ig-page .hn-logo {
+  display: inline-flex; align-items: center; padding: 2px 6px 2px 4px;
+  border-radius: 999px; transition: transform .25s ease;
+}
+.ig-page .hn-logo img {
+  height: 26px; width: auto; display: block;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+}
+.ig-page .hn-logo:hover { transform: scale(1.04); }
+.ig-page .hn-divider {
+  width: 1px; height: 22px; background: rgba(255, 255, 255, 0.22);
+  margin: 0 4px;
+}
 .ig-page .hn-link {
   display: flex; align-items: center; gap: 8px;
   color: rgba(255, 255, 255, 0.82);
@@ -700,9 +717,11 @@ body.ig-page-body::before {
 .ig-page .hn-link.is-active { color: #fff; background: rgba(255, 255, 255, 0.14); }
 .ig-page .hn-link.is-active .hn-dot { background: #cfe9b8; box-shadow: 0 0 0 4px rgba(207, 233, 184, 0.18); }
 @media (max-width: 640px) {
-  .ig-page .hero-nav { top: 12px; gap: 2px; padding: 6px 8px; }
-  .ig-page .hn-link { padding: 8px 10px; font-size: 12px; }
+  .ig-page .hero-nav { top: 12px; gap: 2px; padding: 5px 8px; }
+  .ig-page .hn-link { padding: 7px 9px; font-size: 12px; }
   .ig-page .hn-dot { display: none; }
+  .ig-page .hn-logo img { height: 22px; }
+  .ig-page .hn-divider { height: 18px; margin: 0 2px; }
 }
 .ig-page .eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
