@@ -711,6 +711,7 @@ const IgLandingPage = () => {
         {activeOffers.length > 0 && (
           <motion.section
             id="offers"
+            ref={productsSectionRef}
             className="snap-section section section-cream products-section"
             initial="hidden"
             whileInView="show"
@@ -724,6 +725,9 @@ const IgLandingPage = () => {
               },
             }}
           >
+            {/* Cinematic parallax backdrop — sits behind everything */}
+            <ProductsParallaxBackdrop sectionRef={productsSectionRef} />
+
             {/* 1. HEADING */}
             <div className="container">
               <motion.header
