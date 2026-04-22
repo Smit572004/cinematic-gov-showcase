@@ -314,13 +314,60 @@ const IgLandingPage = () => {
   const mapApple = `https://maps.apple.com/?daddr=${encodeURIComponent(mapQuery)}`;
   const mapShare = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}`;
 
-  const dayLabelsDe = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
-  const dayLabelsEn = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const dayLabels = lang === "de" ? dayLabelsDe : dayLabelsEn;
+  // Day labels (CMS-driven, with hardcoded fallbacks)
+  const dayLabels = useMemo(() => {
+    const longKeys: Array<[string, string]> = [
+      ["ig_day_long_sun", "Sonntag"],
+      ["ig_day_long_mon", "Montag"],
+      ["ig_day_long_tue", "Dienstag"],
+      ["ig_day_long_wed", "Mittwoch"],
+      ["ig_day_long_thu", "Donnerstag"],
+      ["ig_day_long_fri", "Freitag"],
+      ["ig_day_long_sat", "Samstag"],
+    ];
+    return longKeys.map(([k, fb]) => pick(content, k, lang, fb));
+  }, [content, lang]);
+  const dayShort = useMemo(() => {
+    const shortKeys: Array<[string, string]> = [
+      ["ig_day_short_sun", "So"],
+      ["ig_day_short_mon", "Mo"],
+      ["ig_day_short_tue", "Di"],
+      ["ig_day_short_wed", "Mi"],
+      ["ig_day_short_thu", "Do"],
+      ["ig_day_short_fri", "Fr"],
+      ["ig_day_short_sat", "Sa"],
+    ];
+    return shortKeys.map(([k, fb]) => pick(content, k, lang, fb));
+  }, [content, lang]);
   // Display order: Mon..Sun
   const displayOrder = [1, 2, 3, 4, 5, 6, 0];
 
-  const closedLabel = lang === "de" ? "Geschlossen" : "Closed";
+  const closedLabel = pick(content, "ig_hours_closed", lang, "Geschlossen");
+
+  // Status templates
+  const statusTemplates: StatusTemplates = useMemo(
+    () => ({
+      closed: pick(content, "ig_hours_closed", lang, "Geschlossen"),
+      openUntil: pick(content, "ig_status_open_until", lang, "Geöffnet · bis {time}"),
+      closesIn: pick(content, "ig_status_closes_in", lang, "Schließt in {minutes} Min."),
+      opensToday: pick(content, "ig_status_opens_today", lang, "Öffnet heute um {time}"),
+      opensTomorrow: pick(content, "ig_status_opens_tomorrow", lang, "Öffnet morgen um {time}"),
+      opensOn: pick(content, "ig_status_opens_on", lang, "Öffnet {day} um {time}"),
+      dayShort,
+    }),
+    [content, lang, dayShort],
+  );
+
+  // Nav items (CMS-driven)
+  const navItems: NavItem[] = useMemo(
+    () => [
+      { id: "ig-main", label: pick(content, "ig_nav_home", lang, "Start") },
+      { id: "offers", label: pick(content, "ig_nav_offers", lang, "Angebote") },
+      { id: "location", label: pick(content, "ig_nav_location", lang, "Standort") },
+      { id: "contact", label: pick(content, "ig_nav_contact", lang, "Kontakt") },
+    ],
+    [content, lang],
+  );
 
   // ---- Scroll spy for sticky nav ----
   const [activeSection, setActiveSection] = useState<string>("ig-main");
@@ -344,6 +391,30 @@ const IgLandingPage = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, [content]);
 
+  // Other CMS labels used below
+  const navAriaLabel = lang === "de" ? "Seitennavigation" : "Page navigation";
+  const scrollHintLabel = pick(content, "ig_hero_scroll_hint", lang, "SCROLL");
+  const hoursHeading = pick(content, "ig_hours_heading", lang, "Öffnungszeiten");
+  const addressHeading = pick(content, "ig_address_heading", lang, "So findest du uns");
+  const mapOpenLabel = pick(content, "ig_map_open", lang, "In Google Maps öffnen");
+  const mapRouteLabel = pick(content, "ig_map_route", lang, "Route");
+  const mapAppleLabel = pick(content, "ig_map_apple", lang, "Apple Maps");
+  const mapShareLabel = pick(content, "ig_map_share", lang, "Teilen");
+  const qaCallLabel = pick(content, "ig_qa_call", lang, "Anrufen");
+  const qaWhatsappLabel = pick(content, "ig_qa_whatsapp", lang, "WhatsApp");
+  const qaEmailLabel = pick(content, "ig_qa_email", lang, "E-Mail");
+  const whatsappMessage = pick(
+    content,
+    "ig_whatsapp_message",
+    lang,
+    "Hallo TinPlant, ich habe eine Frage zu euren Pflanzen.",
+  );
+  const emailSubject = pick(content, "ig_email_subject", lang, "Anfrage Pflanzen");
+  const footerCopyright = fillTemplate(
+    pick(content, "ig_footer_copyright", lang, "© {year} TinPlant"),
+    { year },
+  );
+
   return (
     <>
       <style>{IG_STYLES}</style>
@@ -351,7 +422,8 @@ const IgLandingPage = () => {
       <main className="ig-page" id="ig-main">
         {/* ============== STICKY NAV ============== */}
         <StickyIgNav
-          lang={lang as LangKey}
+          items={navItems}
+          ariaLabel={navAriaLabel}
           activeSection={activeSection}
           navScrolled={navScrolled}
           logo={logoWhite}
