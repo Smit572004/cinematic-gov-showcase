@@ -482,14 +482,16 @@ body.ig-page-body::after {
 }
 .ig-page .hero::before {
   content: ""; position: absolute; inset: 0;
-  background: url('/ig-hero.jpg') center 40%/cover no-repeat;
-  transform: scale(1.08); will-change: transform; z-index: 0;
+  background: url('/ig-hero.jpg') no-repeat;
+  background-size: 130% auto;
+  background-position: 50% 40%;
+  transform: scale(1.08); will-change: transform, background-position; z-index: 0;
   transition: transform .9s cubic-bezier(.2,.8,.2,1);
-  animation: igKenBurns 22s ease-in-out infinite alternate;
+  animation: igKenBurns 24s ease-in-out infinite alternate;
 }
 @keyframes igKenBurns {
-  0%   { transform: scale(1.08) translate3d(0, 0, 0); }
-  100% { transform: scale(1.18) translate3d(-2%, -1.5%, 0); }
+  0%   { background-size: 130% auto; background-position: 48% 38%; }
+  100% { background-size: 145% auto; background-position: 54% 46%; }
 }
 .ig-page .hero::after {
   content: ""; position: absolute; inset: 0; z-index: 1;
