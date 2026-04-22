@@ -128,6 +128,96 @@ export type Database = {
         }
         Relationships: []
       }
+      ig_gallery: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string | null
+          is_active: boolean
+          sort_order: number
+          span: string
+          title_de: string
+          title_en: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          sort_order?: number
+          span?: string
+          title_de?: string
+          title_en?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          sort_order?: number
+          span?: string
+          title_de?: string
+          title_en?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ig_offers: {
+        Row: {
+          badge_de: string
+          badge_en: string
+          color_tag: string
+          created_at: string
+          description_de: string
+          description_en: string
+          emoji: string
+          id: string
+          is_active: boolean
+          price_text: string
+          sort_order: number
+          title_de: string
+          title_en: string
+          unit_text: string
+          updated_at: string
+        }
+        Insert: {
+          badge_de?: string
+          badge_en?: string
+          color_tag?: string
+          created_at?: string
+          description_de?: string
+          description_en?: string
+          emoji?: string
+          id?: string
+          is_active?: boolean
+          price_text?: string
+          sort_order?: number
+          title_de: string
+          title_en?: string
+          unit_text?: string
+          updated_at?: string
+        }
+        Update: {
+          badge_de?: string
+          badge_en?: string
+          color_tag?: string
+          created_at?: string
+          description_de?: string
+          description_en?: string
+          emoji?: string
+          id?: string
+          is_active?: boolean
+          price_text?: string
+          sort_order?: number
+          title_de?: string
+          title_en?: string
+          unit_text?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           created_at: string

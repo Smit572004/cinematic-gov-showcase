@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutDashboard, Package, Users, FileText, LogOut, ArrowLeft, Menu, X, Gift, Image, ChevronRight } from "lucide-react";
+import { LayoutDashboard, Package, Users, FileText, LogOut, ArrowLeft, Menu, X, Gift, Image, ChevronRight, Instagram } from "lucide-react";
 import logoColour from "@/assets/tinplant-logo-colour.png";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -15,6 +15,7 @@ const navItems = [
   { labelEn: "Content", labelDe: "Inhalt", href: "/admin/content", icon: FileText },
   { labelEn: "Offers", labelDe: "Angebote", href: "/admin/offers", icon: Gift },
   { labelEn: "Gallery", labelDe: "Galerie", href: "/admin/gallery", icon: Image },
+  { labelEn: "IG Landing", labelDe: "IG Landing", href: "/admin/ig-landing", icon: Instagram },
 ];
 
 const AdminLayout = ({ children }: { children: ReactNode }) => {
