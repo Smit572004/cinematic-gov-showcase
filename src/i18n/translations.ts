@@ -19,11 +19,11 @@ export const translations = {
   // Hero Section
   hero: {
     badge: { en: "Trusted by Government Forestry Departments Since 1992", de: "Vertrauenspartner staatlicher Forstbehörden seit 1992" },
-    title1: { en: "Reforesting Nations,", de: "Aufforstung für Nationen," },
+    title1: { en: "Reforesting Nations,", de: "Forstung für Nationen," },
     title2: { en: "Securing Tomorrow", de: "Zukunft Sichern" },
     desc: {
       en: "Premium container seedlings engineered for state-scale reforestation. Partnering with government agencies and forestry departments to restore resilient forests across Germany and beyond.",
-      de: "Premium-Containerpflanzen für staatliche Aufforstungsprogramme. Partner von Behörden und Forstämtern beim Aufbau widerstandsfähiger Wälder in Deutschland und darüber hinaus.",
+      de: "Premium-Containerpflanzen für staatliche Forstungsprogramme. Partner von Behörden und Forstämtern beim Aufbau widerstandsfähiger Wälder in Deutschland und darüber hinaus.",
     },
     exploreServices: { en: "Request Government Briefing", de: "Behörden-Briefing anfragen" },
     aboutTinplant: { en: "View Our Capabilities", de: "Unsere Kompetenzen" },
@@ -33,15 +33,15 @@ export const translations = {
   about: {
     subtitle: { en: "About Us", de: "Über Uns" },
     title1: { en: "Pioneering", de: "Wegweisende" },
-    title2: { en: "Reforestation", de: "Aufforstungs-" },
+    title2: { en: "Reforestation", de: "Forstungs-" },
     title3: { en: "Technology", de: "Technologie" },
     desc1: {
       en: "TinPlant has been at the forefront of plant propagation and research since 1992. We specialize in producing high-quality container seedlings that enable efficient, large-scale reforestation projects for government agencies and forestry departments.",
-      de: "TinPlant steht seit 1992 an der Spitze der Pflanzenvermehrung und Forschung. Wir sind spezialisiert auf die Produktion hochwertiger Containerpflanzen für effiziente, großflächige Aufforstungsprojekte für Behörden und Forstämter.",
+      de: "TinPlant steht seit 1992 an der Spitze der Pflanzenvermehrung und Forschung. Wir sind spezialisiert auf die Produktion hochwertiger Containerpflanzen für effiziente, großflächige Forstungsprojekte für Behörden und Forstämter.",
     },
     desc2: {
       en: "Our advanced growing techniques ensure maximum survival rates and optimal growth, making reforestation more accessible and effective than ever before.",
-      de: "Unsere fortschrittlichen Anbautechniken gewährleisten maximale Überlebensraten und optimales Wachstum, wodurch Aufforstung zugänglicher und effektiver wird als je zuvor.",
+      de: "Unsere fortschrittlichen Anbautechniken gewährleisten maximale Überlebensraten und optimales Wachstum, wodurch Forstung zugänglicher und effektiver wird als je zuvor.",
     },
     sustainable: { en: "Sustainable", de: "Nachhaltig" },
     sustainableDesc: { en: "Climate-friendly growing methods", de: "Klimafreundliche Anbaumethoden" },
@@ -58,17 +58,17 @@ export const translations = {
     title2: { en: "Services", de: "Leistungen" },
     desc: {
       en: "End-to-end reforestation solutions designed for government agencies and large-scale forestry projects.",
-      de: "Ganzheitliche Aufforstungslösungen für Behörden und großflächige Forstprojekte.",
+      de: "Ganzheitliche Forstungslösungen für Behörden und großflächige Forstprojekte.",
     },
     containerSeedlings: { en: "Container Seedlings", de: "Containerpflanzen" },
     containerSeedlingsDesc: {
       en: "Premium quality container-grown seedlings with superior root systems for maximum survival rates in the field.",
       de: "Premium-Containerpflanzen mit überlegenem Wurzelsystem für maximale Überlebensraten im Freiland.",
     },
-    reforestationPlanning: { en: "Reforestation Planning", de: "Aufforstungsplanung" },
+    reforestationPlanning: { en: "Reforestation Planning", de: "Forstungsplanung" },
     reforestationPlanningDesc: {
       en: "Comprehensive reforestation strategies tailored to your region's climate, soil conditions, and biodiversity goals.",
-      de: "Umfassende Aufforstungsstrategien, angepasst an Klima, Bodenbedingungen und Biodiversitätsziele Ihrer Region.",
+      de: "Umfassende Forstungsstrategien, angepasst an Klima, Bodenbedingungen und Biodiversitätsziele Ihrer Region.",
     },
     research: { en: "Research & Development", de: "Forschung & Entwicklung" },
     researchDesc: {
@@ -126,7 +126,7 @@ export const translations = {
     title2: { en: "Touch", de: "Kontakt auf" },
     desc: {
       en: "Ready to start your next reforestation project? Our team is here to help.",
-      de: "Bereit für Ihr nächstes Aufforstungsprojekt? Unser Team hilft Ihnen gerne.",
+      de: "Bereit für Ihr nächstes Forstungsprojekt? Unser Team hilft Ihnen gerne.",
     },
     address: { en: "Address", de: "Adresse" },
     phone: { en: "Phone", de: "Telefon" },
@@ -143,7 +143,7 @@ export const translations = {
     subject: { en: "Subject", de: "Betreff" },
     selectTopic: { en: "Select a topic", de: "Thema auswählen" },
     seedlingOrder: { en: "Container Seedling Order", de: "Containerpflanzen Bestellung" },
-    consultation: { en: "Reforestation Consultation", de: "Aufforstungsberatung" },
+    consultation: { en: "Reforestation Consultation", de: "Forstungsberatung" },
     researchCollab: { en: "Research Collaboration", de: "Forschungskooperation" },
     facilityVisit: { en: "Facility Visit", de: "Betriebsbesichtigung" },
     other: { en: "Other", de: "Sonstiges" },
@@ -185,7 +185,7 @@ export const translations = {
     legal: { en: "Legal", de: "Rechtliches" },
     desc: {
       en: "Biotechnik und Pflanzenvermehrung GmbH. Pioneering reforestation technology since 1992.",
-      de: "Biotechnik und Pflanzenvermehrung GmbH. Wegweisende Aufforstungstechnologie seit 1992.",
+      de: "Biotechnik und Pflanzenvermehrung GmbH. Wegweisende Forstungstechnologie seit 1992.",
     },
     rights: { en: "All rights reserved.", de: "Alle Rechte vorbehalten." },
   },
@@ -196,7 +196,7 @@ export const translations = {
     title: { en: "Project Gallery", de: "Projektgalerie" },
     desc: {
       en: "Explore our state-of-the-art greenhouse facilities, seedling production stages, and field reforestation projects.",
-      de: "Entdecken Sie unsere modernen Gewächshausanlagen, Pflanzenproduktionsstufen und Aufforstungsprojekte im Freiland.",
+      de: "Entdecken Sie unsere modernen Gewächshausanlagen, Pflanzenproduktionsstufen und Forstungsprojekte im Freiland.",
     },
     all: { en: "All", de: "Alle" },
     greenhouse: { en: "Greenhouse", de: "Gewächshaus" },
@@ -207,7 +207,7 @@ export const translations = {
 
   // Page Heroes
   pageHero: {
-    aboutTitle: { en: "Pioneering Reforestation Since 1992", de: "Wegweisende Aufforstung Seit 1992" },
+    aboutTitle: { en: "Pioneering Reforestation Since 1992", de: "Wegweisende Forstung Seit 1992" },
     aboutSubtitle: { en: "About TinPlant", de: "Über TinPlant" },
     aboutDesc: {
       en: "TinPlant Biotechnik und Pflanzenvermehrung GmbH — at the forefront of plant propagation and forestry research for over three decades.",
@@ -219,11 +219,11 @@ export const translations = {
       en: "Our production system is built on decades of ecophysiological research from British Columbia, adapted for German forestry conditions through rigorous scientific methodology.",
       de: "Unser Produktionssystem basiert auf Jahrzehnten ökophysiologischer Forschung aus British Columbia, adaptiert für deutsche Forstbedingungen durch rigorose wissenschaftliche Methodik.",
     },
-    servicesTitle: { en: "End-to-End Reforestation Solutions", de: "Ganzheitliche Aufforstungslösungen" },
+    servicesTitle: { en: "End-to-End Reforestation Solutions", de: "Ganzheitliche Forstungslösungen" },
     servicesSubtitle: { en: "Our Services", de: "Unsere Leistungen" },
     servicesDesc: {
       en: "Comprehensive container seedling production and reforestation support designed for government agencies and large-scale forestry projects.",
-      de: "Umfassende Containerpflanzen-Produktion und Aufforstungsunterstützung für Behörden und großflächige Forstprojekte.",
+      de: "Umfassende Containerpflanzen-Produktion und Forstungsunterstützung für Behörden und großflächige Forstprojekte.",
     },
     researchTitle: { en: "Research & Scientific Foundation", de: "Forschung & Wissenschaftliche Grundlage" },
     researchSubtitle: { en: "Knowledge Base", de: "Wissensbasis" },
@@ -235,19 +235,19 @@ export const translations = {
     contactSubtitle: { en: "Contact Us", de: "Kontaktieren Sie Uns" },
     contactDesc: {
       en: "Ready to discuss your reforestation project? Our team is here to help with expert consultation and customized solutions.",
-      de: "Bereit, Ihr Aufforstungsprojekt zu besprechen? Unser Team unterstützt Sie mit fachkundiger Beratung und maßgeschneiderten Lösungen.",
+      de: "Bereit, Ihr Forstungsprojekt zu besprechen? Unser Team unterstützt Sie mit fachkundiger Beratung und maßgeschneiderten Lösungen.",
     },
     galleryTitle: { en: "Our Work in Pictures", de: "Unsere Arbeit in Bildern" },
     gallerySubtitle: { en: "Photo Gallery", de: "Fotogalerie" },
     galleryDesc: {
       en: "From greenhouse cultivation to field planting — see our complete reforestation process.",
-      de: "Von der Gewächshauskultur bis zur Freilandpflanzung — erleben Sie unseren gesamten Aufforstungsprozess.",
+      de: "Von der Gewächshauskultur bis zur Freilandpflanzung — erleben Sie unseren gesamten Forstungsprozess.",
     },
     productsTitle: { en: "Our Plant Catalog", de: "Unser Pflanzenkatalog" },
     productsSubtitle: { en: "Products", de: "Produkte" },
     productsDesc: {
       en: "Browse our selection of high-quality container seedlings, grown using proven biotechnology methods for optimal reforestation success.",
-      de: "Durchstöbern Sie unsere Auswahl hochwertiger Containersetzlinge, die mit bewährten Biotechnologie-Methoden für optimalen Aufforstungserfolg gezüchtet werden.",
+      de: "Durchstöbern Sie unsere Auswahl hochwertiger Containersetzlinge, die mit bewährten Biotechnologie-Methoden für optimalen Forstungserfolg gezüchtet werden.",
     },
   },
 
@@ -265,7 +265,7 @@ export const translations = {
     },
     storyP3: {
       en: "Our collaboration with world-renowned experts like Dr. Steven C. Grossnickle and David Swain bridges decades of British Columbia forestry expertise with German forestry practice, enabling evidence-based reforestation at scale.",
-      de: "Unsere Zusammenarbeit mit weltweit renommierten Experten wie Dr. Steven C. Grossnickle und David Swain verbindet Jahrzehnte britisch-kolumbischer Forstexpertise mit deutscher Forstpraxis und ermöglicht evidenzbasierte Aufforstung im großen Maßstab.",
+      de: "Unsere Zusammenarbeit mit weltweit renommierten Experten wie Dr. Steven C. Grossnickle und David Swain verbindet Jahrzehnte britisch-kolumbischer Forstexpertise mit deutscher Forstpraxis und ermöglicht evidenzbasierte Forstung im großen Maßstab.",
     },
     journeyTitle: { en: "Our", de: "Unsere" },
     journeyTitle2: { en: "Journey", de: "Reise" },
@@ -281,14 +281,14 @@ export const translations = {
     m2020Title: { en: "Innovation", de: "Innovation" },
     m2020Desc: { en: "Pioneered frost chain logistics for container seedlings in Europe", de: "Pionierarbeit in der Frostketten-Logistik für Containerpflanzen in Europa" },
     m2025Title: { en: "BC Transfer", de: "BC-Transfer" },
-    m2025Desc: { en: "Published landmark report on British Columbia reforestation transfer", de: "Veröffentlichung des wegweisenden Berichts zum British Columbia Aufforstungstransfer" },
+    m2025Desc: { en: "Published landmark report on British Columbia reforestation transfer", de: "Veröffentlichung des wegweisenden Berichts zum British Columbia Forstungstransfer" },
     // Values
     precision: { en: "Precision", de: "Präzision" },
     precisionDesc: { en: "Every seedling is produced with scientific precision and quality control at every stage.", de: "Jeder Setzling wird mit wissenschaftlicher Präzision und Qualitätskontrolle in jeder Phase produziert." },
     researchDriven: { en: "Research-Driven", de: "Forschungsgetrieben" },
     researchDrivenDesc: { en: "Our methods are grounded in decades of ecophysiological research and field validation.", de: "Unsere Methoden basieren auf Jahrzehnten ökophysiologischer Forschung und Feldvalidierung." },
     partnership: { en: "Partnership", de: "Partnerschaft" },
-    partnershipDesc: { en: "We work alongside government agencies as trusted partners in reforestation.", de: "Wir arbeiten als vertrauenswürdige Partner der Behörden bei der Aufforstung." },
+    partnershipDesc: { en: "We work alongside government agencies as trusted partners in reforestation.", de: "Wir arbeiten als vertrauenswürdige Partner der Behörden bei der Forstung." },
     globalKnowledge: { en: "Global Knowledge", de: "Globales Wissen" },
     globalKnowledgeDesc: { en: "Integrating best practices from British Columbia and international forestry science.", de: "Integration bewährter Verfahren aus British Columbia und internationaler Forstwissenschaft." },
     expertTeam: { en: "Expert Team", de: "Expertenteam" },
@@ -369,7 +369,7 @@ export const translations = {
     ctaTitle3: { en: "?", de: " zu starten?" },
     ctaDesc: {
       en: "Contact our team to discuss your reforestation requirements. We provide customized solutions for government forestry departments.",
-      de: "Kontaktieren Sie unser Team, um Ihre Aufforstungsanforderungen zu besprechen. Wir bieten maßgeschneiderte Lösungen für staatliche Forstbehörden.",
+      de: "Kontaktieren Sie unser Team, um Ihre Forstungsanforderungen zu besprechen. Wir bieten maßgeschneiderte Lösungen für staatliche Forstbehörden.",
     },
     ctaButton: { en: "Get in Touch", de: "Kontakt aufnehmen" },
     yearsExperience: { en: "Years Experience", de: "Jahre Erfahrung" },
